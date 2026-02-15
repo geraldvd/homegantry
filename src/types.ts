@@ -21,6 +21,7 @@ export interface Service {
   icon: string;
   category: string;
   status: string;
+  stack?: string;
   container?: ContainerInfo;
   hidden: boolean;
   sortOrder: number;
@@ -46,12 +47,19 @@ export interface ManualService {
   sortOrder: number;
 }
 
+export interface StackConfig {
+  visible: boolean;
+  icon?: string;
+  displayName?: string;
+}
+
 export interface DashboardSettings {
   dashboardTitle: string;
   columns: number;
   showStatus: boolean;
   layout: 'grid' | 'list';
   showStopped: boolean;
+  groupBy: 'category' | 'stack';
 }
 
 export type SSEEvent =
@@ -59,4 +67,5 @@ export type SSEEvent =
   | { type: 'service_updated'; data: Service }
   | { type: 'service_removed'; data: { id: string } }
   | { type: 'settings_updated'; data: DashboardSettings }
+  | { type: 'stacks_updated'; data: Record<string, StackConfig> }
   | { type: 'heartbeat'; data: Record<string, never> };

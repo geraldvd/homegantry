@@ -36,9 +36,14 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
     );
   }
 
+  // If slug is already a full URL, use it directly (fixes double-CDN bug)
+  const src = slug.startsWith('http://') || slug.startsWith('https://')
+    ? slug
+    : `${ICON_CDN}/${slug}.png`;
+
   return (
     <img
-      src={`${ICON_CDN}/${slug}.png`}
+      src={src}
       alt={name}
       width={size}
       height={size}
