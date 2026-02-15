@@ -8,6 +8,8 @@ services:
       - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
       - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
     restart: unless-stopped
+    networks:
+      - proxy
     labels:
       - homegantry.hidden=true
       - traefik.enable=true
