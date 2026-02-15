@@ -1,19 +1,24 @@
 # HomeGantry
 
-Auto-discovering Docker homelab dashboard with real-time updates.
+[![CI](https://github.com/geraldvd/homegantry/actions/workflows/ci.yml/badge.svg)](https://github.com/geraldvd/homegantry/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**Auto-discovering Docker homelab dashboard with real-time updates.**
+
+HomeGantry watches your Docker daemon for running containers, matches them against a built-in knowledge base of 60+ services, and presents them in a clean dashboard — no manual configuration required.
 
 <!-- screenshot placeholder -->
 
 ## Features
 
-- **Auto-discovery** — Detects running Docker containers and matches them against a knowledge base of 60+ services
-- **Dark mode** glass-morphism UI with responsive grid and list layouts
-- **Real-time updates** via Server-Sent Events (SSE) — no manual refresh needed
-- **Stack management** — Group services by Docker Compose project, toggle stack visibility
-- **Traefik support** — Automatically extracts URLs from Traefik router rules
-- **Homepage compatibility** — Reads `homepage.*` Docker labels for easy migration
-- **Manual services** — Add non-Docker services to your dashboard
+- **Auto-discovery** — Detects running Docker containers and identifies them from a knowledge base of 60+ services
+- **Real-time updates** — Server-Sent Events push changes instantly, no polling or page refresh
+- **Traefik support** — Extracts service URLs from Traefik `Host()` router rules automatically
+- **Homepage compatibility** — Reads `homepage.*` Docker labels for easy migration from [Homepage](https://gethomepage.dev/)
+- **Stack management** — Group services by Docker Compose project, toggle visibility per-stack
+- **Manual services** — Add non-Docker services to the dashboard through the UI
 - **Customizable** — Override names, icons, categories, and URLs per-service
+- **Dark mode glass-morphism UI** — Responsive grid and list layouts
 
 ## Quick Start
 
@@ -21,42 +26,45 @@ Auto-discovering Docker homelab dashboard with real-time updates.
 # docker-compose.yml
 services:
   homegantry:
-    image: homegantry:latest
+    image: ghcr.io/geraldvd/homegantry:latest
     ports:
       - "3000:3000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data:/app/data
+      - homegantry_data:/data
     environment:
       - HOMEGANTRY_HOST=192.168.1.100
     restart: unless-stopped
+
+volumes:
+  homegantry_data:
 ```
 
 ```bash
 docker compose up -d
 ```
 
-Open `http://localhost:3000` in your browser.
+Open [http://localhost:3000](http://localhost:3000).
+
+> **Requirements:** Docker Engine 20.10+ and Docker Compose v2. No reverse proxy needed — Traefik integration is optional and only used for URL auto-detection. See the [Getting Started](https://homegantry.com/guide/getting-started) guide for details.
 
 ## Configuration
 
 | Variable | Default | Description |
 |---|---|---|
-| `HOMEGANTRY_PORT` | `3000` | Server listen port |
-| `HOMEGANTRY_HOST` | _(empty)_ | Host/IP for service URL fallback (e.g. `192.168.1.100`) |
+| `HOMEGANTRY_HOST` | _(empty)_ | Host/IP for building service URLs (e.g. `192.168.1.100`) |
 | `HOMEGANTRY_TITLE` | `HomeGantry` | Dashboard title |
-| `HOMEGANTRY_DOCKER_SOCKET` | `/var/run/docker.sock` | Docker socket path |
 | `HOMEGANTRY_POLL_INTERVAL` | `60` | Seconds between full Docker rescans |
 | `HOMEGANTRY_SHOW_STOPPED` | `false` | Show stopped containers |
-| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true` | Read `homepage.*` labels |
+| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true` | Read `homepage.*` Docker labels |
 | `HOMEGANTRY_EXCLUDE_SELF` | `true` | Hide the HomeGantry container |
 | `HOMEGANTRY_COMPOSE_ONLY` | `true` | Only show containers from Compose projects |
-| `HOMEGANTRY_DATA_DIR` | `./data` | Persistent data directory |
-| `HOMEGANTRY_LOG_LEVEL` | `info` | Log level |
+
+See the [full configuration reference](https://homegantry.com/guide/configuration) for all options.
 
 ## Docker Labels
 
-### HomeGantry labels
+Control how services appear on the dashboard using container labels:
 
 ```yaml
 labels:
@@ -64,53 +72,35 @@ labels:
   homegantry.icon: "plex"
   homegantry.url: "https://plex.example.com"
   homegantry.category: "Media"
-  homegantry.description: "Media server"
-  homegantry.exclude: "true"  # hide this container
 ```
 
-### Homepage compatibility
+Homepage labels (`homepage.name`, `homepage.href`, etc.) are also supported. See the [Docker Labels](https://homegantry.com/guide/docker-labels) documentation.
 
-```yaml
-labels:
-  homepage.name: "Sonarr"
-  homepage.icon: "sonarr"
-  homepage.href: "https://sonarr.example.com"
-  homepage.group: "Media"
-  homepage.description: "TV show manager"
-```
+## Documentation
 
-### Traefik support
+Full documentation is available at [homegantry.com](https://homegantry.com).
 
-When Traefik router rules are present, HomeGantry extracts the `Host()` domain automatically:
-
-```yaml
-labels:
-  traefik.http.routers.myapp.rule: "Host(`app.example.com`)"
-  # HomeGantry resolves URL to https://app.example.com
-```
-
-## Stack Management
-
-HomeGantry groups services by Docker Compose project (stack). In the Settings drawer you can:
-
-- Toggle stack visibility to show/hide all services in a stack
-- Set a custom display name and icon for each stack
-- Switch between grouping by category or stack
+- [Getting Started](https://homegantry.com/guide/getting-started) — Requirements and quick start
+- [Configuration](https://homegantry.com/guide/configuration) — Environment variables reference
+- [Docker Labels](https://homegantry.com/guide/docker-labels) — Controlling service display
+- [Traefik Integration](https://homegantry.com/guide/traefik) — URL auto-detection from Traefik
+- [Deployment](https://homegantry.com/guide/deployment) — Production deployment guides
+- [Reverse Proxy](https://homegantry.com/guide/reverse-proxy) — Traefik, Nginx, and Caddy examples
+- [Contributing](https://homegantry.com/guide/contributing) — Development setup and project structure
 
 ## Development
 
 ```bash
+git clone https://github.com/geraldvd/homegantry.git
+cd homegantry
 npm install
 npm run dev
 ```
 
-This starts both the backend (`tsx watch`) and Vite dev server concurrently. Frontend is at `http://localhost:5173`.
+This starts both the Express backend and Vite dev server. The frontend is available at `http://localhost:5173` with hot module replacement.
 
-```bash
-npm run build        # Production build
-npm run typecheck    # Type-check both frontend and server
-```
+See the [contributing guide](https://homegantry.com/guide/contributing) for more details.
 
 ## License
 
-MIT
+[MIT](LICENSE)

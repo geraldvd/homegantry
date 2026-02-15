@@ -1,6 +1,8 @@
+# End-user deployment — run HomeGantry with a pre-built image.
+# Usage: docker compose up -d
 services:
   homegantry:
-    build: .
+    image: ghcr.io/geraldvd/homegantry:latest
     container_name: homegantry
     ports:
       - "${HOMEGANTRY_PORT:-3000}:3000"

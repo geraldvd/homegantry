@@ -1,0 +1,11 @@
+# Documentation site — build and serve the VitePress docs.
+# Usage: docker compose -f docker-compose.docs.yml up --build
+services:
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    container_name: homegantry-docs
+    ports:
+      - "${DOCS_PORT:-4173}:80"
+    restart: unless-stopped
