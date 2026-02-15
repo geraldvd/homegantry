@@ -3,3 +3,5 @@ dist/
 data/*.json
 .env
 *.tsbuildinfo
+docs/.vitepress/dist/
+docs/.vitepress/cache/
