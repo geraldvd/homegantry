@@ -1,16 +1,23 @@
-## Add your compose file here
 services:
-  hello_world:
-    image: hello-world
-    # networks:
-    #   - default
-    # ports:
-    #   - 3000:3000
-    # volumes:
-    #   - data:/data
+  homegantry:
+    build: .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /fastmirror/DockerData/homegantry:/data
+    environment:
+      - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
+      - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
+    restart: unless-stopped
+    labels:
+      - homegantry.hidden=true
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.transmission.rule=Host(`homegantry.g91.io`)
+      - traefik.http.routers.transmission.tls=true
+      - traefik.http.routers.transmission.tls.certresolver=le
+      - traefik.http.routers.transmission.middlewares=authentik@docker
+      - traefik.http.services.transmission.loadbalancer.server.port=3000
 
-# networks:
-#   default: {}
-
-# volumes:
-#   data:
+networks:
+  proxy:
+    external: true
