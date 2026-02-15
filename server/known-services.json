@@ -81,6 +81,15 @@
     "aliases": ["overseerr"]
   },
   {
+    "name": "Jellyseerr",
+    "description": "Media request management for Jellyfin",
+    "icon": "jellyseerr",
+    "category": "Media",
+    "defaultPort": 5055,
+    "patterns": ["fallenbagel/jellyseerr", "ghcr.io/fallenbagel/jellyseerr"],
+    "aliases": ["jellyseerr"]
+  },
+  {
     "name": "Tautulli",
     "description": "Monitoring and tracking for Plex Media Server",
     "icon": "tautulli",
@@ -124,6 +133,67 @@
     "defaultPort": 8787,
     "patterns": ["linuxserver/readarr", "ghcr.io/linuxserver/readarr", "hotio/readarr"],
     "aliases": ["readarr"]
+  },
+  {
+    "name": "Audiobookshelf",
+    "description": "Self-hosted audiobook and podcast server",
+    "icon": "audiobookshelf",
+    "category": "Media",
+    "defaultPort": 13378,
+    "patterns": ["ghcr.io/advplyr/audiobookshelf", "advplyr/audiobookshelf"],
+    "aliases": ["audiobookshelf"]
+  },
+  {
+    "name": "Calibre-web",
+    "description": "Web-based e-book browser and reader",
+    "icon": "calibre-web",
+    "category": "Media",
+    "defaultPort": 8083,
+    "patterns": ["linuxserver/calibre-web", "ghcr.io/linuxserver/calibre-web", "johnguan/calibre-web"],
+    "aliases": ["calibre-web", "calibreweb"]
+  },
+  {
+    "name": "Tdarr",
+    "description": "Distributed media transcoding system",
+    "icon": "tdarr",
+    "category": "Media",
+    "defaultPort": 8265,
+    "patterns": ["ghcr.io/haveagitgat/tdarr", "haveagitgat/tdarr"],
+    "aliases": ["tdarr"]
+  },
+  {
+    "name": "Recyclarr",
+    "description": "Sync TRaSH guides to Sonarr and Radarr",
+    "icon": "recyclarr",
+    "category": "Media",
+    "patterns": ["ghcr.io/recyclarr/recyclarr", "recyclarr/recyclarr"],
+    "aliases": ["recyclarr"]
+  },
+  {
+    "name": "Unpackerr",
+    "description": "Extracts downloads for Starr apps",
+    "icon": "unpackerr",
+    "category": "Media",
+    "patterns": ["ghcr.io/unpackerr/unpackerr", "golift/unpackerr"],
+    "aliases": ["unpackerr"]
+  },
+  {
+    "name": "Requestrr",
+    "description": "Chatbot for media requests via Discord",
+    "icon": "requestrr",
+    "category": "Media",
+    "defaultPort": 4545,
+    "patterns": ["darkalfx/requestrr", "ghcr.io/darkalfx/requestrr"],
+    "aliases": ["requestrr"]
+  },
+  {
+    "name": "Whisparr",
+    "description": "Adult content collection manager",
+    "icon": "whisparr",
+    "category": "Media",
+    "defaultPort": 6969,
+    "patterns": ["hotio/whisparr", "ghcr.io/hotio/whisparr"],
+    "aliases": ["whisparr"]
   },
   {
     "name": "Traefik",
@@ -207,6 +277,40 @@
     "aliases": ["haproxy"]
   },
   {
+    "name": "Cloudflared",
+    "description": "Cloudflare Tunnel client for secure access",
+    "icon": "cloudflare",
+    "category": "Network",
+    "patterns": ["cloudflare/cloudflared", "ghcr.io/cloudflare/cloudflared"],
+    "aliases": ["cloudflared", "cloudflare-tunnel"]
+  },
+  {
+    "name": "Gluetun",
+    "description": "VPN client in a thin Docker container",
+    "icon": "gluetun",
+    "category": "Network",
+    "patterns": ["qmcgaw/gluetun", "ghcr.io/qdm12/gluetun"],
+    "aliases": ["gluetun"]
+  },
+  {
+    "name": "Speedtest Tracker",
+    "description": "Internet speed tracking and monitoring",
+    "icon": "speedtest-tracker",
+    "category": "Network",
+    "defaultPort": 8080,
+    "patterns": ["ghcr.io/alexjustesen/speedtest-tracker", "linuxserver/speedtest-tracker", "henrywhitaker3/speedtest-tracker"],
+    "aliases": ["speedtest-tracker", "speedtest"]
+  },
+  {
+    "name": "Blocky",
+    "description": "Fast DNS proxy and ad blocker",
+    "icon": "blocky",
+    "category": "Network",
+    "defaultPort": 4000,
+    "patterns": ["spx01/blocky", "ghcr.io/0xerr0r/blocky"],
+    "aliases": ["blocky"]
+  },
+  {
     "name": "Portainer",
     "description": "Container management GUI for Docker",
     "icon": "portainer",
@@ -270,6 +374,25 @@
     "aliases": ["diun"]
   },
   {
+    "name": "Ofelia",
+    "description": "Docker job scheduler (cron alternative)",
+    "icon": "ofelia",
+    "category": "Infrastructure",
+    "infrastructure": true,
+    "patterns": ["mcuadros/ofelia", "ghcr.io/mcuadros/ofelia"],
+    "aliases": ["ofelia"]
+  },
+  {
+    "name": "Docker Socket Proxy",
+    "description": "Secured Docker socket proxy",
+    "icon": "docker",
+    "category": "Infrastructure",
+    "defaultPort": 2375,
+    "infrastructure": true,
+    "patterns": ["tecnativa/docker-socket-proxy", "ghcr.io/tecnativa/docker-socket-proxy", "linuxserver/socket-proxy"],
+    "aliases": ["docker-socket-proxy", "socket-proxy"]
+  },
+  {
     "name": "Grafana",
     "description": "Analytics and interactive visualization platform",
     "icon": "grafana",
@@ -322,6 +445,24 @@
     "defaultPort": 8000,
     "patterns": ["linuxserver/healthchecks", "ghcr.io/linuxserver/healthchecks", "healthchecks/healthchecks"],
     "aliases": ["healthchecks", "healthchecks-io"]
+  },
+  {
+    "name": "Gatus",
+    "description": "Health dashboard for monitoring endpoints",
+    "icon": "gatus",
+    "category": "Monitoring",
+    "defaultPort": 8080,
+    "patterns": ["twinproduction/gatus", "ghcr.io/twin/gatus"],
+    "aliases": ["gatus"]
+  },
+  {
+    "name": "Dozzle",
+    "description": "Real-time Docker container log viewer",
+    "icon": "dozzle",
+    "category": "Monitoring",
+    "defaultPort": 8080,
+    "patterns": ["amir20/dozzle", "ghcr.io/amir20/dozzle"],
+    "aliases": ["dozzle"]
   },
   {
     "name": "Nextcloud",
@@ -385,6 +526,24 @@
     "defaultPort": 8082,
     "patterns": ["seafileltd/seafile-mc", "seafileltd/seafile"],
     "aliases": ["seafile"]
+  },
+  {
+    "name": "Lychee",
+    "description": "Self-hosted photo management application",
+    "icon": "lychee",
+    "category": "Storage",
+    "defaultPort": 8080,
+    "patterns": ["lycheeorg/lychee", "ghcr.io/lycheeorg/lychee", "linuxserver/lychee"],
+    "aliases": ["lychee"]
+  },
+  {
+    "name": "Alist",
+    "description": "File list program supporting multiple storage",
+    "icon": "alist",
+    "category": "Storage",
+    "defaultPort": 5244,
+    "patterns": ["xhofe/alist", "ghcr.io/alistgo/alist"],
+    "aliases": ["alist"]
   },
   {
     "name": "Bookstack",
@@ -459,6 +618,114 @@
     "aliases": ["tandoor", "tandoor-recipes", "recipes"]
   },
   {
+    "name": "Outline",
+    "description": "Team knowledge base and wiki",
+    "icon": "outline",
+    "category": "Productivity",
+    "defaultPort": 3000,
+    "patterns": ["outlinewiki/outline", "ghcr.io/outline/outline"],
+    "aliases": ["outline"]
+  },
+  {
+    "name": "Stirling-PDF",
+    "description": "Self-hosted PDF manipulation tool",
+    "icon": "stirling-pdf",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["frooodle/s-pdf", "ghcr.io/stirling-tools/s-pdf", "ghcr.io/frooodle/s-pdf"],
+    "aliases": ["stirling-pdf", "stirlingpdf", "s-pdf"]
+  },
+  {
+    "name": "FreshRSS",
+    "description": "Self-hosted RSS feed aggregator",
+    "icon": "freshrss",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["freshrss/freshrss", "linuxserver/freshrss", "ghcr.io/linuxserver/freshrss"],
+    "aliases": ["freshrss"]
+  },
+  {
+    "name": "Miniflux",
+    "description": "Minimalist and opinionated RSS reader",
+    "icon": "miniflux",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["miniflux/miniflux", "ghcr.io/miniflux/miniflux"],
+    "aliases": ["miniflux"]
+  },
+  {
+    "name": "Linkding",
+    "description": "Self-hosted bookmark manager",
+    "icon": "linkding",
+    "category": "Productivity",
+    "defaultPort": 9090,
+    "patterns": ["sissbruecker/linkding", "ghcr.io/sissbruecker/linkding"],
+    "aliases": ["linkding"]
+  },
+  {
+    "name": "Memos",
+    "description": "Lightweight self-hosted memo hub",
+    "icon": "memos",
+    "category": "Productivity",
+    "defaultPort": 5230,
+    "patterns": ["neosmemo/memos", "ghcr.io/usememos/memos"],
+    "aliases": ["memos"]
+  },
+  {
+    "name": "n8n",
+    "description": "Workflow automation tool",
+    "icon": "n8n",
+    "category": "Productivity",
+    "defaultPort": 5678,
+    "patterns": ["n8nio/n8n", "ghcr.io/n8n-io/n8n"],
+    "aliases": ["n8n"]
+  },
+  {
+    "name": "Trilium Notes",
+    "description": "Hierarchical note-taking application",
+    "icon": "trilium",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["zadam/trilium", "ghcr.io/zadam/trilium", "triliumnext/notes"],
+    "aliases": ["trilium", "trilium-notes", "triliumnotes"]
+  },
+  {
+    "name": "Actual Budget",
+    "description": "Local-first personal finance tool",
+    "icon": "actual-budget",
+    "category": "Productivity",
+    "defaultPort": 5006,
+    "patterns": ["actualbudget/actual-server", "ghcr.io/actualbudget/actual-server"],
+    "aliases": ["actual-budget", "actual", "actualbudget"]
+  },
+  {
+    "name": "Firefly III",
+    "description": "Self-hosted personal finance manager",
+    "icon": "firefly-iii",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["fireflyiii/core", "ghcr.io/firefly-iii/core"],
+    "aliases": ["firefly-iii", "fireflyiii", "firefly"]
+  },
+  {
+    "name": "IT-Tools",
+    "description": "Collection of handy developer utilities",
+    "icon": "it-tools",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["corentinth/it-tools", "ghcr.io/corentinth/it-tools"],
+    "aliases": ["it-tools", "ittools"]
+  },
+  {
+    "name": "Changedetection.io",
+    "description": "Website change detection and monitoring",
+    "icon": "changedetection-io",
+    "category": "Productivity",
+    "defaultPort": 5000,
+    "patterns": ["dgtlmoon/changedetection.io", "ghcr.io/dgtlmoon/changedetection.io"],
+    "aliases": ["changedetection", "changedetection-io", "changedetectionio"]
+  },
+  {
     "name": "Vaultwarden",
     "description": "Lightweight Bitwarden-compatible password server",
     "icon": "vaultwarden",
@@ -493,6 +760,24 @@
     "defaultPort": 8080,
     "patterns": ["crowdsecurity/crowdsec", "ghcr.io/crowdsecurity/crowdsec"],
     "aliases": ["crowdsec"]
+  },
+  {
+    "name": "Fail2Ban",
+    "description": "Intrusion prevention framework",
+    "icon": "fail2ban",
+    "category": "Security",
+    "infrastructure": true,
+    "patterns": ["linuxserver/fail2ban", "ghcr.io/linuxserver/fail2ban", "crazymax/fail2ban"],
+    "aliases": ["fail2ban"]
+  },
+  {
+    "name": "CrowdSec Bouncer",
+    "description": "CrowdSec traffic bouncer for Traefik",
+    "icon": "crowdsec",
+    "category": "Security",
+    "infrastructure": true,
+    "patterns": ["fbonalair/traefik-crowdsec-bouncer", "ghcr.io/crowdsecurity/traefik-bouncer"],
+    "aliases": ["crowdsec-bouncer", "traefik-crowdsec-bouncer"]
   },
   {
     "name": "qBittorrent",
@@ -608,6 +893,7 @@
     "icon": "mariadb",
     "category": "Databases",
     "defaultPort": 3306,
+    "infrastructure": true,
     "patterns": ["mariadb", "library/mariadb", "linuxserver/mariadb"],
     "aliases": ["mariadb"]
   },
@@ -617,6 +903,7 @@
     "icon": "postgresql",
     "category": "Databases",
     "defaultPort": 5432,
+    "infrastructure": true,
     "patterns": ["postgres", "library/postgres", "bitnami/postgresql"],
     "aliases": ["postgres", "postgresql", "pgsql"]
   },
@@ -626,6 +913,7 @@
     "icon": "redis",
     "category": "Databases",
     "defaultPort": 6379,
+    "infrastructure": true,
     "patterns": ["redis", "library/redis", "bitnami/redis"],
     "aliases": ["redis"]
   },
@@ -635,6 +923,7 @@
     "icon": "mongodb",
     "category": "Databases",
     "defaultPort": 27017,
+    "infrastructure": true,
     "patterns": ["mongo", "library/mongo", "bitnami/mongodb"],
     "aliases": ["mongo", "mongodb"]
   },
@@ -644,8 +933,59 @@
     "icon": "influxdb",
     "category": "Databases",
     "defaultPort": 8086,
+    "infrastructure": true,
     "patterns": ["influxdb", "library/influxdb", "bitnami/influxdb"],
     "aliases": ["influxdb", "influx"]
+  },
+  {
+    "name": "MySQL",
+    "description": "Popular open-source relational database",
+    "icon": "mysql",
+    "category": "Databases",
+    "defaultPort": 3306,
+    "infrastructure": true,
+    "patterns": ["mysql", "library/mysql", "bitnami/mysql"],
+    "aliases": ["mysql"]
+  },
+  {
+    "name": "Memcached",
+    "description": "Distributed memory object caching system",
+    "icon": "memcached",
+    "category": "Databases",
+    "defaultPort": 11211,
+    "infrastructure": true,
+    "patterns": ["memcached", "library/memcached", "bitnami/memcached"],
+    "aliases": ["memcached"]
+  },
+  {
+    "name": "Valkey",
+    "description": "Open-source Redis-compatible key-value store",
+    "icon": "valkey",
+    "category": "Databases",
+    "defaultPort": 6379,
+    "infrastructure": true,
+    "patterns": ["valkey/valkey", "bitnami/valkey", "ghcr.io/valkey-io/valkey"],
+    "aliases": ["valkey"]
+  },
+  {
+    "name": "KeyDB",
+    "description": "High-performance Redis-compatible database",
+    "icon": "keydb",
+    "category": "Databases",
+    "defaultPort": 6379,
+    "infrastructure": true,
+    "patterns": ["eqalpha/keydb", "ghcr.io/eqalpha/keydb"],
+    "aliases": ["keydb"]
+  },
+  {
+    "name": "Elasticsearch",
+    "description": "Distributed search and analytics engine",
+    "icon": "elasticsearch",
+    "category": "Databases",
+    "defaultPort": 9200,
+    "infrastructure": true,
+    "patterns": ["elasticsearch", "library/elasticsearch", "docker.elastic.co/elasticsearch/elasticsearch"],
+    "aliases": ["elasticsearch", "elastic"]
   },
   {
     "name": "Home Assistant",
@@ -671,6 +1011,7 @@
     "icon": "mosquitto",
     "category": "Home",
     "defaultPort": 1883,
+    "infrastructure": true,
     "patterns": ["eclipse-mosquitto", "library/eclipse-mosquitto"],
     "aliases": ["mosquitto", "eclipse-mosquitto", "mqtt"]
   },
@@ -736,5 +1077,23 @@
     "defaultPort": 5005,
     "patterns": ["pawelmalak/flame", "ghcr.io/fdarveau/flame"],
     "aliases": ["flame"]
+  },
+  {
+    "name": "code-server",
+    "description": "VS Code in the browser",
+    "icon": "code-server",
+    "category": "Development",
+    "defaultPort": 8080,
+    "patterns": ["linuxserver/code-server", "ghcr.io/linuxserver/code-server", "codercom/code-server"],
+    "aliases": ["code-server", "codeserver"]
+  },
+  {
+    "name": "Gitness",
+    "description": "Open-source developer platform with CI/CD",
+    "icon": "gitness",
+    "category": "Development",
+    "defaultPort": 3000,
+    "patterns": ["harness/gitness", "ghcr.io/harness/gitness"],
+    "aliases": ["gitness"]
   }
 ]

@@ -54,10 +54,6 @@ function findByPattern(image: string): KnownService | undefined {
   );
 }
 
-function findByPort(port: number): KnownService | undefined {
-  return knownServices.find((ks) => ks.defaultPort === port);
-}
-
 // ---- labels ----
 
 function getLabel(
@@ -171,9 +167,9 @@ export function matchContainer(input: MatchInput): Service {
   // Only attempt knowledge-base matching if labels didn't resolve
   const resolvedByLabels = !!(hgName || (config.homepageCompat && getLabel(input.labels, 'homepage.name')));
 
-  if (!resolvedByLabels) {
-    let matched: KnownService | undefined;
+  let matched: KnownService | undefined;
 
+  if (!resolvedByLabels) {
     // Priority 3: Compose service name lookup
     if (!matched && input.compose_service) {
       matched = findByAlias(input.compose_service);
@@ -189,12 +185,6 @@ export function matchContainer(input: MatchInput): Service {
     if (!matched) {
       const { repo } = parseImage(input.image);
       matched = findByPattern(repo);
-    }
-
-    // Priority 6: Port heuristics
-    if (!matched && input.ports.length > 0) {
-      const privatePort = input.ports[0]!.private;
-      matched = findByPort(privatePort);
     }
 
     if (matched) {
@@ -218,6 +208,12 @@ export function matchContainer(input: MatchInput): Service {
     if (override.description !== undefined) description = override.description;
   }
 
+  // Auto-hide infrastructure services (unless user has explicitly set hidden)
+  let hidden = override?.hidden ?? false;
+  if (matched?.infrastructure && !hgName && override?.hidden === undefined) {
+    hidden = true;
+  }
+
   const status = input.state === 'running' ? 'running' : 'stopped';
 
   return {
@@ -231,7 +227,7 @@ export function matchContainer(input: MatchInput): Service {
     status,
     stack: input.compose_project,
     container,
-    hidden: override?.hidden ?? false,
+    hidden,
     sortOrder: override?.sortOrder ?? 0,
   };
 }

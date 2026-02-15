@@ -70,6 +70,7 @@ export interface KnownService {
   defaultPort?: number;
   patterns: string[];
   aliases: string[];
+  infrastructure?: boolean;
 }
 
 export type SSEEvent =

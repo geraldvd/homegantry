@@ -200,8 +200,6 @@ router.get('/api/events', (_req: Request, res: Response) => {
   };
   const onStacksUpdated = (data: Record<string, StackConfig>) => {
     send({ type: 'stacks_updated', data });
-    // Also resend initial_state so clients see updated service list
-    send({ type: 'initial_state', data: mergeServices(false) });
   };
 
   dockerEvents.on('service_updated', onUpdated);
