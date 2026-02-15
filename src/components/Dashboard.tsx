@@ -1,7 +1,23 @@
 import { useMemo } from 'react';
 import type { Service } from '../types';
-import { useServices, useSettings } from '../context/ServiceContext';
+import { useServices, useSettings, useStacks } from '../context/ServiceContext';
 import CategorySection from './CategorySection';
+
+const CATEGORY_ICONS: Record<string, string> = {
+  Media: 'plex',
+  Monitoring: 'grafana',
+  Networking: 'nginx',
+  Storage: 'nextcloud',
+  Development: 'gitea',
+  Security: 'authelia',
+  Automation: 'home-assistant',
+  Downloads: 'qbittorrent',
+  Productivity: 'bookstack',
+  Communication: 'matrix',
+  Gaming: 'steam',
+  Analytics: 'plausible',
+  Database: 'postgresql',
+};
 
 interface Props {
   search: string;
@@ -11,6 +27,7 @@ interface Props {
 export default function Dashboard({ search, onEdit }: Props) {
   const { services, connected } = useServices();
   const { settings } = useSettings();
+  const { stacks } = useStacks();
 
   const filtered = useMemo(() => {
     let list = services.filter((s) => !s.hidden);
@@ -32,17 +49,19 @@ export default function Dashboard({ search, onEdit }: Props) {
   const grouped = useMemo(() => {
     const map = new Map<string, Service[]>();
     for (const s of filtered) {
-      const cat = s.category || 'Uncategorized';
-      const arr = map.get(cat);
+      const key = settings.groupBy === 'stack'
+        ? (s.stack || 'Ungrouped')
+        : (s.category || 'Uncategorized');
+      const arr = map.get(key);
       if (arr) arr.push(s);
-      else map.set(cat, [s]);
+      else map.set(key, [s]);
     }
     const entries = [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
     for (const [, list] of entries) {
       list.sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
     }
     return entries;
-  }, [filtered]);
+  }, [filtered, settings.groupBy]);
 
   if (filtered.length === 0) {
     return (
@@ -80,16 +99,29 @@ export default function Dashboard({ search, onEdit }: Props) {
 
   return (
     <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 py-6 space-y-8">
-      {grouped.map(([category, list]) => (
-        <CategorySection
-          key={category}
-          category={category}
-          services={list}
-          showStatus={settings.showStatus}
-          columns={settings.columns}
-          onEdit={onEdit}
-        />
-      ))}
+      {grouped.map(([category, list]) => {
+        // Determine icon for section header
+        let icon: string | undefined;
+        if (settings.groupBy === 'stack') {
+          const stackCfg = stacks[category];
+          icon = stackCfg?.icon;
+        } else {
+          icon = CATEGORY_ICONS[category];
+        }
+
+        return (
+          <CategorySection
+            key={category}
+            category={category}
+            services={list}
+            showStatus={settings.showStatus}
+            columns={settings.columns}
+            layout={settings.layout}
+            icon={icon}
+            onEdit={onEdit}
+          />
+        );
+      })}
     </main>
   );
 }

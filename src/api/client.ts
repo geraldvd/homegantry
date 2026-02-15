@@ -1,4 +1,4 @@
-import type { Service, ServiceOverride, ManualService, DashboardSettings } from '../types';
+import type { Service, ServiceOverride, ManualService, DashboardSettings, StackConfig } from '../types';
 
 const BASE = '/api';
 
@@ -67,5 +67,16 @@ export function updateSettings(
   return request<DashboardSettings>('/settings', {
     method: 'PATCH',
     body: JSON.stringify(settings),
+  });
+}
+
+export function getStacks(): Promise<Record<string, StackConfig>> {
+  return request<Record<string, StackConfig>>('/stacks');
+}
+
+export function updateStack(name: string, config: Partial<StackConfig>): Promise<StackConfig> {
+  return request<StackConfig>(`/stacks/${encodeURIComponent(name)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(config),
   });
 }

@@ -26,4 +26,5 @@ export const config = {
   excludeSelf: envBool('HOMEGANTRY_EXCLUDE_SELF', true),
   dataDir: envString('HOMEGANTRY_DATA_DIR', './data'),
   logLevel: envString('HOMEGANTRY_LOG_LEVEL', 'info'),
+  composeOnly: envBool('HOMEGANTRY_COMPOSE_ONLY', true),
 } as const;

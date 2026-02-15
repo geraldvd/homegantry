@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { config } from './config.js';
-import type { ServiceOverride, ManualService, DashboardSettings } from './types.js';
+import type { ServiceOverride, ManualService, DashboardSettings, StackConfig } from './types.js';
 
 class JsonStore<T> {
   private cache: T;
@@ -54,8 +54,19 @@ export const settingsStore = new JsonStore<DashboardSettings>(
     showStatus: true,
     layout: 'grid',
     showStopped: config.showStopped,
+    groupBy: 'category',
   },
 );
+
+export const stacksStore = new JsonStore<Record<string, StackConfig>>(
+  'stacks.json',
+  {},
+);
+
+export function getStackConfig(name: string): StackConfig {
+  const stacks = stacksStore.get();
+  return stacks[name] ?? { visible: true };
+}
 
 /** Resolve an override for a container by its id or name. */
 export function resolveOverride(

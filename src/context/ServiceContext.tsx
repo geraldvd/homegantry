@@ -1,16 +1,19 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef, useCallback, useState } from 'react';
-import type { Service, DashboardSettings, SSEEvent } from '../types';
+import type { Service, DashboardSettings, StackConfig, SSEEvent } from '../types';
+import { getStacks } from '../api/client';
 
 interface State {
   services: Service[];
   settings: DashboardSettings;
+  stacks: Record<string, StackConfig>;
 }
 
 type Action =
   | { type: 'SET_SERVICES'; payload: Service[] }
   | { type: 'UPDATE_SERVICE'; payload: Service }
   | { type: 'REMOVE_SERVICE'; payload: string }
-  | { type: 'SET_SETTINGS'; payload: DashboardSettings };
+  | { type: 'SET_SETTINGS'; payload: DashboardSettings }
+  | { type: 'SET_STACKS'; payload: Record<string, StackConfig> };
 
 const defaultSettings: DashboardSettings = {
   dashboardTitle: 'HomeGantry',
@@ -18,6 +21,7 @@ const defaultSettings: DashboardSettings = {
   showStatus: true,
   layout: 'grid',
   showStopped: true,
+  groupBy: 'category',
 };
 
 function reducer(state: State, action: Action): State {
@@ -40,6 +44,8 @@ function reducer(state: State, action: Action): State {
       };
     case 'SET_SETTINGS':
       return { ...state, settings: action.payload };
+    case 'SET_STACKS':
+      return { ...state, stacks: action.payload };
     default:
       return state;
   }
@@ -48,6 +54,7 @@ function reducer(state: State, action: Action): State {
 interface ServiceContextValue {
   services: Service[];
   settings: DashboardSettings;
+  stacks: Record<string, StackConfig>;
   connected: boolean;
   dispatch: React.Dispatch<Action>;
 }
@@ -58,9 +65,17 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     services: [],
     settings: defaultSettings,
+    stacks: {},
   });
   const [connected, setConnected] = useState(false);
   const retryDelay = useRef(1000);
+
+  // Fetch stacks on mount
+  useEffect(() => {
+    getStacks()
+      .then((data) => dispatch({ type: 'SET_STACKS', payload: data }))
+      .catch(() => { /* ignore */ });
+  }, []);
 
   const connect = useCallback(() => {
     const es = new EventSource('/api/events');
@@ -93,6 +108,9 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
             break;
           case 'settings_updated':
             dispatch({ type: 'SET_SETTINGS', payload: event.data });
+            break;
+          case 'stacks_updated':
+            dispatch({ type: 'SET_STACKS', payload: event.data });
             break;
           case 'heartbeat':
             break;
@@ -127,4 +145,10 @@ export function useSettings() {
   const ctx = useContext(ServiceContext);
   if (!ctx) throw new Error('useSettings must be used within ServiceProvider');
   return { settings: ctx.settings, dispatch: ctx.dispatch };
+}
+
+export function useStacks() {
+  const ctx = useContext(ServiceContext);
+  if (!ctx) throw new Error('useStacks must be used within ServiceProvider');
+  return { stacks: ctx.stacks, dispatch: ctx.dispatch };
 }

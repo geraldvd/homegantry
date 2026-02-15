@@ -13,6 +13,9 @@ let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 export const dockerEvents = new EventEmitter();
 
+// Match input cache for rematch support
+const matchInputCache = new Map<string, MatchInput>();
+
 // ---- helpers ----
 
 function containerToMatchInput(
@@ -61,6 +64,12 @@ async function fullScan(): Promise<void> {
         // Also check if image contains homegantry
         if (info.Image?.includes('homegantry')) continue;
       }
+      // Compose-only filter: skip containers without compose project label
+      if (config.composeOnly && !input.compose_project) continue;
+
+      // Cache the match input for rematch support
+      matchInputCache.set(input.id, input);
+
       const svc = matchContainer(input);
       next.set(svc.id, svc);
     }
@@ -72,6 +81,7 @@ async function fullScan(): Promise<void> {
     for (const [id] of prev) {
       if (!next.has(id)) {
         dockerEvents.emit('service_removed', { id });
+        matchInputCache.delete(id);
       }
     }
 
@@ -139,6 +149,24 @@ export function getServices(): Service[] {
 
 export function isConnected(): boolean {
   return connected;
+}
+
+/** Re-run matchContainer for a cached input (picks up new overrides). */
+export function rematchService(id: string): Service | undefined {
+  const input = matchInputCache.get(id);
+  if (!input) return undefined;
+  const svc = matchContainer(input);
+  services.set(svc.id, svc);
+  return svc;
+}
+
+/** Returns sorted unique stack names from current services. */
+export function getDiscoveredStacks(): string[] {
+  const stacks = new Set<string>();
+  for (const svc of services.values()) {
+    if (svc.stack) stacks.add(svc.stack);
+  }
+  return [...stacks].sort();
 }
 
 export async function startWatching(): Promise<void> {

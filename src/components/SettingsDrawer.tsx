@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useSettings } from '../context/ServiceContext';
-import { updateSettings } from '../api/client';
-import type { DashboardSettings } from '../types';
+import { useSettings, useStacks } from '../context/ServiceContext';
+import { updateSettings, updateStack } from '../api/client';
+import type { DashboardSettings, StackConfig } from '../types';
+import ServiceIcon from './ServiceIcon';
 
 interface Props {
   open: boolean;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function SettingsDrawer({ open, onClose }: Props) {
   const { settings, dispatch } = useSettings();
+  const { stacks } = useStacks();
   const [local, setLocal] = useState<DashboardSettings>(settings);
 
   useEffect(() => {
@@ -25,6 +27,14 @@ export default function SettingsDrawer({ open, onClose }: Props) {
     } catch {
       // revert on error
       setLocal(settings);
+    }
+  };
+
+  const handleStackUpdate = async (name: string, patch: Partial<StackConfig>) => {
+    try {
+      await updateStack(name, patch);
+    } catch {
+      // ignore
     }
   };
 
@@ -114,10 +124,99 @@ export default function SettingsDrawer({ open, onClose }: Props) {
                 ))}
               </div>
             </div>
+
+            <div>
+              <span className="text-sm text-gray-400 mb-2 block">Group By</span>
+              <div className="flex gap-2">
+                {(['category', 'stack'] as const).map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => save({ groupBy: g })}
+                    className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors capitalize ${
+                      local.groupBy === g
+                        ? 'bg-accent/10 border-accent text-accent'
+                        : 'bg-surface-700 border-surface-600/60 text-gray-400 hover:text-gray-200'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stacks section */}
+            {Object.keys(stacks).length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Stacks</h3>
+                <div className="space-y-3">
+                  {Object.entries(stacks).map(([name, cfg]) => (
+                    <StackRow
+                      key={name}
+                      name={name}
+                      config={cfg}
+                      onUpdate={(patch) => handleStackUpdate(name, patch)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function StackRow({
+  name,
+  config,
+  onUpdate,
+}: {
+  name: string;
+  config: StackConfig;
+  onUpdate: (patch: Partial<StackConfig>) => void;
+}) {
+  const [displayName, setDisplayName] = useState(config.displayName ?? '');
+  const [iconSlug, setIconSlug] = useState(config.icon ?? '');
+
+  return (
+    <div className="bg-surface-700/50 rounded-lg p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {iconSlug && <ServiceIcon slug={iconSlug} name={name} size={18} />}
+          <span className="text-sm text-gray-200 font-medium">{name}</span>
+        </div>
+        <Toggle
+          label=""
+          checked={config.visible}
+          onChange={(v) => onUpdate({ visible: v })}
+        />
+      </div>
+      <input
+        type="text"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+        onBlur={() => {
+          if (displayName !== (config.displayName ?? '')) {
+            onUpdate({ displayName: displayName || undefined });
+          }
+        }}
+        placeholder="Display name"
+        className="w-full px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-xs focus:outline-none focus:border-accent/50"
+      />
+      <input
+        type="text"
+        value={iconSlug}
+        onChange={(e) => setIconSlug(e.target.value)}
+        onBlur={() => {
+          if (iconSlug !== (config.icon ?? '')) {
+            onUpdate({ icon: iconSlug || undefined });
+          }
+        }}
+        placeholder="Icon slug"
+        className="w-full px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-xs focus:outline-none focus:border-accent/50"
+      />
+    </div>
   );
 }
 
@@ -132,7 +231,7 @@ function Toggle({
 }) {
   return (
     <label className="flex items-center justify-between cursor-pointer">
-      <span className="text-sm text-gray-400">{label}</span>
+      {label && <span className="text-sm text-gray-400">{label}</span>}
       <button
         type="button"
         role="switch"
