@@ -14,11 +14,11 @@ services:
       - homegantry.hidden=true
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.transmission.rule=Host(`homegantry.g91.io`)
-      - traefik.http.routers.transmission.tls=true
-      - traefik.http.routers.transmission.tls.certresolver=le
-      - traefik.http.routers.transmission.middlewares=authentik@docker
-      - traefik.http.services.transmission.loadbalancer.server.port=3000
+      - traefik.http.routers.homegantry.rule=Host(`homegantry.g91.io`)
+      - traefik.http.routers.homegantry.tls=true
+      - traefik.http.routers.homegantry.tls.certresolver=le
+      - traefik.http.routers.homegantry.middlewares=authentik@docker
+      - traefik.http.services.homegantry.loadbalancer.server.port=3000
 
 networks:
   proxy:
