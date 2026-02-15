@@ -1,0 +1,740 @@
+[
+  {
+    "name": "Jellyfin",
+    "description": "The free software media system",
+    "icon": "jellyfin",
+    "category": "Media",
+    "defaultPort": 8096,
+    "patterns": ["jellyfin/jellyfin", "linuxserver/jellyfin", "ghcr.io/jellyfin/jellyfin"],
+    "aliases": ["jellyfin"]
+  },
+  {
+    "name": "Plex",
+    "description": "Stream movies and TV shows",
+    "icon": "plex",
+    "category": "Media",
+    "defaultPort": 32400,
+    "patterns": ["plexinc/pms-docker", "linuxserver/plex", "ghcr.io/linuxserver/plex"],
+    "aliases": ["plex", "plex-media-server", "plexmediaserver"]
+  },
+  {
+    "name": "Emby",
+    "description": "Personal media server",
+    "icon": "emby",
+    "category": "Media",
+    "defaultPort": 8096,
+    "patterns": ["emby/embyserver", "linuxserver/emby", "ghcr.io/linuxserver/emby"],
+    "aliases": ["emby", "embyserver"]
+  },
+  {
+    "name": "Sonarr",
+    "description": "TV series management and automation",
+    "icon": "sonarr",
+    "category": "Media",
+    "defaultPort": 8989,
+    "patterns": ["linuxserver/sonarr", "ghcr.io/linuxserver/sonarr", "hotio/sonarr"],
+    "aliases": ["sonarr"]
+  },
+  {
+    "name": "Radarr",
+    "description": "Movie collection management and automation",
+    "icon": "radarr",
+    "category": "Media",
+    "defaultPort": 7878,
+    "patterns": ["linuxserver/radarr", "ghcr.io/linuxserver/radarr", "hotio/radarr"],
+    "aliases": ["radarr"]
+  },
+  {
+    "name": "Lidarr",
+    "description": "Music collection management and automation",
+    "icon": "lidarr",
+    "category": "Media",
+    "defaultPort": 8686,
+    "patterns": ["linuxserver/lidarr", "ghcr.io/linuxserver/lidarr", "hotio/lidarr"],
+    "aliases": ["lidarr"]
+  },
+  {
+    "name": "Prowlarr",
+    "description": "Indexer manager for Sonarr, Radarr, and Lidarr",
+    "icon": "prowlarr",
+    "category": "Media",
+    "defaultPort": 9696,
+    "patterns": ["linuxserver/prowlarr", "ghcr.io/linuxserver/prowlarr", "hotio/prowlarr"],
+    "aliases": ["prowlarr"]
+  },
+  {
+    "name": "Bazarr",
+    "description": "Automatic subtitle download manager",
+    "icon": "bazarr",
+    "category": "Media",
+    "defaultPort": 6767,
+    "patterns": ["linuxserver/bazarr", "ghcr.io/linuxserver/bazarr", "hotio/bazarr"],
+    "aliases": ["bazarr"]
+  },
+  {
+    "name": "Overseerr",
+    "description": "Media request management for Plex",
+    "icon": "overseerr",
+    "category": "Media",
+    "defaultPort": 5055,
+    "patterns": ["linuxserver/overseerr", "sctx/overseerr", "ghcr.io/sctx/overseerr"],
+    "aliases": ["overseerr"]
+  },
+  {
+    "name": "Tautulli",
+    "description": "Monitoring and tracking for Plex Media Server",
+    "icon": "tautulli",
+    "category": "Media",
+    "defaultPort": 8181,
+    "patterns": ["linuxserver/tautulli", "ghcr.io/linuxserver/tautulli", "tautulli/tautulli", "ghcr.io/tautulli/tautulli"],
+    "aliases": ["tautulli", "plexpy"]
+  },
+  {
+    "name": "Stash",
+    "description": "Organizer and metadata scraper for media",
+    "icon": "stash",
+    "category": "Media",
+    "defaultPort": 9999,
+    "patterns": ["stashapp/stash", "ghcr.io/stashapp/stash"],
+    "aliases": ["stash", "stashapp"]
+  },
+  {
+    "name": "Navidrome",
+    "description": "Modern music server and streamer",
+    "icon": "navidrome",
+    "category": "Media",
+    "defaultPort": 4533,
+    "patterns": ["deluan/navidrome", "ghcr.io/navidrome/navidrome"],
+    "aliases": ["navidrome"]
+  },
+  {
+    "name": "Kavita",
+    "description": "Self-hosted digital library for reading",
+    "icon": "kavita",
+    "category": "Media",
+    "defaultPort": 5000,
+    "patterns": ["jvmilazz0/kavita", "ghcr.io/kareadita/kavita"],
+    "aliases": ["kavita"]
+  },
+  {
+    "name": "Readarr",
+    "description": "Book and audiobook collection manager",
+    "icon": "readarr",
+    "category": "Media",
+    "defaultPort": 8787,
+    "patterns": ["linuxserver/readarr", "ghcr.io/linuxserver/readarr", "hotio/readarr"],
+    "aliases": ["readarr"]
+  },
+  {
+    "name": "Traefik",
+    "description": "Cloud-native reverse proxy and load balancer",
+    "icon": "traefik",
+    "category": "Network",
+    "defaultPort": 8080,
+    "patterns": ["traefik", "library/traefik"],
+    "aliases": ["traefik", "traefik-proxy"]
+  },
+  {
+    "name": "Nginx Proxy Manager",
+    "description": "Easy-to-use reverse proxy with SSL management",
+    "icon": "nginx-proxy-manager",
+    "category": "Network",
+    "defaultPort": 81,
+    "patterns": ["jc21/nginx-proxy-manager", "ghcr.io/nginxproxymanager/nginx-proxy-manager"],
+    "aliases": ["nginx-proxy-manager", "nginxproxymanager", "npm"]
+  },
+  {
+    "name": "Caddy",
+    "description": "Fast web server with automatic HTTPS",
+    "icon": "caddy",
+    "category": "Network",
+    "defaultPort": 443,
+    "patterns": ["caddy", "library/caddy", "lucaslorentz/caddy-docker-proxy"],
+    "aliases": ["caddy", "caddy-server"]
+  },
+  {
+    "name": "Pi-hole",
+    "description": "Network-wide ad blocking DNS server",
+    "icon": "pi-hole",
+    "category": "Network",
+    "defaultPort": 80,
+    "patterns": ["pihole/pihole", "ghcr.io/pi-hole/pihole"],
+    "aliases": ["pihole", "pi-hole"]
+  },
+  {
+    "name": "AdGuard Home",
+    "description": "Network-wide ad and tracker blocking DNS",
+    "icon": "adguard-home",
+    "category": "Network",
+    "defaultPort": 3000,
+    "patterns": ["adguard/adguardhome", "ghcr.io/adguardteam/adguardhome"],
+    "aliases": ["adguardhome", "adguard-home", "adguard"]
+  },
+  {
+    "name": "WireGuard",
+    "description": "Fast and modern VPN tunnel",
+    "icon": "wireguard",
+    "category": "Network",
+    "defaultPort": 51820,
+    "patterns": ["linuxserver/wireguard", "ghcr.io/linuxserver/wireguard", "ghcr.io/wg-easy/wg-easy"],
+    "aliases": ["wireguard", "wg-easy", "wgeasy"]
+  },
+  {
+    "name": "Tailscale",
+    "description": "Zero-config mesh VPN built on WireGuard",
+    "icon": "tailscale",
+    "category": "Network",
+    "defaultPort": 41641,
+    "patterns": ["tailscale/tailscale", "ghcr.io/tailscale/tailscale"],
+    "aliases": ["tailscale"]
+  },
+  {
+    "name": "Nginx",
+    "description": "High-performance web server and reverse proxy",
+    "icon": "nginx",
+    "category": "Network",
+    "defaultPort": 80,
+    "patterns": ["nginx", "library/nginx", "linuxserver/nginx"],
+    "aliases": ["nginx"]
+  },
+  {
+    "name": "HAProxy",
+    "description": "Reliable high-performance TCP/HTTP load balancer",
+    "icon": "haproxy",
+    "category": "Network",
+    "defaultPort": 8404,
+    "patterns": ["haproxy", "library/haproxy", "haproxytech/haproxy-alpine"],
+    "aliases": ["haproxy"]
+  },
+  {
+    "name": "Portainer",
+    "description": "Container management GUI for Docker",
+    "icon": "portainer",
+    "category": "Infrastructure",
+    "defaultPort": 9000,
+    "patterns": ["portainer/portainer-ce", "portainer/portainer", "portainer/portainer-ee"],
+    "aliases": ["portainer", "portainer-ce", "portainer-ee"]
+  },
+  {
+    "name": "Watchtower",
+    "description": "Automatic Docker container image updates",
+    "icon": "watchtower",
+    "category": "Infrastructure",
+    "defaultPort": 8080,
+    "patterns": ["containrrr/watchtower", "ghcr.io/containrrr/watchtower"],
+    "aliases": ["watchtower"]
+  },
+  {
+    "name": "Dockge",
+    "description": "Docker compose stack manager with UI",
+    "icon": "dockge",
+    "category": "Infrastructure",
+    "defaultPort": 5001,
+    "patterns": ["louislam/dockge", "ghcr.io/louislam/dockge"],
+    "aliases": ["dockge"]
+  },
+  {
+    "name": "Komodo",
+    "description": "Multi-server Docker and service manager",
+    "icon": "komodo",
+    "category": "Infrastructure",
+    "defaultPort": 9120,
+    "patterns": ["ghcr.io/mbecker20/komodo", "ghcr.io/moghtech/komodo"],
+    "aliases": ["komodo"]
+  },
+  {
+    "name": "Yacht",
+    "description": "Web-based container management interface",
+    "icon": "yacht",
+    "category": "Infrastructure",
+    "defaultPort": 8000,
+    "patterns": ["selfhostedpro/yacht", "ghcr.io/selfhostedpro/yacht"],
+    "aliases": ["yacht"]
+  },
+  {
+    "name": "Ouroboros",
+    "description": "Automatic Docker container updater",
+    "icon": "ouroboros",
+    "category": "Infrastructure",
+    "defaultPort": 8080,
+    "patterns": ["pyouroboros/ouroboros", "ghcr.io/pyouroboros/ouroboros"],
+    "aliases": ["ouroboros"]
+  },
+  {
+    "name": "Diun",
+    "description": "Docker image update notifier",
+    "icon": "diun",
+    "category": "Infrastructure",
+    "defaultPort": 8080,
+    "patterns": ["crazymax/diun", "ghcr.io/crazy-max/diun"],
+    "aliases": ["diun"]
+  },
+  {
+    "name": "Grafana",
+    "description": "Analytics and interactive visualization platform",
+    "icon": "grafana",
+    "category": "Monitoring",
+    "defaultPort": 3000,
+    "patterns": ["grafana/grafana", "grafana/grafana-oss", "grafana/grafana-enterprise"],
+    "aliases": ["grafana"]
+  },
+  {
+    "name": "Prometheus",
+    "description": "Systems monitoring and alerting toolkit",
+    "icon": "prometheus",
+    "category": "Monitoring",
+    "defaultPort": 9090,
+    "patterns": ["prom/prometheus", "ghcr.io/prometheus/prometheus"],
+    "aliases": ["prometheus"]
+  },
+  {
+    "name": "Uptime Kuma",
+    "description": "Self-hosted monitoring tool with status pages",
+    "icon": "uptime-kuma",
+    "category": "Monitoring",
+    "defaultPort": 3001,
+    "patterns": ["louislam/uptime-kuma", "ghcr.io/louislam/uptime-kuma"],
+    "aliases": ["uptime-kuma", "uptimekuma"]
+  },
+  {
+    "name": "Netdata",
+    "description": "Real-time infrastructure monitoring agent",
+    "icon": "netdata",
+    "category": "Monitoring",
+    "defaultPort": 19999,
+    "patterns": ["netdata/netdata", "ghcr.io/netdata/netdata"],
+    "aliases": ["netdata"]
+  },
+  {
+    "name": "Glances",
+    "description": "Cross-platform system monitoring tool",
+    "icon": "glances",
+    "category": "Monitoring",
+    "defaultPort": 61208,
+    "patterns": ["nicolargo/glances", "ghcr.io/nicolargo/glances"],
+    "aliases": ["glances"]
+  },
+  {
+    "name": "Healthchecks",
+    "description": "Cron job and background task monitoring",
+    "icon": "healthchecks",
+    "category": "Monitoring",
+    "defaultPort": 8000,
+    "patterns": ["linuxserver/healthchecks", "ghcr.io/linuxserver/healthchecks", "healthchecks/healthchecks"],
+    "aliases": ["healthchecks", "healthchecks-io"]
+  },
+  {
+    "name": "Nextcloud",
+    "description": "Self-hosted productivity and file sharing",
+    "icon": "nextcloud",
+    "category": "Storage",
+    "defaultPort": 443,
+    "patterns": ["nextcloud", "library/nextcloud", "linuxserver/nextcloud"],
+    "aliases": ["nextcloud"]
+  },
+  {
+    "name": "Immich",
+    "description": "High-performance self-hosted photo and video",
+    "icon": "immich",
+    "category": "Storage",
+    "defaultPort": 2283,
+    "patterns": ["ghcr.io/immich-app/immich-server", "altran1502/immich-server"],
+    "aliases": ["immich", "immich-server"]
+  },
+  {
+    "name": "PhotoPrism",
+    "description": "AI-powered photo management application",
+    "icon": "photoprism",
+    "category": "Storage",
+    "defaultPort": 2342,
+    "patterns": ["photoprism/photoprism", "ghcr.io/photoprism/photoprism"],
+    "aliases": ["photoprism"]
+  },
+  {
+    "name": "Syncthing",
+    "description": "Continuous peer-to-peer file synchronization",
+    "icon": "syncthing",
+    "category": "Storage",
+    "defaultPort": 8384,
+    "patterns": ["syncthing/syncthing", "linuxserver/syncthing", "ghcr.io/linuxserver/syncthing"],
+    "aliases": ["syncthing"]
+  },
+  {
+    "name": "MinIO",
+    "description": "High-performance S3-compatible object storage",
+    "icon": "minio",
+    "category": "Storage",
+    "defaultPort": 9001,
+    "patterns": ["minio/minio", "quay.io/minio/minio"],
+    "aliases": ["minio"]
+  },
+  {
+    "name": "File Browser",
+    "description": "Web-based file manager interface",
+    "icon": "filebrowser",
+    "category": "Storage",
+    "defaultPort": 8080,
+    "patterns": ["filebrowser/filebrowser", "ghcr.io/filebrowser/filebrowser"],
+    "aliases": ["filebrowser", "file-browser"]
+  },
+  {
+    "name": "Seafile",
+    "description": "Enterprise file sync and share platform",
+    "icon": "seafile",
+    "category": "Storage",
+    "defaultPort": 8082,
+    "patterns": ["seafileltd/seafile-mc", "seafileltd/seafile"],
+    "aliases": ["seafile"]
+  },
+  {
+    "name": "Bookstack",
+    "description": "Platform for organizing and storing information",
+    "icon": "bookstack",
+    "category": "Productivity",
+    "defaultPort": 6875,
+    "patterns": ["linuxserver/bookstack", "ghcr.io/linuxserver/bookstack", "solidnerd/bookstack"],
+    "aliases": ["bookstack"]
+  },
+  {
+    "name": "Wiki.js",
+    "description": "Modern and powerful wiki application",
+    "icon": "wikijs",
+    "category": "Productivity",
+    "defaultPort": 3000,
+    "patterns": ["linuxserver/wikijs", "ghcr.io/requarks/wiki", "requarks/wiki"],
+    "aliases": ["wikijs", "wiki-js", "wiki"]
+  },
+  {
+    "name": "Gitea",
+    "description": "Lightweight self-hosted Git service",
+    "icon": "gitea",
+    "category": "Productivity",
+    "defaultPort": 3000,
+    "patterns": ["gitea/gitea", "ghcr.io/gitea/gitea"],
+    "aliases": ["gitea"]
+  },
+  {
+    "name": "Forgejo",
+    "description": "Self-hosted lightweight software forge",
+    "icon": "forgejo",
+    "category": "Productivity",
+    "defaultPort": 3000,
+    "patterns": ["codeberg.org/forgejo/forgejo", "ghcr.io/forgejo/forgejo"],
+    "aliases": ["forgejo"]
+  },
+  {
+    "name": "Vikunja",
+    "description": "Open-source to-do and task management app",
+    "icon": "vikunja",
+    "category": "Productivity",
+    "defaultPort": 3456,
+    "patterns": ["vikunja/vikunja", "vikunja/api", "ghcr.io/go-vikunja/vikunja"],
+    "aliases": ["vikunja"]
+  },
+  {
+    "name": "Paperless-ngx",
+    "description": "Document management system with OCR",
+    "icon": "paperless-ngx",
+    "category": "Productivity",
+    "defaultPort": 8000,
+    "patterns": ["ghcr.io/paperless-ngx/paperless-ngx", "linuxserver/paperless-ngx"],
+    "aliases": ["paperless-ngx", "paperless", "paperlessngx"]
+  },
+  {
+    "name": "Mealie",
+    "description": "Self-hosted recipe manager and meal planner",
+    "icon": "mealie",
+    "category": "Productivity",
+    "defaultPort": 9925,
+    "patterns": ["ghcr.io/mealie-recipes/mealie", "hkotel/mealie"],
+    "aliases": ["mealie"]
+  },
+  {
+    "name": "Tandoor",
+    "description": "Recipe management and meal planning tool",
+    "icon": "tandoor",
+    "category": "Productivity",
+    "defaultPort": 8080,
+    "patterns": ["ghcr.io/tandoorrecipes/recipes", "vabene1111/recipes"],
+    "aliases": ["tandoor", "tandoor-recipes", "recipes"]
+  },
+  {
+    "name": "Vaultwarden",
+    "description": "Lightweight Bitwarden-compatible password server",
+    "icon": "vaultwarden",
+    "category": "Security",
+    "defaultPort": 8080,
+    "patterns": ["vaultwarden/server", "ghcr.io/dani-garcia/vaultwarden"],
+    "aliases": ["vaultwarden", "bitwarden", "bitwarden-rs"]
+  },
+  {
+    "name": "Authelia",
+    "description": "SSO and 2FA authentication portal",
+    "icon": "authelia",
+    "category": "Security",
+    "defaultPort": 9091,
+    "patterns": ["authelia/authelia", "ghcr.io/authelia/authelia"],
+    "aliases": ["authelia"]
+  },
+  {
+    "name": "Authentik",
+    "description": "Open-source identity provider and SSO",
+    "icon": "authentik",
+    "category": "Security",
+    "defaultPort": 9000,
+    "patterns": ["ghcr.io/goauthentik/server", "beryju/authentik"],
+    "aliases": ["authentik"]
+  },
+  {
+    "name": "CrowdSec",
+    "description": "Collaborative open-source security engine",
+    "icon": "crowdsec",
+    "category": "Security",
+    "defaultPort": 8080,
+    "patterns": ["crowdsecurity/crowdsec", "ghcr.io/crowdsecurity/crowdsec"],
+    "aliases": ["crowdsec"]
+  },
+  {
+    "name": "qBittorrent",
+    "description": "Free and open-source BitTorrent client",
+    "icon": "qbittorrent",
+    "category": "Downloads",
+    "defaultPort": 8080,
+    "patterns": ["linuxserver/qbittorrent", "ghcr.io/linuxserver/qbittorrent", "hotio/qbittorrent"],
+    "aliases": ["qbittorrent", "qbt"]
+  },
+  {
+    "name": "Transmission",
+    "description": "Lightweight and fast BitTorrent client",
+    "icon": "transmission",
+    "category": "Downloads",
+    "defaultPort": 9091,
+    "patterns": ["linuxserver/transmission", "ghcr.io/linuxserver/transmission", "haugene/transmission-openvpn"],
+    "aliases": ["transmission"]
+  },
+  {
+    "name": "Deluge",
+    "description": "Lightweight cross-platform BitTorrent client",
+    "icon": "deluge",
+    "category": "Downloads",
+    "defaultPort": 8112,
+    "patterns": ["linuxserver/deluge", "ghcr.io/linuxserver/deluge", "binhex/arch-delugevpn"],
+    "aliases": ["deluge"]
+  },
+  {
+    "name": "SABnzbd",
+    "description": "Free and easy Usenet binary newsreader",
+    "icon": "sabnzbd",
+    "category": "Downloads",
+    "defaultPort": 8080,
+    "patterns": ["linuxserver/sabnzbd", "ghcr.io/linuxserver/sabnzbd", "hotio/sabnzbd"],
+    "aliases": ["sabnzbd", "sab"]
+  },
+  {
+    "name": "NZBGet",
+    "description": "Efficient Usenet downloader",
+    "icon": "nzbget",
+    "category": "Downloads",
+    "defaultPort": 6789,
+    "patterns": ["linuxserver/nzbget", "ghcr.io/linuxserver/nzbget", "hotio/nzbget"],
+    "aliases": ["nzbget"]
+  },
+  {
+    "name": "Jackett",
+    "description": "Proxy server for torrent indexer queries",
+    "icon": "jackett",
+    "category": "Downloads",
+    "defaultPort": 9117,
+    "patterns": ["linuxserver/jackett", "ghcr.io/linuxserver/jackett", "hotio/jackett"],
+    "aliases": ["jackett"]
+  },
+  {
+    "name": "FlareSolverr",
+    "description": "Proxy to bypass Cloudflare protections",
+    "icon": "flaresolverr",
+    "category": "Downloads",
+    "defaultPort": 8191,
+    "patterns": ["ghcr.io/flaresolverr/flaresolverr", "flaresolverr/flaresolverr"],
+    "aliases": ["flaresolverr"]
+  },
+  {
+    "name": "Matrix Synapse",
+    "description": "Decentralized messaging homeserver",
+    "icon": "matrix",
+    "category": "Communication",
+    "defaultPort": 8008,
+    "patterns": ["matrixdotorg/synapse", "ghcr.io/element-hq/synapse"],
+    "aliases": ["synapse", "matrix", "matrix-synapse"]
+  },
+  {
+    "name": "Ntfy",
+    "description": "Simple HTTP-based push notification service",
+    "icon": "ntfy",
+    "category": "Communication",
+    "defaultPort": 80,
+    "patterns": ["binwiederhier/ntfy", "ghcr.io/binwiederhier/ntfy"],
+    "aliases": ["ntfy"]
+  },
+  {
+    "name": "Gotify",
+    "description": "Self-hosted push notification server",
+    "icon": "gotify",
+    "category": "Communication",
+    "defaultPort": 80,
+    "patterns": ["gotify/server", "ghcr.io/gotify/server"],
+    "aliases": ["gotify"]
+  },
+  {
+    "name": "Minecraft Server",
+    "description": "Dedicated Minecraft game server",
+    "icon": "minecraft",
+    "category": "Games",
+    "defaultPort": 25565,
+    "patterns": ["itzg/minecraft-server", "itzg/minecraft-bedrock-server"],
+    "aliases": ["minecraft", "minecraft-server", "mc-server"]
+  },
+  {
+    "name": "Valheim",
+    "description": "Dedicated Valheim game server",
+    "icon": "valheim",
+    "category": "Games",
+    "defaultPort": 2456,
+    "patterns": ["ghcr.io/lloesche/valheim-server", "lloesche/valheim-server", "ich777/valheimplus"],
+    "aliases": ["valheim", "valheim-server"]
+  },
+  {
+    "name": "MariaDB",
+    "description": "Community-developed MySQL-compatible database",
+    "icon": "mariadb",
+    "category": "Databases",
+    "defaultPort": 3306,
+    "patterns": ["mariadb", "library/mariadb", "linuxserver/mariadb"],
+    "aliases": ["mariadb"]
+  },
+  {
+    "name": "PostgreSQL",
+    "description": "Advanced open-source relational database",
+    "icon": "postgresql",
+    "category": "Databases",
+    "defaultPort": 5432,
+    "patterns": ["postgres", "library/postgres", "bitnami/postgresql"],
+    "aliases": ["postgres", "postgresql", "pgsql"]
+  },
+  {
+    "name": "Redis",
+    "description": "In-memory data structure store and cache",
+    "icon": "redis",
+    "category": "Databases",
+    "defaultPort": 6379,
+    "patterns": ["redis", "library/redis", "bitnami/redis"],
+    "aliases": ["redis"]
+  },
+  {
+    "name": "MongoDB",
+    "description": "General-purpose document-oriented database",
+    "icon": "mongodb",
+    "category": "Databases",
+    "defaultPort": 27017,
+    "patterns": ["mongo", "library/mongo", "bitnami/mongodb"],
+    "aliases": ["mongo", "mongodb"]
+  },
+  {
+    "name": "InfluxDB",
+    "description": "Time-series database for metrics and events",
+    "icon": "influxdb",
+    "category": "Databases",
+    "defaultPort": 8086,
+    "patterns": ["influxdb", "library/influxdb", "bitnami/influxdb"],
+    "aliases": ["influxdb", "influx"]
+  },
+  {
+    "name": "Home Assistant",
+    "description": "Open-source home automation platform",
+    "icon": "home-assistant",
+    "category": "Home",
+    "defaultPort": 8123,
+    "patterns": ["homeassistant/home-assistant", "ghcr.io/home-assistant/home-assistant", "linuxserver/homeassistant"],
+    "aliases": ["homeassistant", "home-assistant", "hass"]
+  },
+  {
+    "name": "Node-RED",
+    "description": "Flow-based programming for IoT automation",
+    "icon": "node-red",
+    "category": "Home",
+    "defaultPort": 1880,
+    "patterns": ["nodered/node-red", "ghcr.io/node-red/node-red"],
+    "aliases": ["nodered", "node-red"]
+  },
+  {
+    "name": "Mosquitto",
+    "description": "Lightweight MQTT message broker",
+    "icon": "mosquitto",
+    "category": "Home",
+    "defaultPort": 1883,
+    "patterns": ["eclipse-mosquitto", "library/eclipse-mosquitto"],
+    "aliases": ["mosquitto", "eclipse-mosquitto", "mqtt"]
+  },
+  {
+    "name": "Zigbee2MQTT",
+    "description": "Bridge Zigbee devices to MQTT network",
+    "icon": "zigbee2mqtt",
+    "category": "Home",
+    "defaultPort": 8080,
+    "patterns": ["koenkk/zigbee2mqtt", "ghcr.io/koenkk/zigbee2mqtt"],
+    "aliases": ["zigbee2mqtt", "z2m"]
+  },
+  {
+    "name": "Homarr",
+    "description": "Customizable homelab dashboard and app launcher",
+    "icon": "homarr",
+    "category": "Dashboard",
+    "defaultPort": 7575,
+    "patterns": ["ghcr.io/homarr-labs/homarr", "ghcr.io/ajnart/homarr"],
+    "aliases": ["homarr"]
+  },
+  {
+    "name": "Homepage",
+    "description": "Highly customizable application dashboard",
+    "icon": "homepage",
+    "category": "Dashboard",
+    "defaultPort": 3000,
+    "patterns": ["ghcr.io/gethomepage/homepage", "ghcr.io/benphelps/homepage"],
+    "aliases": ["homepage"]
+  },
+  {
+    "name": "Dashy",
+    "description": "Feature-rich self-hosted dashboard for homelab",
+    "icon": "dashy",
+    "category": "Dashboard",
+    "defaultPort": 8080,
+    "patterns": ["lissy93/dashy", "ghcr.io/lissy93/dashy"],
+    "aliases": ["dashy"]
+  },
+  {
+    "name": "Homer",
+    "description": "Simple static HOMEpage for your server",
+    "icon": "homer",
+    "category": "Dashboard",
+    "defaultPort": 8080,
+    "patterns": ["b4bz/homer", "ghcr.io/bastienwirtz/homer"],
+    "aliases": ["homer"]
+  },
+  {
+    "name": "Heimdall",
+    "description": "Application dashboard and launcher",
+    "icon": "heimdall",
+    "category": "Dashboard",
+    "defaultPort": 443,
+    "patterns": ["linuxserver/heimdall", "ghcr.io/linuxserver/heimdall"],
+    "aliases": ["heimdall"]
+  },
+  {
+    "name": "Flame",
+    "description": "Self-hosted startpage for your server",
+    "icon": "flame",
+    "category": "Dashboard",
+    "defaultPort": 5005,
+    "patterns": ["pawelmalak/flame", "ghcr.io/fdarveau/flame"],
+    "aliases": ["flame"]
+  }
+]

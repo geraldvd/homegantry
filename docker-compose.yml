@@ -1,0 +1,18 @@
+services:
+  homegantry:
+    build: .
+    container_name: homegantry
+    ports:
+      - "${HOMEGANTRY_PORT:-3000}:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - homegantry_data:/data
+    environment:
+      - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
+      - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
+    restart: unless-stopped
+    labels:
+      - homegantry.hidden=true
+
+volumes:
+  homegantry_data:
