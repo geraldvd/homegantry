@@ -1,0 +1,20 @@
+# Development — build from source with live-reload.
+# Usage: docker compose -f docker-compose.dev.yml up --build
+services:
+  homegantry:
+    build: .
+    container_name: homegantry-dev
+    ports:
+      - "${HOMEGANTRY_PORT:-3000}:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - homegantry_data:/data
+    environment:
+      - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
+      - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry (dev)}
+      - HOMEGANTRY_LOG_LEVEL=debug
+    labels:
+      - homegantry.hidden=true
+
+volumes:
+  homegantry_data:

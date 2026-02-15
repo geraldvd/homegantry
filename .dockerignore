@@ -4,4 +4,4 @@ data/*.json
 .env
 .git
 .claude
-*.md
+docs/
