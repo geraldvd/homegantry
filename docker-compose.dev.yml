@@ -1,9 +1,9 @@
-# End-user deployment — run HomeGantry with a pre-built image.
-# Usage: docker compose up -d
+# Development — build from source with live-reload.
+# Usage: docker compose -f docker-compose.dev.yml up --build
 services:
   homegantry:
-    image: ghcr.io/geraldvd/homegantry:latest
-    container_name: homegantry
+    build: .
+    container_name: homegantry-dev
     ports:
       - "${HOMEGANTRY_PORT:-3000}:3000"
     volumes:
@@ -11,8 +11,8 @@ services:
       - homegantry_data:/data
     environment:
       - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
-      - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
-    restart: unless-stopped
+      - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry (dev)}
+      - HOMEGANTRY_LOG_LEVEL=debug
     labels:
       - homegantry.hidden=true
 

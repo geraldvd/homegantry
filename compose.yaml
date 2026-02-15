@@ -1,9 +1,11 @@
+# Example: Production deployment behind Traefik reverse proxy
+# Copy this file and adjust the domain, volume path, and middleware to your setup.
 services:
   homegantry:
-    build: .
+    image: ghcr.io/geraldvd/homegantry:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /fastmirror/DockerData/homegantry:/data
+      - homegantry_data:/data
     environment:
       - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
       - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
@@ -14,11 +16,13 @@ services:
       - homegantry.hidden=true
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.homegantry.rule=Host(`homegantry.g91.io`)
+      - traefik.http.routers.homegantry.rule=Host(`homegantry.example.com`)
       - traefik.http.routers.homegantry.tls=true
       - traefik.http.routers.homegantry.tls.certresolver=le
-      - traefik.http.routers.homegantry.middlewares=authentik@docker
       - traefik.http.services.homegantry.loadbalancer.server.port=3000
+
+volumes:
+  homegantry_data:
 
 networks:
   proxy:
