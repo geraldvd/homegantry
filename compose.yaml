@@ -16,7 +16,7 @@ services:
       - homegantry.hidden=true
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.homegantry.rule=Host(`homegantry.example.com`)
+      - traefik.http.routers.homegantry.rule=Host(`homegantry.g91.io`)
       - traefik.http.routers.homegantry.tls=true
       - traefik.http.routers.homegantry.tls.certresolver=le
       - traefik.http.services.homegantry.loadbalancer.server.port=3000
