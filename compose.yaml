@@ -19,6 +19,9 @@ services:
       - traefik.http.routers.homegantry.rule=Host(`homegantry.example.com`)
       - traefik.http.routers.homegantry.tls=true
       - traefik.http.routers.homegantry.tls.certresolver=le
+      # Restrict to LAN/VPN: the API allows edits without auth (until built-in auth lands).
+      # Middleware defined on the Traefik container; use your own allowlist or forward-auth.
+      - traefik.http.routers.homegantry.middlewares=vpn-only@docker
       - traefik.http.services.homegantry.loadbalancer.server.port=3000
 
 volumes:
