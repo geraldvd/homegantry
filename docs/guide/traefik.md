@@ -8,7 +8,7 @@ When a container has Traefik router labels, HomeGantry reads the `Host()` rule t
 
 ```yaml
 labels:
-  traefik.http.routers.myapp.rule: "Host(`app.example.com`)"
+  traefik.http.routers.myapp.rule: 'Host(`app.example.com`)'
   # HomeGantry resolves this to: https://app.example.com
 ```
 
@@ -16,11 +16,11 @@ HomeGantry assumes HTTPS when a Traefik TLS configuration is present:
 
 ```yaml
 labels:
-  traefik.http.routers.myapp.rule: "Host(`app.example.com`)"
-  traefik.http.routers.myapp.tls: "true"
+  traefik.http.routers.myapp.rule: 'Host(`app.example.com`)'
+  traefik.http.routers.myapp.tls: 'true'
   # → https://app.example.com
 
-  traefik.http.routers.anotherapp.rule: "Host(`other.example.com`)"
+  traefik.http.routers.anotherapp.rule: 'Host(`other.example.com`)'
   # No TLS label → http://other.example.com
 ```
 

@@ -27,12 +27,12 @@ The result is a dashboard that works out of the box with zero configuration for 
 
 HomeGantry is a full-stack TypeScript application:
 
-| Layer | Technology |
-|---|---|
-| Frontend | React, Tailwind CSS, Vite |
-| Backend | Node.js, Express |
-| Docker integration | Dockerode (Docker Engine API) |
-| Persistence | JSON files (no database required) |
-| Real-time | Server-Sent Events (SSE) |
+| Layer              | Technology                        |
+| ------------------ | --------------------------------- |
+| Frontend           | React, Tailwind CSS, Vite         |
+| Backend            | Node.js, Express                  |
+| Docker integration | Dockerode (Docker Engine API)     |
+| Persistence        | JSON files (no database required) |
+| Real-time          | Server-Sent Events (SSE)          |
 
 The entire application runs as a single Docker container. Persistent data (overrides, manual services, settings) is stored in a `/data` volume as JSON files.

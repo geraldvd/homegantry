@@ -1,0 +1,45 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please use example data (example.com, 192.168.1.100) instead of your real hostnames and IPs.
+        Security issues: do not file them here, see SECURITY.md.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Include the relevant parts of your compose file / container labels (redacted).
+      placeholder: |
+        1. Run a container with labels ...
+        2. Open the dashboard
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: HomeGantry version / image tag
+      placeholder: ghcr.io/geraldvd/homegantry:latest (sha-...)
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Docker version, reverse proxy (Traefik/Nginx/Caddy/none), relevant HOMEGANTRY_* settings.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Output of `docker logs homegantry` (redacted).
+      render: text

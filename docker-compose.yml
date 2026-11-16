@@ -5,7 +5,7 @@ services:
     image: ghcr.io/geraldvd/homegantry:latest
     container_name: homegantry
     ports:
-      - "${HOMEGANTRY_PORT:-3000}:3000"
+      - '${HOMEGANTRY_PORT:-3000}:3000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - homegantry_data:/data

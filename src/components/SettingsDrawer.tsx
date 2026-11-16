@@ -40,9 +40,7 @@ export default function SettingsDrawer({ open, onClose }: Props) {
 
   return (
     <>
-      {open && (
-        <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} />
-      )}
+      {open && <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} />}
       <div
         className={`fixed top-0 right-0 z-50 h-full w-80 bg-surface-800 border-l border-surface-600/40 shadow-2xl transform transition-transform duration-300 ${
           open ? 'translate-x-0' : 'translate-x-full'
@@ -57,7 +55,12 @@ export default function SettingsDrawer({ open, onClose }: Props) {
               aria-label="Close settings"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -147,7 +150,9 @@ export default function SettingsDrawer({ open, onClose }: Props) {
             {/* Stacks section */}
             {Object.keys(stacks).length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Stacks</h3>
+                <h3 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">
+                  Stacks
+                </h3>
                 <div className="space-y-3">
                   {Object.entries(stacks).map(([name, cfg]) => (
                     <StackRow
@@ -186,11 +191,7 @@ function StackRow({
           {iconSlug && <ServiceIcon slug={iconSlug} name={name} size={18} />}
           <span className="text-sm text-gray-200 font-medium">{name}</span>
         </div>
-        <Toggle
-          label=""
-          checked={config.visible}
-          onChange={(v) => onUpdate({ visible: v })}
-        />
+        <Toggle label="" checked={config.visible} onChange={(v) => onUpdate({ visible: v })} />
       </div>
       <input
         type="text"

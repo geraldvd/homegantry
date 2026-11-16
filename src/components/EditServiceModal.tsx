@@ -195,13 +195,7 @@ function Field({
   );
 }
 
-function CategoryCombobox({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function CategoryCombobox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const { services } = useServices();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -227,7 +221,10 @@ function CategoryCombobox({
       <input
         type="text"
         value={value}
-        onChange={(e) => { onChange(e.target.value); setOpen(true); }}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+        }}
         onFocus={() => setOpen(true)}
         placeholder="Type or select category"
         className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-sm"
@@ -238,7 +235,10 @@ function CategoryCombobox({
             <button
               key={cat}
               type="button"
-              onClick={() => { onChange(cat); setOpen(false); }}
+              onClick={() => {
+                onChange(cat);
+                setOpen(false);
+              }}
               className="w-full text-left px-3 py-1.5 text-sm text-gray-200 hover:bg-surface-600 transition-colors"
             >
               {cat}

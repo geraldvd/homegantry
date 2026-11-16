@@ -4,7 +4,15 @@ import { config } from './config.js';
 import { matchContainer, type MatchInput } from './matcher.js';
 import type { Service } from './types.js';
 
-const docker = new Dockerode({ socketPath: config.dockerSocket });
+/** The subset of the Dockerode API that HomeGantry uses (read-only). */
+export type DockerClient = Pick<Dockerode, 'listContainers' | 'getEvents'>;
+
+let docker: DockerClient = new Dockerode({ socketPath: config.dockerSocket });
+
+/** Replace the Docker client (used by tests and the dev fixture; no real socket needed). */
+export function setDockerClient(client: DockerClient): void {
+  docker = client;
+}
 
 let services = new Map<string, Service>();
 let connected = false;
@@ -18,9 +26,7 @@ const matchInputCache = new Map<string, MatchInput>();
 
 // ---- helpers ----
 
-function containerToMatchInput(
-  info: Dockerode.ContainerInfo,
-): MatchInput {
+function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
   const names = info.Names ?? [];
   const name = (names[0] ?? '').replace(/^\//, '');
   const labels = info.Labels ?? {};
@@ -42,7 +48,7 @@ function containerToMatchInput(
 
 // ---- scanning ----
 
-async function fullScan(): Promise<void> {
+export async function fullScan(): Promise<void> {
   try {
     const filters: Record<string, string[]> = {};
     if (!config.showStopped) {
