@@ -7,5 +7,5 @@ services:
       dockerfile: Dockerfile.docs
     container_name: homegantry-docs
     ports:
-      - "${DOCS_PORT:-4173}:80"
+      - '${DOCS_PORT:-4173}:80'
     restart: unless-stopped

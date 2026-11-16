@@ -8,13 +8,13 @@ These take the highest priority and are the recommended way to configure service
 
 ```yaml
 labels:
-  homegantry.name: "My Service"          # Display name
-  homegantry.icon: "plex"                # Icon identifier
-  homegantry.url: "https://plex.lan"     # Clickable URL
-  homegantry.category: "Media"           # Category grouping
-  homegantry.description: "Media server" # Short description
-  homegantry.exclude: "true"             # Hide from dashboard
-  homegantry.hidden: "true"              # Same as exclude
+  homegantry.name: 'My Service' # Display name
+  homegantry.icon: 'plex' # Icon identifier
+  homegantry.url: 'https://plex.lan' # Clickable URL
+  homegantry.category: 'Media' # Category grouping
+  homegantry.description: 'Media server' # Short description
+  homegantry.exclude: 'true' # Hide from dashboard
+  homegantry.hidden: 'true' # Same as exclude
 ```
 
 All labels are optional. If not provided, HomeGantry uses its knowledge base to auto-detect names, icons, and categories based on the Docker image.
@@ -25,11 +25,11 @@ For easy migration from [Homepage](https://gethomepage.dev/), HomeGantry reads `
 
 ```yaml
 labels:
-  homepage.name: "Sonarr"
-  homepage.icon: "sonarr"
-  homepage.href: "https://sonarr.example.com"
-  homepage.group: "Media"
-  homepage.description: "TV show manager"
+  homepage.name: 'Sonarr'
+  homepage.icon: 'sonarr'
+  homepage.href: 'https://sonarr.example.com'
+  homepage.group: 'Media'
+  homepage.description: 'TV show manager'
 ```
 
 HomeGantry-native labels always take precedence over Homepage labels when both are present.
@@ -41,8 +41,8 @@ There are several ways to hide a container from the dashboard:
 ```yaml
 labels:
   # Any of these will hide the container:
-  homegantry.exclude: "true"
-  homegantry.hidden: "true"
+  homegantry.exclude: 'true'
+  homegantry.hidden: 'true'
 ```
 
 Infrastructure containers (Traefik, Docker socket proxies, etc.) are hidden by default. You can also toggle stack visibility in the Settings drawer.

@@ -28,7 +28,7 @@ services:
   homegantry:
     image: ghcr.io/geraldvd/homegantry:latest
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - homegantry_data:/data
@@ -50,15 +50,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Configuration
 
-| Variable | Default | Description |
-|---|---|---|
-| `HOMEGANTRY_HOST` | _(empty)_ | Host/IP for building service URLs (e.g. `192.168.1.100`) |
-| `HOMEGANTRY_TITLE` | `HomeGantry` | Dashboard title |
-| `HOMEGANTRY_POLL_INTERVAL` | `60` | Seconds between full Docker rescans |
-| `HOMEGANTRY_SHOW_STOPPED` | `false` | Show stopped containers |
-| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true` | Read `homepage.*` Docker labels |
-| `HOMEGANTRY_EXCLUDE_SELF` | `true` | Hide the HomeGantry container |
-| `HOMEGANTRY_COMPOSE_ONLY` | `true` | Only show containers from Compose projects |
+| Variable                     | Default      | Description                                              |
+| ---------------------------- | ------------ | -------------------------------------------------------- |
+| `HOMEGANTRY_HOST`            | _(empty)_    | Host/IP for building service URLs (e.g. `192.168.1.100`) |
+| `HOMEGANTRY_TITLE`           | `HomeGantry` | Dashboard title                                          |
+| `HOMEGANTRY_POLL_INTERVAL`   | `60`         | Seconds between full Docker rescans                      |
+| `HOMEGANTRY_SHOW_STOPPED`    | `false`      | Show stopped containers                                  |
+| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                          |
+| `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                            |
+| `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects               |
 
 See the [full configuration reference](https://homegantry.com/guide/configuration) for all options.
 
@@ -68,10 +68,10 @@ Control how services appear on the dashboard using container labels:
 
 ```yaml
 labels:
-  homegantry.name: "My Service"
-  homegantry.icon: "plex"
-  homegantry.url: "https://plex.example.com"
-  homegantry.category: "Media"
+  homegantry.name: 'My Service'
+  homegantry.icon: 'plex'
+  homegantry.url: 'https://plex.example.com'
+  homegantry.category: 'Media'
 ```
 
 Homepage labels (`homepage.name`, `homepage.href`, etc.) are also supported. See the [Docker Labels](https://homegantry.com/guide/docker-labels) documentation.

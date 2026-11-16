@@ -7,7 +7,13 @@ import {
   stacksStore,
   getStackConfig,
 } from './storage.js';
-import { getServices, isConnected, dockerEvents, rematchService, getDiscoveredStacks } from './docker.js';
+import {
+  getServices,
+  isConnected,
+  dockerEvents,
+  rematchService,
+  getDiscoveredStacks,
+} from './docker.js';
 import type {
   Service,
   ServiceOverride,

@@ -79,4 +79,4 @@ export type SSEEvent =
   | { type: 'service_removed'; data: { id: string } }
   | { type: 'settings_updated'; data: DashboardSettings }
   | { type: 'stacks_updated'; data: Record<string, StackConfig> }
-  | { type: 'heartbeat'; data: {} };
+  | { type: 'heartbeat'; data: Record<string, never> };

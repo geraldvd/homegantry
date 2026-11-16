@@ -54,10 +54,19 @@ describe('GET /api/services', () => {
   it('builds the expected service objects', async () => {
     const { app } = await setup();
     const res = await request(app).get('/api/services').expect(200);
-    const byName = Object.fromEntries((res.body as Array<{ name: string }>).map((s) => [s.name, s]));
-    expect(byName['Jellyfin']).toMatchObject({ url: 'https://jellyfin.example.com', stack: 'media', status: 'running' });
+    const byName = Object.fromEntries(
+      (res.body as Array<{ name: string }>).map((s) => [s.name, s]),
+    );
+    expect(byName['Jellyfin']).toMatchObject({
+      url: 'https://jellyfin.example.com',
+      stack: 'media',
+      status: 'running',
+    });
     expect(byName['Prowlarr']).toMatchObject({ url: 'http://192.168.1.100:9696' });
-    expect(byName['Team Wiki']).toMatchObject({ url: 'https://wiki.example.com', category: 'Productivity' });
+    expect(byName['Team Wiki']).toMatchObject({
+      url: 'https://wiki.example.com',
+      category: 'Productivity',
+    });
   });
 });
 
@@ -70,8 +79,12 @@ describe('service overrides', () => {
       .put('/api/services/id-jellyfin/override')
       .send({ displayName: 'Movies', category: 'Fun' })
       .expect(200, { ok: true });
-    expect(s.overridesStore.get()).toEqual({ 'id-jellyfin': { displayName: 'Movies', category: 'Fun' } });
-    expect(events).toEqual([expect.objectContaining({ id: 'id-jellyfin', name: 'Movies', category: 'Fun' })]);
+    expect(s.overridesStore.get()).toEqual({
+      'id-jellyfin': { displayName: 'Movies', category: 'Fun' },
+    });
+    expect(events).toEqual([
+      expect.objectContaining({ id: 'id-jellyfin', name: 'Movies', category: 'Fun' }),
+    ]);
     const res = await request(s.app).get('/api/services');
     expect(res.body).toContainEqual(expect.objectContaining({ id: 'id-jellyfin', name: 'Movies' }));
   });
@@ -87,7 +100,10 @@ describe('service overrides', () => {
     const s = await setup();
     const listener = vi.fn();
     s.dockerEvents.on('service_updated', listener);
-    await request(s.app).put('/api/services/nope/override').send({ hidden: true }).expect(200, { ok: true });
+    await request(s.app)
+      .put('/api/services/nope/override')
+      .send({ hidden: true })
+      .expect(200, { ok: true });
     expect(s.overridesStore.get()).toEqual({ nope: { hidden: true } });
     expect(listener).not.toHaveBeenCalled();
   });
@@ -132,7 +148,9 @@ describe('manual services', () => {
       },
     ]);
     const list = await request(s.app).get('/api/services');
-    expect(list.body).toContainEqual(expect.objectContaining({ id: res.body.id, source: 'manual' }));
+    expect(list.body).toContainEqual(
+      expect.objectContaining({ id: res.body.id, source: 'manual' }),
+    );
   });
 
   it('PUT updates a manual service and keeps its id', async () => {
@@ -147,7 +165,10 @@ describe('manual services', () => {
 
   it('PUT returns 404 for an unknown manual service', async () => {
     const { app } = await setup();
-    await request(app).put('/api/services/manual/nope').send({}).expect(404, { error: 'not found' });
+    await request(app)
+      .put('/api/services/manual/nope')
+      .send({})
+      .expect(404, { error: 'not found' });
   });
 
   it('DELETE removes a manual service and emits service_removed', async () => {
@@ -184,19 +205,27 @@ describe('stacks', () => {
     const s = await setup();
     const events: unknown[] = [];
     s.dockerEvents.on('stacks_updated', (d) => events.push(d));
-    const res = await request(s.app).patch('/api/stacks/media').send({ visible: false }).expect(200);
+    const res = await request(s.app)
+      .patch('/api/stacks/media')
+      .send({ visible: false })
+      .expect(200);
     expect(res.body).toEqual({ visible: false });
     expect(events[0]).toMatchObject({ media: { visible: false }, cloud: { visible: true } });
 
     const services = await request(s.app).get('/api/services?includeHidden=true');
-    expect((services.body as Array<{ stack?: string }>).some((x) => x.stack === 'media')).toBe(false);
+    expect((services.body as Array<{ stack?: string }>).some((x) => x.stack === 'media')).toBe(
+      false,
+    );
     const stacks = await request(s.app).get('/api/stacks');
     expect(stacks.body.media).toEqual({ visible: false });
   });
 
   it('PATCH merges fields and defaults visible to true', async () => {
     const { app } = await setup();
-    const res = await request(app).patch('/api/stacks/media').send({ displayName: 'Media' }).expect(200);
+    const res = await request(app)
+      .patch('/api/stacks/media')
+      .send({ displayName: 'Media' })
+      .expect(200);
     expect(res.body).toEqual({ visible: true, displayName: 'Media' });
   });
 });
@@ -218,7 +247,10 @@ describe('settings', () => {
     const s = await setup();
     const listener = vi.fn();
     s.dockerEvents.on('settings_updated', listener);
-    const res = await request(s.app).patch('/api/settings').send({ columns: 6, layout: 'list' }).expect(200);
+    const res = await request(s.app)
+      .patch('/api/settings')
+      .send({ columns: 6, layout: 'list' })
+      .expect(200);
     expect(res.body).toMatchObject({ columns: 6, layout: 'list', dashboardTitle: 'HomeGantry' });
     expect(listener).toHaveBeenCalledWith(res.body);
     await request(s.app).get('/api/settings').expect(200, res.body);
@@ -261,7 +293,8 @@ describe('GET /api/events (SSE)', () => {
         buf = buf.slice(idx + 2);
       }
     });
-    const waitFor = (n: number) => vi.waitFor(() => expect(events.length).toBeGreaterThanOrEqual(n));
+    const waitFor = (n: number) =>
+      vi.waitFor(() => expect(events.length).toBeGreaterThanOrEqual(n));
     return { res, events, waitFor, close: () => res.destroy() };
   }
 

@@ -9,10 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let knownServices: KnownService[] = [];
 try {
-  const raw = fs.readFileSync(
-    path.join(__dirname, 'known-services.json'),
-    'utf-8',
-  );
+  const raw = fs.readFileSync(path.join(__dirname, 'known-services.json'), 'utf-8');
   knownServices = JSON.parse(raw) as KnownService[];
 } catch {
   // known-services.json may not exist yet
@@ -42,24 +39,17 @@ function parseImage(image: string): { repo: string; name: string } {
 
 function findByAlias(alias: string): KnownService | undefined {
   const norm = normalise(alias);
-  return knownServices.find((ks) =>
-    ks.aliases.some((a) => normalise(a) === norm),
-  );
+  return knownServices.find((ks) => ks.aliases.some((a) => normalise(a) === norm));
 }
 
 function findByPattern(image: string): KnownService | undefined {
   const lower = image.toLowerCase();
-  return knownServices.find((ks) =>
-    ks.patterns.some((p) => lower.includes(p.toLowerCase())),
-  );
+  return knownServices.find((ks) => ks.patterns.some((p) => lower.includes(p.toLowerCase())));
 }
 
 // ---- labels ----
 
-function getLabel(
-  labels: Record<string, string>,
-  key: string,
-): string | undefined {
+function getLabel(labels: Record<string, string>, key: string): string | undefined {
   return labels[key];
 }
 
@@ -165,7 +155,10 @@ export function matchContainer(input: MatchInput): Service {
   }
 
   // Only attempt knowledge-base matching if labels didn't resolve
-  const resolvedByLabels = !!(hgName || (config.homepageCompat && getLabel(input.labels, 'homepage.name')));
+  const resolvedByLabels = !!(
+    hgName ||
+    (config.homepageCompat && getLabel(input.labels, 'homepage.name'))
+  );
 
   let matched: KnownService | undefined;
 

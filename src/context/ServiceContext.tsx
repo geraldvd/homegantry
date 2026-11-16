@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useReducer, useEffect, useRef, useCallback, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useRef,
+  useCallback,
+  useState,
+} from 'react';
 import type { Service, DashboardSettings, StackConfig, SSEEvent } from '../types';
 import { getStacks } from '../api/client';
 
@@ -74,7 +82,9 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     getStacks()
       .then((data) => dispatch({ type: 'SET_STACKS', payload: data }))
-      .catch(() => { /* ignore */ });
+      .catch(() => {
+        /* ignore */
+      });
   }, []);
 
   const connect = useCallback(() => {

@@ -26,9 +26,7 @@ const matchInputCache = new Map<string, MatchInput>();
 
 // ---- helpers ----
 
-function containerToMatchInput(
-  info: Dockerode.ContainerInfo,
-): MatchInput {
+function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
   const names = info.Names ?? [];
   const name = (names[0] ?? '').replace(/^\//, '');
   const labels = info.Labels ?? {};

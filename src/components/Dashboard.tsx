@@ -49,9 +49,8 @@ export default function Dashboard({ search, onEdit }: Props) {
   const grouped = useMemo(() => {
     const map = new Map<string, Service[]>();
     for (const s of filtered) {
-      const key = settings.groupBy === 'stack'
-        ? (s.stack || 'Ungrouped')
-        : (s.category || 'Uncategorized');
+      const key =
+        settings.groupBy === 'stack' ? s.stack || 'Ungrouped' : s.category || 'Uncategorized';
       const arr = map.get(key);
       if (arr) arr.push(s);
       else map.set(key, [s]);

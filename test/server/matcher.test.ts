@@ -114,11 +114,19 @@ describe('matchContainer: label precedence', () => {
         'homegantry.description': 'Our films',
       },
     });
-    expect(svc).toMatchObject({ name: 'Movies', icon: 'mdi-movie', category: 'Fun', description: 'Our films' });
+    expect(svc).toMatchObject({
+      name: 'Movies',
+      icon: 'mdi-movie',
+      category: 'Fun',
+      description: 'Our films',
+    });
   });
 
   it('homegantry.name skips the knowledge base entirely', async () => {
-    const svc = await match({ image: 'jellyfin/jellyfin', labels: { 'homegantry.name': 'Movies' } });
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: { 'homegantry.name': 'Movies' },
+    });
     expect(svc).toMatchObject({ name: 'Movies', icon: '', category: 'Other', description: '' });
   });
 
@@ -156,7 +164,11 @@ describe('matchContainer: label precedence', () => {
   it('without homegantry.name, homepage.* values are applied after homegantry.* (current behaviour)', async () => {
     // Characterisation: homepage.icon currently overwrites homegantry.icon when no homegantry.name is set.
     const svc = await match({
-      labels: { 'homegantry.icon': 'hg-icon', 'homepage.name': 'HP Name', 'homepage.icon': 'hp-icon' },
+      labels: {
+        'homegantry.icon': 'hg-icon',
+        'homepage.name': 'HP Name',
+        'homepage.icon': 'hp-icon',
+      },
     });
     expect(svc).toMatchObject({ name: 'HP Name', icon: 'hp-icon' });
   });
@@ -177,7 +189,10 @@ describe('matchContainer: label precedence', () => {
 
   it('ignores homepage.* labels when HOMEGANTRY_HOMEPAGE_COMPAT=false', async () => {
     const svc = await match(
-      { image: 'jellyfin/jellyfin', labels: { 'homepage.name': 'HP', 'homepage.href': 'https://hp.example.com' } },
+      {
+        image: 'jellyfin/jellyfin',
+        labels: { 'homepage.name': 'HP', 'homepage.href': 'https://hp.example.com' },
+      },
       { HOMEGANTRY_HOMEPAGE_COMPAT: 'false' },
     );
     expect(svc.name).toBe('Jellyfin');
@@ -189,7 +204,9 @@ describe('matchContainer: URL resolution', () => {
   const traefik = (rule: string) => ({ 'traefik.http.routers.app.rule': rule });
 
   it('parses a single Traefik Host() rule into an https URL', async () => {
-    expect((await match({ labels: traefik('Host(`app.example.com`)') })).url).toBe('https://app.example.com');
+    expect((await match({ labels: traefik('Host(`app.example.com`)') })).url).toBe(
+      'https://app.example.com',
+    );
   });
 
   it('uses the first host of Host() || Host()', async () => {
@@ -208,12 +225,16 @@ describe('matchContainer: URL resolution', () => {
   });
 
   it('matches the router label key case-insensitively', async () => {
-    const svc = await match({ labels: { 'Traefik.HTTP.Routers.App.Rule': 'host(`app.example.com`)' } });
+    const svc = await match({
+      labels: { 'Traefik.HTTP.Routers.App.Rule': 'host(`app.example.com`)' },
+    });
     expect(svc.url).toBe('https://app.example.com');
   });
 
   it('ignores non-router Traefik labels', async () => {
-    const svc = await match({ labels: { 'traefik.http.services.app.loadbalancer.server.port': '80' } });
+    const svc = await match({
+      labels: { 'traefik.http.services.app.loadbalancer.server.port': '80' },
+    });
     expect(svc.url).toBe('#');
   });
 
@@ -229,17 +250,28 @@ describe('matchContainer: URL resolution', () => {
   });
 
   it('Traefik beats the published port', async () => {
-    const svc = await match({ labels: traefik('Host(`app.example.com`)'), ports: [{ private: 80, public: 8080 }] });
+    const svc = await match({
+      labels: traefik('Host(`app.example.com`)'),
+      ports: [{ private: 80, public: 8080 }],
+    });
     expect(svc.url).toBe('https://app.example.com');
   });
 
   it('builds http://localhost:<port> from the first published port without HOMEGANTRY_HOST', async () => {
-    const svc = await match({ ports: [{ private: 80, public: 8080 }, { private: 443, public: 8443 }] });
+    const svc = await match({
+      ports: [
+        { private: 80, public: 8080 },
+        { private: 443, public: 8443 },
+      ],
+    });
     expect(svc.url).toBe('http://localhost:8080');
   });
 
   it('uses HOMEGANTRY_HOST for the published-port URL', async () => {
-    const svc = await match({ ports: [{ private: 80, public: 8080 }] }, { HOMEGANTRY_HOST: '192.168.1.100' });
+    const svc = await match(
+      { ports: [{ private: 80, public: 8080 }] },
+      { HOMEGANTRY_HOST: '192.168.1.100' },
+    );
     expect(svc.url).toBe('http://192.168.1.100:8080');
   });
 

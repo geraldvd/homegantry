@@ -11,7 +11,7 @@ services:
     image: ghcr.io/geraldvd/homegantry:latest
     container_name: homegantry
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - homegantry_data:/data
@@ -48,10 +48,10 @@ Your data is preserved in the named volume.
 
 HomeGantry needs two volume mounts:
 
-| Mount | Purpose |
-|---|---|
-| `/var/run/docker.sock` | **Required.** Read-only access to the Docker daemon for container discovery. |
-| `/data` | **Recommended.** Persistent storage for overrides, manual services, settings, and stack configs. Without this, customizations are lost on container recreation. |
+| Mount                  | Purpose                                                                                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/var/run/docker.sock` | **Required.** Read-only access to the Docker daemon for container discovery.                                                                                    |
+| `/data`                | **Recommended.** Persistent storage for overrides, manual services, settings, and stack configs. Without this, customizations are lost on container recreation. |
 
 ## Security Notes
 

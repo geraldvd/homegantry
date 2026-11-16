@@ -95,7 +95,12 @@
     "icon": "tautulli",
     "category": "Media",
     "defaultPort": 8181,
-    "patterns": ["linuxserver/tautulli", "ghcr.io/linuxserver/tautulli", "tautulli/tautulli", "ghcr.io/tautulli/tautulli"],
+    "patterns": [
+      "linuxserver/tautulli",
+      "ghcr.io/linuxserver/tautulli",
+      "tautulli/tautulli",
+      "ghcr.io/tautulli/tautulli"
+    ],
     "aliases": ["tautulli", "plexpy"]
   },
   {
@@ -149,7 +154,11 @@
     "icon": "calibre-web",
     "category": "Media",
     "defaultPort": 8083,
-    "patterns": ["linuxserver/calibre-web", "ghcr.io/linuxserver/calibre-web", "johnguan/calibre-web"],
+    "patterns": [
+      "linuxserver/calibre-web",
+      "ghcr.io/linuxserver/calibre-web",
+      "johnguan/calibre-web"
+    ],
     "aliases": ["calibre-web", "calibreweb"]
   },
   {
@@ -246,7 +255,11 @@
     "icon": "wireguard",
     "category": "Network",
     "defaultPort": 51820,
-    "patterns": ["linuxserver/wireguard", "ghcr.io/linuxserver/wireguard", "ghcr.io/wg-easy/wg-easy"],
+    "patterns": [
+      "linuxserver/wireguard",
+      "ghcr.io/linuxserver/wireguard",
+      "ghcr.io/wg-easy/wg-easy"
+    ],
     "aliases": ["wireguard", "wg-easy", "wgeasy"]
   },
   {
@@ -298,7 +311,11 @@
     "icon": "speedtest-tracker",
     "category": "Network",
     "defaultPort": 8080,
-    "patterns": ["ghcr.io/alexjustesen/speedtest-tracker", "linuxserver/speedtest-tracker", "henrywhitaker3/speedtest-tracker"],
+    "patterns": [
+      "ghcr.io/alexjustesen/speedtest-tracker",
+      "linuxserver/speedtest-tracker",
+      "henrywhitaker3/speedtest-tracker"
+    ],
     "aliases": ["speedtest-tracker", "speedtest"]
   },
   {
@@ -389,7 +406,11 @@
     "category": "Infrastructure",
     "defaultPort": 2375,
     "infrastructure": true,
-    "patterns": ["tecnativa/docker-socket-proxy", "ghcr.io/tecnativa/docker-socket-proxy", "linuxserver/socket-proxy"],
+    "patterns": [
+      "tecnativa/docker-socket-proxy",
+      "ghcr.io/tecnativa/docker-socket-proxy",
+      "linuxserver/socket-proxy"
+    ],
     "aliases": ["docker-socket-proxy", "socket-proxy"]
   },
   {
@@ -443,7 +464,11 @@
     "icon": "healthchecks",
     "category": "Monitoring",
     "defaultPort": 8000,
-    "patterns": ["linuxserver/healthchecks", "ghcr.io/linuxserver/healthchecks", "healthchecks/healthchecks"],
+    "patterns": [
+      "linuxserver/healthchecks",
+      "ghcr.io/linuxserver/healthchecks",
+      "healthchecks/healthchecks"
+    ],
     "aliases": ["healthchecks", "healthchecks-io"]
   },
   {
@@ -794,7 +819,11 @@
     "icon": "transmission",
     "category": "Downloads",
     "defaultPort": 9091,
-    "patterns": ["linuxserver/transmission", "ghcr.io/linuxserver/transmission", "haugene/transmission-openvpn"],
+    "patterns": [
+      "linuxserver/transmission",
+      "ghcr.io/linuxserver/transmission",
+      "haugene/transmission-openvpn"
+    ],
     "aliases": ["transmission"]
   },
   {
@@ -884,7 +913,11 @@
     "icon": "valheim",
     "category": "Games",
     "defaultPort": 2456,
-    "patterns": ["ghcr.io/lloesche/valheim-server", "lloesche/valheim-server", "ich777/valheimplus"],
+    "patterns": [
+      "ghcr.io/lloesche/valheim-server",
+      "lloesche/valheim-server",
+      "ich777/valheimplus"
+    ],
     "aliases": ["valheim", "valheim-server"]
   },
   {
@@ -984,7 +1017,11 @@
     "category": "Databases",
     "defaultPort": 9200,
     "infrastructure": true,
-    "patterns": ["elasticsearch", "library/elasticsearch", "docker.elastic.co/elasticsearch/elasticsearch"],
+    "patterns": [
+      "elasticsearch",
+      "library/elasticsearch",
+      "docker.elastic.co/elasticsearch/elasticsearch"
+    ],
     "aliases": ["elasticsearch", "elastic"]
   },
   {
@@ -993,7 +1030,11 @@
     "icon": "home-assistant",
     "category": "Home",
     "defaultPort": 8123,
-    "patterns": ["homeassistant/home-assistant", "ghcr.io/home-assistant/home-assistant", "linuxserver/homeassistant"],
+    "patterns": [
+      "homeassistant/home-assistant",
+      "ghcr.io/home-assistant/home-assistant",
+      "linuxserver/homeassistant"
+    ],
     "aliases": ["homeassistant", "home-assistant", "hass"]
   },
   {
@@ -1084,7 +1125,11 @@
     "icon": "code-server",
     "category": "Development",
     "defaultPort": 8080,
-    "patterns": ["linuxserver/code-server", "ghcr.io/linuxserver/code-server", "codercom/code-server"],
+    "patterns": [
+      "linuxserver/code-server",
+      "ghcr.io/linuxserver/code-server",
+      "codercom/code-server"
+    ],
     "aliases": ["code-server", "codeserver"]
   },
   {

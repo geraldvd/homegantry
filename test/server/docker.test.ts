@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { container } from '../fixtures/containers.js';
 import { fakeDocker, loadServer, type Env } from '../helpers.js';
 
-async function setup(env: Env = {}, containers = [container({ name: 'jellyfin', image: 'jellyfin/jellyfin' })]) {
+async function setup(
+  env: Env = {},
+  containers = [container({ name: 'jellyfin', image: 'jellyfin/jellyfin' })],
+) {
   const server = await loadServer(env);
   const fake = fakeDocker(containers);
   server.setDockerClient(fake.client);
@@ -14,7 +17,10 @@ describe('docker scanning', () => {
   it('lists only running containers by default', async () => {
     const s = await setup();
     await s.fullScan();
-    expect(s.fake.listContainers).toHaveBeenCalledWith({ all: false, filters: { status: ['running'] } });
+    expect(s.fake.listContainers).toHaveBeenCalledWith({
+      all: false,
+      filters: { status: ['running'] },
+    });
   });
 
   it('lists all containers when HOMEGANTRY_SHOW_STOPPED=true', async () => {
@@ -37,7 +43,12 @@ describe('docker scanning', () => {
     await s.fullScan();
     expect(s.isConnected()).toBe(true);
     const [svc] = s.getServices();
-    expect(svc).toMatchObject({ id: 'c1', name: 'Jellyfin', stack: 'media', url: 'http://localhost:8096' });
+    expect(svc).toMatchObject({
+      id: 'c1',
+      name: 'Jellyfin',
+      stack: 'media',
+      url: 'http://localhost:8096',
+    });
     // Ports without a public mapping are dropped.
     expect(svc!.container!.ports).toEqual([{ private: 8096, public: 8096 }]);
     expect(svc!.container!.name).toBe('jellyfin');
@@ -117,7 +128,9 @@ describe('docker scanning', () => {
   });
 
   it('rematchService picks up new overrides for a known container and ignores unknown ids', async () => {
-    const s = await setup({}, [container({ id: 'c1', name: 'jellyfin', image: 'jellyfin/jellyfin' })]);
+    const s = await setup({}, [
+      container({ id: 'c1', name: 'jellyfin', image: 'jellyfin/jellyfin' }),
+    ]);
     await s.fullScan();
     s.overridesStore.set({ c1: { displayName: 'Movies' } });
     expect(s.rematchService('c1')?.name).toBe('Movies');

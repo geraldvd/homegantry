@@ -6,7 +6,13 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/', 'coverage/', 'node_modules/', 'docs/.vitepress/dist/', 'docs/.vitepress/cache/'],
+    ignores: [
+      'dist/',
+      'coverage/',
+      'node_modules/',
+      'docs/.vitepress/dist/',
+      'docs/.vitepress/cache/',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -22,7 +28,10 @@ export default tseslint.config(
   },
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
   prettier,

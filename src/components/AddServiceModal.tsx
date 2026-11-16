@@ -71,16 +71,29 @@ export default function AddServiceModal({ open, onClose }: Props) {
         <form onSubmit={handleSubmit} className="space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="My Service" required />
           <Field label="URL" value={url} onChange={setUrl} placeholder="https://..." required />
-          <Field label="Icon slug" value={icon} onChange={setIcon} placeholder="e.g. plex, grafana" />
+          <Field
+            label="Icon slug"
+            value={icon}
+            onChange={setIcon}
+            placeholder="e.g. plex, grafana"
+          />
           <CategoryCombobox value={category} onChange={setCategory} />
-          <Field label="Description" value={description} onChange={setDescription} placeholder="Optional description" />
+          <Field
+            label="Description"
+            value={description}
+            onChange={setDescription}
+            placeholder="Optional description"
+          />
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
-              onClick={() => { reset(); onClose(); }}
+              onClick={() => {
+                reset();
+                onClose();
+              }}
               className="px-4 py-2 text-sm rounded-lg text-gray-400 hover:text-gray-200 hover:bg-surface-700 transition-colors"
             >
               Cancel
@@ -127,13 +140,7 @@ function Field({
   );
 }
 
-function CategoryCombobox({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function CategoryCombobox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const { services } = useServices();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -159,7 +166,10 @@ function CategoryCombobox({
       <input
         type="text"
         value={value}
-        onChange={(e) => { onChange(e.target.value); setOpen(true); }}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+        }}
         onFocus={() => setOpen(true)}
         placeholder="Type or select category"
         className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-sm"
@@ -170,7 +180,10 @@ function CategoryCombobox({
             <button
               key={cat}
               type="button"
-              onClick={() => { onChange(cat); setOpen(false); }}
+              onClick={() => {
+                onChange(cat);
+                setOpen(false);
+              }}
               className="w-full text-left px-3 py-1.5 text-sm text-gray-200 hover:bg-surface-600 transition-colors"
             >
               {cat}

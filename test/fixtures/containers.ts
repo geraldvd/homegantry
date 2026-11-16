@@ -4,18 +4,16 @@ import type Dockerode from 'dockerode';
  * Build a Docker `ContainerInfo` (as returned by `listContainers`) with sensible
  * defaults. Only example data: example.com / 192.168.1.100.
  */
-export function container(
-  opts: {
-    id?: string;
-    name: string;
-    image: string;
-    state?: string;
-    labels?: Record<string, string>;
-    project?: string | null;
-    service?: string;
-    ports?: Array<{ PrivatePort: number; PublicPort?: number }>;
-  },
-): Dockerode.ContainerInfo {
+export function container(opts: {
+  id?: string;
+  name: string;
+  image: string;
+  state?: string;
+  labels?: Record<string, string>;
+  project?: string | null;
+  service?: string;
+  ports?: Array<{ PrivatePort: number; PublicPort?: number }>;
+}): Dockerode.ContainerInfo {
   const labels: Record<string, string> = { ...(opts.labels ?? {}) };
   if (opts.project !== null) {
     labels['com.docker.compose.project'] ??= opts.project ?? 'default';
@@ -30,7 +28,11 @@ export function container(
     Created: 0,
     State: opts.state ?? 'running',
     Status: '',
-    Ports: (opts.ports ?? []).map((p) => ({ IP: '0.0.0.0', Type: 'tcp', ...p })) as Dockerode.Port[],
+    Ports: (opts.ports ?? []).map((p) => ({
+      IP: '0.0.0.0',
+      Type: 'tcp',
+      ...p,
+    })) as Dockerode.Port[],
     Labels: labels,
     HostConfig: { NetworkMode: 'bridge' },
     NetworkSettings: { Networks: {} },
