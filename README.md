@@ -7,7 +7,12 @@
 
 HomeGantry watches your Docker daemon for running containers, matches them against a built-in knowledge base of 60+ services, and presents them in a clean dashboard — no manual configuration required.
 
-<!-- screenshot placeholder -->
+> **Status: pre-1.0, under active development.** Expect breaking changes between releases. See the
+> [roadmap](docs/MISSION.md#how-it-is-built).
+
+![HomeGantry dashboard showing auto-discovered services grouped by category](docs/public/screenshot.png)
+
+<sub>Screenshot from dev mode with example containers (`npm run dev:fixture`).</sub>
 
 ## Features
 
@@ -47,6 +52,15 @@ docker compose up -d
 Open [http://localhost:3000](http://localhost:3000).
 
 > **Requirements:** Docker Engine 20.10+ and Docker Compose v2. No reverse proxy needed — Traefik integration is optional and only used for URL auto-detection. See the [Getting Started](https://homegantry.com/guide/getting-started) guide for details.
+
+## Security
+
+Until milestone M1 (secure by default) lands, the HomeGantry API has **no authentication**: anyone who can reach it can
+edit overrides, settings and manual services. Keep it **behind your LAN, a VPN, or a forward-auth middleware**
+(Authelia, Authentik, oauth2-proxy, ...) and do not expose it directly to the internet. HomeGantry only needs the Docker
+socket read-only (`:ro`) and never starts, stops or removes containers.
+
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## Configuration
 
@@ -99,7 +113,8 @@ npm run dev
 
 This starts both the Express backend and Vite dev server. The frontend is available at `http://localhost:5173` with hot module replacement.
 
-See the [contributing guide](https://homegantry.com/guide/contributing) for more details.
+Run the checks with `npm run typecheck`, `npm run lint`, `npm test` and `npm run build`. No Docker? `npm run dev:fixture`
+serves a fake example lab. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
