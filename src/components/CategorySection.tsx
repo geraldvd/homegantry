@@ -14,7 +14,15 @@ interface Props {
   onEdit: (service: Service) => void;
 }
 
-export default function CategorySection({ category, services, showStatus, columns, layout = 'grid', icon, onEdit }: Props) {
+export default function CategorySection({
+  category,
+  services,
+  showStatus,
+  columns,
+  layout = 'grid',
+  icon,
+  onEdit,
+}: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
   const gridCols: Record<number, string> = {
@@ -40,12 +48,8 @@ export default function CategorySection({ category, services, showStatus, column
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-        {icon && (
-          <ServiceIcon slug={icon} name={category} size={20} />
-        )}
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
-          {category}
-        </h2>
+        {icon && <ServiceIcon slug={icon} name={category} size={20} />}
+        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">{category}</h2>
         <span className="text-xs text-gray-500 bg-surface-700 px-2 py-0.5 rounded-full">
           {services.length}
         </span>

@@ -46,15 +46,11 @@ export default defineConfig({
       },
       {
         text: 'Development',
-        items: [
-          { text: 'Contributing', link: '/guide/contributing' },
-        ],
+        items: [{ text: 'Contributing', link: '/guide/contributing' }],
       },
     ],
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/geraldvd/homegantry' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/geraldvd/homegantry' }],
 
     footer: {
       message: 'Released under the MIT License.',

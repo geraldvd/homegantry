@@ -1,4 +1,10 @@
-import type { Service, ServiceOverride, ManualService, DashboardSettings, StackConfig } from '../types';
+import type {
+  Service,
+  ServiceOverride,
+  ManualService,
+  DashboardSettings,
+  StackConfig,
+} from '../types';
 
 const BASE = '/api';
 
@@ -32,9 +38,7 @@ export function deleteOverride(id: string): Promise<Service> {
   });
 }
 
-export function addManualService(
-  service: Omit<ManualService, 'id'>,
-): Promise<ManualService> {
+export function addManualService(service: Omit<ManualService, 'id'>): Promise<ManualService> {
   return request<ManualService>('/services/manual', {
     method: 'POST',
     body: JSON.stringify(service),
@@ -61,9 +65,7 @@ export function getSettings(): Promise<DashboardSettings> {
   return request<DashboardSettings>('/settings');
 }
 
-export function updateSettings(
-  settings: Partial<DashboardSettings>,
-): Promise<DashboardSettings> {
+export function updateSettings(settings: Partial<DashboardSettings>): Promise<DashboardSettings> {
   return request<DashboardSettings>('/settings', {
     method: 'PATCH',
     body: JSON.stringify(settings),

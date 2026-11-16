@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.server.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "declaration": false,
+    "types": ["node"]
+  },
+  "include": ["server", "test", "scripts", "vitest.config.ts"]
+}

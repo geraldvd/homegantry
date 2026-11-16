@@ -1,0 +1,58 @@
+name: New service for the knowledge base
+description: Ask for (or propose) a service HomeGantry should recognise automatically
+labels: [enhancement, good first issue]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        HomeGantry recognises containers via `server/known-services.json`. Pull requests are very welcome, see "Adding a service to the knowledge base" in CONTRIBUTING.md.
+  - type: input
+    id: name
+    attributes:
+      label: Service name
+      placeholder: Jellyfin
+    validations:
+      required: true
+  - type: input
+    id: homepage
+    attributes:
+      label: Project website / repository
+      placeholder: https://example.com
+    validations:
+      required: true
+  - type: textarea
+    id: images
+    attributes:
+      label: Docker images
+      description: Image repositories people commonly use (one per line, without tag).
+      placeholder: |
+        jellyfin/jellyfin
+        lscr.io/linuxserver/jellyfin
+    validations:
+      required: true
+  - type: input
+    id: aliases
+    attributes:
+      label: Common compose service / container names
+      placeholder: jellyfin
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      placeholder: Media
+  - type: input
+    id: icon
+    attributes:
+      label: Icon slug (dashboard-icons)
+      placeholder: jellyfin
+  - type: input
+    id: port
+    attributes:
+      label: Default web UI port
+      placeholder: '8096'
+  - type: checkboxes
+    id: infra
+    attributes:
+      label: Infrastructure
+      options:
+        - label: This is a background/infrastructure service (database, cache, proxy) that should be hidden by default

@@ -3,8 +3,14 @@ import { useState } from 'react';
 const ICON_CDN = 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png';
 
 const COLORS = [
-  'bg-cyan-700', 'bg-violet-700', 'bg-emerald-700', 'bg-rose-700',
-  'bg-amber-700', 'bg-blue-700', 'bg-pink-700', 'bg-teal-700',
+  'bg-cyan-700',
+  'bg-violet-700',
+  'bg-emerald-700',
+  'bg-rose-700',
+  'bg-amber-700',
+  'bg-blue-700',
+  'bg-pink-700',
+  'bg-teal-700',
 ];
 
 function colorFor(name: string): string {
@@ -37,9 +43,8 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
   }
 
   // If slug is already a full URL, use it directly (fixes double-CDN bug)
-  const src = slug.startsWith('http://') || slug.startsWith('https://')
-    ? slug
-    : `${ICON_CDN}/${slug}.png`;
+  const src =
+    slug.startsWith('http://') || slug.startsWith('https://') ? slug : `${ICON_CDN}/${slug}.png`;
 
   return (
     <img

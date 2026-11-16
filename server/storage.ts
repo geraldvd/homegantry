@@ -36,32 +36,20 @@ class JsonStore<T> {
   }
 }
 
-export const overridesStore = new JsonStore<Record<string, ServiceOverride>>(
-  'overrides.json',
-  {},
-);
+export const overridesStore = new JsonStore<Record<string, ServiceOverride>>('overrides.json', {});
 
-export const manualServicesStore = new JsonStore<ManualService[]>(
-  'manual-services.json',
-  [],
-);
+export const manualServicesStore = new JsonStore<ManualService[]>('manual-services.json', []);
 
-export const settingsStore = new JsonStore<DashboardSettings>(
-  'settings.json',
-  {
-    dashboardTitle: config.title,
-    columns: 4,
-    showStatus: true,
-    layout: 'grid',
-    showStopped: config.showStopped,
-    groupBy: 'category',
-  },
-);
+export const settingsStore = new JsonStore<DashboardSettings>('settings.json', {
+  dashboardTitle: config.title,
+  columns: 4,
+  showStatus: true,
+  layout: 'grid',
+  showStopped: config.showStopped,
+  groupBy: 'category',
+});
 
-export const stacksStore = new JsonStore<Record<string, StackConfig>>(
-  'stacks.json',
-  {},
-);
+export const stacksStore = new JsonStore<Record<string, StackConfig>>('stacks.json', {});
 
 export function getStackConfig(name: string): StackConfig {
   const stacks = stacksStore.get();

@@ -67,11 +67,17 @@ npm run typecheck    # Type-check frontend and backend without emitting
 
 ## Adding a Known Service
 
-The service knowledge base is in `server/known-services.json`. To add a new service:
+The service knowledge base is in `server/known-services.json`. See
+[Adding a service to the knowledge base](https://github.com/geraldvd/homegantry/blob/main/CONTRIBUTING.md#adding-a-service-to-the-knowledge-base)
+in CONTRIBUTING.md for the entry format, then add a test case to `test/server/matcher.test.ts` and run `npm test`.
 
-1. Add an entry with the Docker image pattern, display name, icon, and category
-2. Run `npm run typecheck` to verify the JSON structure
-3. Submit a pull request
+## Tests and Linting
+
+```bash
+npm test              # vitest unit + supertest API tests (no Docker socket needed)
+npm run test:coverage # coverage report for server/
+npm run lint          # ESLint + Prettier check
+```
 
 ## Submitting Changes
 

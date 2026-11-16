@@ -21,12 +21,12 @@ services:
     image: ghcr.io/geraldvd/homegantry:latest
     container_name: homegantry
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - homegantry_data:/data
     environment:
-      - HOMEGANTRY_HOST=192.168.1.100  # Your server's LAN IP
+      - HOMEGANTRY_HOST=192.168.1.100 # Your server's LAN IP
     restart: unless-stopped
 
 volumes:
