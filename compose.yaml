@@ -9,6 +9,7 @@ services:
     environment:
       - HOMEGANTRY_HOST=${HOMEGANTRY_HOST:-}
       - HOMEGANTRY_TITLE=${HOMEGANTRY_TITLE:-HomeGantry}
+      # Public hostname: set HOMEGANTRY_DOMAIN in your deploy tool (e.g. Komodo stack environment), not in git.
     restart: unless-stopped
     networks:
       - proxy
@@ -16,7 +17,7 @@ services:
       - homegantry.hidden=true
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.homegantry.rule=Host(`homegantry.example.com`)
+      - traefik.http.routers.homegantry.rule=Host(`${HOMEGANTRY_DOMAIN:-homegantry.example.com}`)
       - traefik.http.routers.homegantry.tls=true
       - traefik.http.routers.homegantry.tls.certresolver=le
       # Restrict to LAN/VPN: the API allows edits without auth (until built-in auth lands).
