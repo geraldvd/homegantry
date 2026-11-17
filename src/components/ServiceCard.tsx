@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Service } from '../types';
 import ServiceIcon from './ServiceIcon';
 import { updateOverride } from '../api/client';
+import { useAuth } from '../context/AuthContext';
 
 function statusClass(status: string): string {
   switch (status) {
@@ -23,6 +24,7 @@ interface Props {
 
 export default function ServiceCard({ service, showStatus, onEdit }: Props) {
   const [hovering, setHovering] = useState(false);
+  const { canEdit } = useAuth();
 
   const handleHide = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -57,7 +59,7 @@ export default function ServiceCard({ service, showStatus, onEdit }: Props) {
         )}
       </div>
 
-      {hovering && (
+      {canEdit && hovering && (
         <div className="absolute top-2 right-2 flex items-center gap-1">
           <button
             onClick={handleEdit}
