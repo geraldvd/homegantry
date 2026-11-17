@@ -55,5 +55,9 @@ HomeGantry needs two volume mounts:
 
 ## Security Notes
 
-- The Docker socket is mounted **read-only** (`:ro`). HomeGantry never modifies containers.
-- HomeGantry does not authenticate users by default. If exposed to the internet, place it behind a reverse proxy with authentication (see [Reverse Proxy](/guide/reverse-proxy)).
+- HomeGantry is **read-only by default**. To edit from the UI, set `HOMEGANTRY_ADMIN_TOKEN` or use a forward-auth
+  header; see the [Security model](/guide/security).
+- HomeGantry never modifies containers. Even so, prefer a [read-only socket proxy](/guide/security#docker-socket-use-a-read-only-socket-proxy)
+  over mounting `/var/run/docker.sock` directly.
+- If the list of services itself is sensitive, put HomeGantry behind a reverse proxy with authentication (see
+  [Reverse Proxy](/guide/reverse-proxy)).

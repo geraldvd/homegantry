@@ -5,8 +5,12 @@
  *
  * Not part of the shipped server: it lives outside server/ and is never built into dist/.
  *
- *   npm run dev:fixture   # backend on :3000
- *   npm run dev:client    # Vite on :5173 (proxies /api to :3000)
+ * The backend serves the UI from dist/client, so either build the client first or run the
+ * Vite dev server next to it:
+ *
+ *   npm run build:client && npm run dev:fixture   # everything on :3000
+ *   npm run dev:fixture                           # backend on :3000 ...
+ *   npm run dev:client                            # ... plus Vite on :5173 (proxies /api to :3000)
  */
 import fs from 'node:fs';
 import os from 'node:os';

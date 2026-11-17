@@ -1,3 +1,4 @@
+import type Dockerode from 'dockerode';
 import { describe, expect, it, vi } from 'vitest';
 import { container } from '../fixtures/containers.js';
 import { fakeDocker, loadServer, type Env } from '../helpers.js';
@@ -180,5 +181,24 @@ describe('docker scanning', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe('Docker connection', () => {
+  type Modem = { socketPath?: string; host?: string; port?: string; protocol?: string };
+  const modem = (client: unknown) => (client as Dockerode & { modem: Modem }).modem;
+
+  it('uses HOMEGANTRY_DOCKER_SOCKET by default', async () => {
+    const { createDockerClient } = await loadServer({
+      HOMEGANTRY_DOCKER_SOCKET: '/run/example/docker.sock',
+    });
+    expect(modem(createDockerClient()).socketPath).toBe('/run/example/docker.sock');
+  });
+
+  it('connects to DOCKER_HOST=tcp://... (e.g. a read-only socket proxy)', async () => {
+    const { createDockerClient } = await loadServer({ DOCKER_HOST: 'tcp://socket-proxy:2375' });
+    const m = modem(createDockerClient());
+    expect(m).toMatchObject({ host: 'socket-proxy', port: '2375', protocol: 'http' });
+    expect(m.socketPath).toBeUndefined();
   });
 });

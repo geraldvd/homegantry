@@ -27,4 +27,12 @@ export const config = {
   dataDir: envString('HOMEGANTRY_DATA_DIR', './data'),
   logLevel: envString('HOMEGANTRY_LOG_LEVEL', 'info'),
   composeOnly: envBool('HOMEGANTRY_COMPOSE_ONLY', true),
+  // ---- security (see docs/guide/security.md) ----
+  adminToken: envString('HOMEGANTRY_ADMIN_TOKEN', '').trim(),
+  authHeader: envString('HOMEGANTRY_AUTH_HEADER', '').trim(),
+  trustedProxies: envString('HOMEGANTRY_TRUSTED_PROXIES', ''),
+  readonly: envBool('HOMEGANTRY_READONLY', false),
+  corsOrigins: envString('HOMEGANTRY_CORS_ORIGINS', '')
+    .split(/[\s,]+/)
+    .filter(Boolean),
 } as const;

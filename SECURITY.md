@@ -4,16 +4,13 @@
 
 HomeGantry is pre-1.0. Only the latest release (and `main`) receive security fixes.
 
-## Current status: keep it private
+## Security model
 
-Until milestone **M1 (secure by default)** lands, the HomeGantry API has **no authentication**: anyone who can reach it
-can change overrides, settings and manual services. HomeGantry mounts the Docker socket read-only and never controls
-containers, but you should still:
-
-- run it only on a trusted LAN, behind a VPN, or behind a forward-auth middleware (Authelia, Authentik, oauth2-proxy, ...);
-- not expose it directly to the internet.
-
-M1 makes the API read-only by default and requires an admin token or a trusted forward-auth header for edits.
+HomeGantry is read-only by default. Edits require an admin token (`HOMEGANTRY_ADMIN_TOKEN`) or a forward-auth header
+from a trusted proxy (`HOMEGANTRY_AUTH_HEADER` + `HOMEGANTRY_TRUSTED_PROXIES`); `HOMEGANTRY_READONLY=true` disables
+them entirely. The API returns an allow-list of fields only (no env vars, mounts or secret-looking labels), and
+HomeGantry never controls containers. See [docs/guide/security.md](docs/guide/security.md) for the threat model, a
+read-only Docker socket proxy setup and reverse-proxy examples.
 
 ## Reporting a vulnerability
 

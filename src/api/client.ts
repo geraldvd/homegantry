@@ -1,4 +1,5 @@
 import type {
+  AuthStatus,
   Service,
   ServiceOverride,
   ManualService,
@@ -8,16 +9,67 @@ import type {
 
 const BASE = '/api';
 
+// ---- admin token (kept for the browser session only) ----
+
+const TOKEN_KEY = 'homegantry.adminToken';
+/** Fired on `window` when the server rejects the stored token. */
+export const AUTH_EXPIRED_EVENT = 'homegantry:auth-expired';
+
+export function getStoredToken(): string | null {
+  try {
+    return sessionStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredToken(token: string | null): void {
+  try {
+    if (token) sessionStorage.setItem(TOKEN_KEY, token);
+    else sessionStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // storage unavailable (private mode): the token simply is not remembered
+  }
+}
+
+function authHeader(token: string | null): Record<string, string> {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function errorMessage(res: Response): Promise<string> {
+  try {
+    const body = (await res.json()) as { error?: string };
+    if (body.error) return body.error;
+  } catch {
+    // not JSON
+  }
+  return `HTTP ${res.status}`;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = getStoredToken();
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...init,
+    headers: { 'Content-Type': 'application/json', ...authHeader(token) },
   });
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API ${res.status}: ${body}`);
+    if (res.status === 401 && token) {
+      setStoredToken(null);
+      window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+    }
+    throw new Error(`API ${res.status}: ${await errorMessage(res)}`);
   }
   return res.json() as Promise<T>;
+}
+
+/**
+ * Ask the server what this session may do. With `token`, checks that token instead of the
+ * stored one (used by "Unlock editing"). Throws with the server's message on 401/429.
+ */
+export async function getAuth(token: string | null = getStoredToken()): Promise<AuthStatus> {
+  const res = await fetch(`${BASE}/auth`, { headers: authHeader(token) });
+  if (!res.ok) throw new Error(await errorMessage(res));
+  return res.json() as Promise<AuthStatus>;
 }
 
 export function getServices(includeHidden = false): Promise<Service[]> {
