@@ -55,24 +55,36 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Security
 
-Until milestone M1 (secure by default) lands, the HomeGantry API has **no authentication**: anyone who can reach it can
-edit overrides, settings and manual services. Keep it **behind your LAN, a VPN, or a forward-auth middleware**
-(Authelia, Authentik, oauth2-proxy, ...) and do not expose it directly to the internet. HomeGantry only needs the Docker
-socket read-only (`:ro`) and never starts, stops or removes containers.
+HomeGantry is **read-only by default**: anyone who can open the dashboard can look, but every change (overrides,
+manual services, stacks, settings) is refused until you enable editing with one of:
 
-To report a vulnerability, see [SECURITY.md](SECURITY.md).
+- `HOMEGANTRY_ADMIN_TOKEN` (at least 24 characters): click **Unlock editing** in the UI and enter it, or send it as
+  `Authorization: Bearer <token>`;
+- `HOMEGANTRY_AUTH_HEADER` + `HOMEGANTRY_TRUSTED_PROXIES`: let your forward-auth proxy (Authelia, Authentik, ...) tell
+  HomeGantry who is signed in.
+
+`HOMEGANTRY_READONLY=true` switches editing off completely. The API never returns container env vars, mounts or
+secret-looking labels, and HomeGantry never starts, stops or removes containers. For the Docker socket we recommend a
+read-only socket proxy ([`examples/compose.socket-proxy.yaml`](examples/compose.socket-proxy.yaml)).
+
+Details: [Security model](https://homegantry.com/guide/security). To report a vulnerability, see
+[SECURITY.md](SECURITY.md).
 
 ## Configuration
 
-| Variable                     | Default      | Description                                              |
-| ---------------------------- | ------------ | -------------------------------------------------------- |
-| `HOMEGANTRY_HOST`            | _(empty)_    | Host/IP for building service URLs (e.g. `192.168.1.100`) |
-| `HOMEGANTRY_TITLE`           | `HomeGantry` | Dashboard title                                          |
-| `HOMEGANTRY_POLL_INTERVAL`   | `60`         | Seconds between full Docker rescans                      |
-| `HOMEGANTRY_SHOW_STOPPED`    | `false`      | Show stopped containers                                  |
-| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                          |
-| `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                            |
-| `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects               |
+| Variable                     | Default      | Description                                                  |
+| ---------------------------- | ------------ | ------------------------------------------------------------ |
+| `HOMEGANTRY_HOST`            | _(empty)_    | Host/IP for building service URLs (e.g. `192.168.1.100`)     |
+| `HOMEGANTRY_TITLE`           | `HomeGantry` | Dashboard title                                              |
+| `HOMEGANTRY_POLL_INTERVAL`   | `60`         | Seconds between full Docker rescans                          |
+| `HOMEGANTRY_SHOW_STOPPED`    | `false`      | Show stopped containers                                      |
+| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                              |
+| `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                                |
+| `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects                   |
+| `HOMEGANTRY_ADMIN_TOKEN`     | _(empty)_    | Token that unlocks editing (≥ 24 characters)                 |
+| `HOMEGANTRY_AUTH_HEADER`     | _(empty)_    | Forward-auth header that allows editing (e.g. `Remote-User`) |
+| `HOMEGANTRY_TRUSTED_PROXIES` | _(empty)_    | IPs/CIDRs of the proxy allowed to set that header            |
+| `HOMEGANTRY_READONLY`        | `false`      | Disable editing completely                                   |
 
 See the [full configuration reference](https://homegantry.com/guide/configuration) for all options.
 
@@ -100,6 +112,7 @@ Full documentation is available at [homegantry.com](https://homegantry.com).
 - [Traefik Integration](https://homegantry.com/guide/traefik) — URL auto-detection from Traefik
 - [Deployment](https://homegantry.com/guide/deployment) — Production deployment guides
 - [Reverse Proxy](https://homegantry.com/guide/reverse-proxy) — Traefik, Nginx, and Caddy examples
+- [Security Model](https://homegantry.com/guide/security) — Read-only default, editing, socket proxy
 - [Contributing](https://homegantry.com/guide/contributing) — Development setup and project structure
 
 ## Development
