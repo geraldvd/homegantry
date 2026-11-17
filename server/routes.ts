@@ -22,6 +22,18 @@ import type {
   StackConfig,
   SSEEvent,
 } from './types.js';
+import { publicService, publicSettings, publicStack, publicStacks } from './sanitize.js';
+import {
+  idParams,
+  manualCreateBody,
+  manualUpdateBody,
+  overrideBody,
+  servicesQuery,
+  settingsBody,
+  stackBody,
+  stackParams,
+  validate,
+} from './validation.js';
 
 export const router = Router();
 
@@ -64,89 +76,109 @@ function mergeServices(includeHidden: boolean): Service[] {
 
 // ---- Service routes ----
 
-router.get('/api/services', (_req: Request, res: Response) => {
+router.get('/api/services', validate({ query: servicesQuery }), (_req: Request, res: Response) => {
   const includeHidden = _req.query.includeHidden === 'true';
-  res.json(mergeServices(includeHidden));
+  res.json(mergeServices(includeHidden).map(publicService));
 });
 
-router.put('/api/services/:id/override', (req: Request, res: Response) => {
-  const id = req.params.id as string;
-  const body = req.body as ServiceOverride;
-  const overrides = overridesStore.get();
-  overrides[id] = { ...overrides[id], ...body };
-  overridesStore.set(overrides);
+router.put(
+  '/api/services/:id/override',
+  validate({ params: idParams, body: overrideBody }),
+  (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const body = req.body as ServiceOverride;
+    const overrides = overridesStore.get();
+    overrides[id] = { ...overrides[id], ...body };
+    overridesStore.set(overrides);
 
-  // Re-match with new overrides and emit SSE
-  const updated = rematchService(id);
-  if (updated) {
-    dockerEvents.emit('service_updated', updated);
-  }
+    // Re-match with new overrides and emit SSE
+    const updated = rematchService(id);
+    if (updated) {
+      dockerEvents.emit('service_updated', updated);
+    }
 
-  res.json({ ok: true });
-});
+    res.json({ ok: true });
+  },
+);
 
-router.delete('/api/services/:id/override', (req: Request, res: Response) => {
-  const id = req.params.id as string;
-  const overrides = overridesStore.get();
-  delete overrides[id];
-  overridesStore.set(overrides);
+router.delete(
+  '/api/services/:id/override',
+  validate({ params: idParams }),
+  (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const overrides = overridesStore.get();
+    delete overrides[id];
+    overridesStore.set(overrides);
 
-  // Re-match without overrides and emit SSE
-  const updated = rematchService(id);
-  if (updated) {
-    dockerEvents.emit('service_updated', updated);
-  }
+    // Re-match without overrides and emit SSE
+    const updated = rematchService(id);
+    if (updated) {
+      dockerEvents.emit('service_updated', updated);
+    }
 
-  res.json({ ok: true });
-});
+    res.json({ ok: true });
+  },
+);
 
-router.post('/api/services/manual', (req: Request, res: Response) => {
-  const body = req.body as Omit<ManualService, 'id'>;
-  const manual = manualServicesStore.get();
-  const entry: ManualService = { ...body, id: uuidv4() };
-  manual.push(entry);
-  manualServicesStore.set(manual);
+router.post(
+  '/api/services/manual',
+  validate({ body: manualCreateBody }),
+  (req: Request, res: Response) => {
+    const body = req.body as Omit<ManualService, 'id'>;
+    const manual = manualServicesStore.get();
+    const entry: ManualService = { ...body, id: uuidv4() };
+    manual.push(entry);
+    manualServicesStore.set(manual);
 
-  // Emit SSE for new manual service
-  dockerEvents.emit('service_updated', manualToService(entry));
+    // Emit SSE for new manual service
+    dockerEvents.emit('service_updated', manualToService(entry));
 
-  res.status(201).json(entry);
-});
+    res.status(201).json(entry);
+  },
+);
 
-router.put('/api/services/manual/:id', (req: Request, res: Response) => {
-  const id = req.params.id as string;
-  const body = req.body as Partial<ManualService>;
-  const manual = manualServicesStore.get();
-  const idx = manual.findIndex((m) => m.id === id);
-  if (idx === -1) {
-    res.status(404).json({ error: 'not found' });
-    return;
-  }
-  manual[idx] = { ...manual[idx]!, ...body, id };
-  manualServicesStore.set(manual);
+router.put(
+  '/api/services/manual/:id',
+  validate({ params: idParams, body: manualUpdateBody }),
+  (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const body = req.body as Partial<ManualService>;
+    const manual = manualServicesStore.get();
+    const idx = manual.findIndex((m) => m.id === id);
+    if (idx === -1) {
+      res.status(404).json({ error: 'not found' });
+      return;
+    }
+    manual[idx] = { ...manual[idx]!, ...body, id };
+    manualServicesStore.set(manual);
 
-  // Emit SSE for updated manual service
-  dockerEvents.emit('service_updated', manualToService(manual[idx]!));
+    // Emit SSE for updated manual service
+    dockerEvents.emit('service_updated', manualToService(manual[idx]!));
 
-  res.json(manual[idx]);
-});
+    res.json(manual[idx]);
+  },
+);
 
-router.delete('/api/services/manual/:id', (req: Request, res: Response) => {
-  const id = req.params.id as string;
-  const manual = manualServicesStore.get();
-  const idx = manual.findIndex((m) => m.id === id);
-  if (idx === -1) {
-    res.status(404).json({ error: 'not found' });
-    return;
-  }
-  manual.splice(idx, 1);
-  manualServicesStore.set(manual);
+router.delete(
+  '/api/services/manual/:id',
+  validate({ params: idParams }),
+  (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const manual = manualServicesStore.get();
+    const idx = manual.findIndex((m) => m.id === id);
+    if (idx === -1) {
+      res.status(404).json({ error: 'not found' });
+      return;
+    }
+    manual.splice(idx, 1);
+    manualServicesStore.set(manual);
 
-  // Emit SSE for removed service
-  dockerEvents.emit('service_removed', { id });
+    // Emit SSE for removed service
+    dockerEvents.emit('service_removed', { id });
 
-  res.json({ ok: true });
-});
+    res.json({ ok: true });
+  },
+);
 
 // ---- Stacks API ----
 
@@ -157,26 +189,30 @@ router.get('/api/stacks', (_req: Request, res: Response) => {
   for (const name of discovered) {
     merged[name] = stored[name] ?? { visible: true };
   }
-  res.json(merged);
+  res.json(publicStacks(merged));
 });
 
-router.patch('/api/stacks/:name', (req: Request, res: Response) => {
-  const name = req.params.name as string;
-  const body = req.body as Partial<StackConfig>;
-  const stacks = stacksStore.get();
-  stacks[name] = { ...{ visible: true }, ...stacks[name], ...body };
-  stacksStore.set(stacks);
+router.patch(
+  '/api/stacks/:name',
+  validate({ params: stackParams, body: stackBody }),
+  (req: Request, res: Response) => {
+    const name = req.params.name as string;
+    const body = req.body as Partial<StackConfig>;
+    const stacks = stacksStore.get();
+    stacks[name] = { ...{ visible: true }, ...stacks[name], ...body };
+    stacksStore.set(stacks);
 
-  // Emit stacks_updated
-  const discovered = getDiscoveredStacks();
-  const merged: Record<string, StackConfig> = {};
-  for (const n of discovered) {
-    merged[n] = stacks[n] ?? { visible: true };
-  }
-  dockerEvents.emit('stacks_updated', merged);
+    // Emit stacks_updated
+    const discovered = getDiscoveredStacks();
+    const merged: Record<string, StackConfig> = {};
+    for (const n of discovered) {
+      merged[n] = stacks[n] ?? { visible: true };
+    }
+    dockerEvents.emit('stacks_updated', merged);
 
-  res.json(stacks[name]);
-});
+    res.json(publicStack(stacks[name]));
+  },
+);
 
 // ---- SSE ----
 
@@ -191,21 +227,21 @@ router.get('/api/events', (_req: Request, res: Response) => {
     res.write(`data: ${JSON.stringify(event)}\n\n`);
   };
 
-  // Send initial state
-  send({ type: 'initial_state', data: mergeServices(false) });
+  // Every event goes through the same allow-lists as the REST API.
+  send({ type: 'initial_state', data: mergeServices(false).map(publicService) });
 
   // Forward docker events
   const onUpdated = (svc: Service) => {
-    send({ type: 'service_updated', data: svc });
+    send({ type: 'service_updated', data: publicService(svc) });
   };
   const onRemoved = (data: { id: string }) => {
-    send({ type: 'service_removed', data });
+    send({ type: 'service_removed', data: { id: data.id } });
   };
   const onSettings = (data: DashboardSettings) => {
-    send({ type: 'settings_updated', data });
+    send({ type: 'settings_updated', data: publicSettings(data) });
   };
   const onStacksUpdated = (data: Record<string, StackConfig>) => {
-    send({ type: 'stacks_updated', data });
+    send({ type: 'stacks_updated', data: publicStacks(data) });
   };
 
   dockerEvents.on('service_updated', onUpdated);
@@ -230,15 +266,15 @@ router.get('/api/events', (_req: Request, res: Response) => {
 // ---- Settings ----
 
 router.get('/api/settings', (_req: Request, res: Response) => {
-  res.json(settingsStore.get());
+  res.json(publicSettings(settingsStore.get()));
 });
 
-router.patch('/api/settings', (req: Request, res: Response) => {
+router.patch('/api/settings', validate({ body: settingsBody }), (req: Request, res: Response) => {
   const current = settingsStore.get();
   const updated: DashboardSettings = { ...current, ...(req.body as Partial<DashboardSettings>) };
   settingsStore.set(updated);
   dockerEvents.emit('settings_updated', updated);
-  res.json(updated);
+  res.json(publicSettings(updated));
 });
 
 // ---- Health ----

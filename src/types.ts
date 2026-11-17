@@ -69,3 +69,13 @@ export type SSEEvent =
   | { type: 'settings_updated'; data: DashboardSettings }
   | { type: 'stacks_updated'; data: Record<string, StackConfig> }
   | { type: 'heartbeat'; data: Record<string, never> };
+
+/** `GET /api/auth`: what the current browser session may do. */
+export interface AuthStatus {
+  canEdit: boolean;
+  method: 'token' | 'header' | null;
+  /** HOMEGANTRY_READONLY=true on the server. */
+  readonly: boolean;
+  /** Which ways to unlock editing the server has enabled. */
+  methods: { token: boolean; header: boolean };
+}

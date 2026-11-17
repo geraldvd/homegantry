@@ -18,6 +18,22 @@ All configuration is done through environment variables. None are required — s
 | `HOMEGANTRY_DATA_DIR`        | `/data`                | Directory for persistent JSON data (overrides, settings, manual services)                                                      |
 | `HOMEGANTRY_LOG_LEVEL`       | `info`                 | Log level: `debug`, `info`, `warn`, `error`                                                                                    |
 
+## Security
+
+See the [Security model](/guide/security) for how these fit together.
+
+| Variable                     | Default   | Description                                                                                                                                                                                       |
+| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `HOMEGANTRY_ADMIN_TOKEN`     | _(empty)_ | Token that unlocks editing (UI: "Unlock editing"; API: `Authorization: Bearer <token>`). Must be at least 24 characters, otherwise it is ignored.                                                 |
+| `HOMEGANTRY_AUTH_HEADER`     | _(empty)_ | Header set by your forward-auth proxy, e.g. `Remote-User` (Authelia) or `X-authentik-username` (Authentik). Any non-empty value allows editing.                                                   |
+| `HOMEGANTRY_TRUSTED_PROXIES` | _(empty)_ | Comma-separated IPs/CIDRs of your reverse proxy. `HOMEGANTRY_AUTH_HEADER`, `X-Forwarded-For` and `X-Forwarded-Host` are only honoured from these.                                                 |
+| `HOMEGANTRY_READONLY`        | `false`   | Disable editing completely, even with a valid token or header                                                                                                                                     |
+| `HOMEGANTRY_CORS_ORIGINS`    | _(empty)_ | Comma-separated origins allowed to call the API from another website (e.g. `https://dash.example.com`). CORS is off when empty.                                                                   |
+| `DOCKER_HOST`                | _(empty)_ | Docker API endpoint, e.g. `tcp://socket-proxy:2375` for a [read-only socket proxy](/guide/security#docker-socket-use-a-read-only-socket-proxy). Takes precedence over `HOMEGANTRY_DOCKER_SOCKET`. |
+
+With neither `HOMEGANTRY_ADMIN_TOKEN` nor `HOMEGANTRY_AUTH_HEADER` + `HOMEGANTRY_TRUSTED_PROXIES` set, HomeGantry is
+read-only.
+
 ## Example `.env` File
 
 ```bash
@@ -30,6 +46,8 @@ HOMEGANTRY_HOMEPAGE_COMPAT=true
 HOMEGANTRY_EXCLUDE_SELF=true
 HOMEGANTRY_COMPOSE_ONLY=true
 HOMEGANTRY_LOG_LEVEL=info
+# Optional: enable editing (generate with: openssl rand -hex 32)
+HOMEGANTRY_ADMIN_TOKEN=change-me-use-a-long-random-token
 ```
 
 ## `HOMEGANTRY_HOST` Explained

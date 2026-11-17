@@ -2,12 +2,22 @@ import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import { config } from './config.js';
 import { matchContainer, type MatchInput } from './matcher.js';
+import { stripSecretLabels } from './sanitize.js';
 import type { Service } from './types.js';
 
 /** The subset of the Dockerode API that HomeGantry uses (read-only). */
 export type DockerClient = Pick<Dockerode, 'listContainers' | 'getEvents'>;
 
-let docker: DockerClient = new Dockerode({ socketPath: config.dockerSocket });
+/**
+ * `DOCKER_HOST` (e.g. `tcp://socket-proxy:2375` for a read-only socket proxy) wins over
+ * `HOMEGANTRY_DOCKER_SOCKET`; Dockerode reads it itself when given no options.
+ */
+export function createDockerClient(): Dockerode {
+  if (process.env.DOCKER_HOST) return new Dockerode();
+  return new Dockerode({ socketPath: config.dockerSocket });
+}
+
+let docker: DockerClient = createDockerClient();
 
 /** Replace the Docker client (used by tests and the dev fixture; no real socket needed). */
 export function setDockerClient(client: DockerClient): void {
@@ -29,7 +39,8 @@ const matchInputCache = new Map<string, MatchInput>();
 function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
   const names = info.Names ?? [];
   const name = (names[0] ?? '').replace(/^\//, '');
-  const labels = info.Labels ?? {};
+  // Secret-looking labels never enter HomeGantry's state (they are not needed for matching).
+  const labels = stripSecretLabels(info.Labels ?? {});
   const ports = (info.Ports ?? [])
     .filter((p) => p.PublicPort && p.PrivatePort)
     .map((p) => ({ private: p.PrivatePort!, public: p.PublicPort! }));

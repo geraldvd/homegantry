@@ -6,5 +6,6 @@
     "declaration": false,
     "types": ["node"]
   },
-  "include": ["server", "test", "scripts", "vitest.config.ts"]
+  "include": ["server", "test", "scripts", "vitest.config.ts"],
+  "exclude": ["test/client"]
 }

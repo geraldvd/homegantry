@@ -45,6 +45,9 @@ labels:
   - traefik.http.routers.homegantry.middlewares=my-auth@docker
 ```
 
+To let signed-in users edit the dashboard, also set `HOMEGANTRY_AUTH_HEADER` and `HOMEGANTRY_TRUSTED_PROXIES`. Full
+Authelia and Authentik examples are in the [Security model](/guide/security#reverse-proxy-examples).
+
 ## Nginx
 
 ```nginx

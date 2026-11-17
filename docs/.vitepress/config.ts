@@ -42,6 +42,7 @@ export default defineConfig({
         items: [
           { text: 'Docker Compose', link: '/guide/deployment' },
           { text: 'Reverse Proxy', link: '/guide/reverse-proxy' },
+          { text: 'Security Model', link: '/guide/security' },
         ],
       },
       {
