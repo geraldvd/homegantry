@@ -7,6 +7,7 @@ import { PassThrough } from 'node:stream';
 import { expect, vi } from 'vitest';
 import type Dockerode from 'dockerode';
 import type { DockerClient } from '../server/docker.js';
+import type { SecurityOptions } from '../server/security.js';
 
 export type Env = Record<string, string | undefined>;
 
@@ -48,7 +49,11 @@ export async function loadServer(env: Env = {}) {
  * `loadServer()` + a fake Docker client with `containers`, one completed scan, and an app
  * serving a stub client directory.
  */
-export async function loadApp(containers: Dockerode.ContainerInfo[], env: Env = {}) {
+export async function loadApp(
+  containers: Dockerode.ContainerInfo[],
+  env: Env = {},
+  options?: SecurityOptions,
+) {
   const server = await loadServer({ HOMEGANTRY_HOST: '192.168.1.100', ...env });
   const clientDir = path.join(server.dataDir, 'client');
   fs.mkdirSync(clientDir);
@@ -56,7 +61,7 @@ export async function loadApp(containers: Dockerode.ContainerInfo[], env: Env = 
   const fake = fakeDocker(containers);
   server.setDockerClient(fake.client);
   await server.fullScan();
-  const app = server.createApp(clientDir);
+  const app = server.createApp(clientDir, options);
   return { ...server, app, fake };
 }
 
