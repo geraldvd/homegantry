@@ -8,7 +8,16 @@ import type { Service } from './types.js';
 /** The subset of the Dockerode API that HomeGantry uses (read-only). */
 export type DockerClient = Pick<Dockerode, 'listContainers' | 'getEvents'>;
 
-let docker: DockerClient = new Dockerode({ socketPath: config.dockerSocket });
+/**
+ * `DOCKER_HOST` (e.g. `tcp://socket-proxy:2375` for a read-only socket proxy) wins over
+ * `HOMEGANTRY_DOCKER_SOCKET`; Dockerode reads it itself when given no options.
+ */
+export function createDockerClient(): Dockerode {
+  if (process.env.DOCKER_HOST) return new Dockerode();
+  return new Dockerode({ socketPath: config.dockerSocket });
+}
+
+let docker: DockerClient = createDockerClient();
 
 /** Replace the Docker client (used by tests and the dev fixture; no real socket needed). */
 export function setDockerClient(client: DockerClient): void {
