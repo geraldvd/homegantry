@@ -20,8 +20,10 @@ npm run dev
 ### Working without Docker
 
 You do not need a Docker socket to work on the UI. `npm run dev:fixture` starts the backend with a fake Docker client
-that serves a small example lab (see `test/fixtures/containers.ts`); run `npm run dev:client` next to it. This is a
-development aid only and is not part of the shipped server.
+that serves a small example lab (see `test/fixtures/containers.ts`). The fixture backend serves the UI from
+`dist/client`, so either run `npm run dev:client` next to it (UI on port 5173, with hot reload) or run
+`npm run build:client` once first (UI on port 3000). This is a development aid only and is not part of the shipped
+server.
 
 ## Checks
 
