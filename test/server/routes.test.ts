@@ -1,16 +1,9 @@
 import fs from 'node:fs';
-import http from 'node:http';
-import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 import request from 'supertest';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { container, exampleLab } from '../fixtures/containers.js';
-import { fakeDocker, loadServer } from '../helpers.js';
-
-const servers: http.Server[] = [];
-afterEach(() => {
-  for (const s of servers.splice(0)) s.close();
-});
+import { fakeDocker, loadServer, openSse } from '../helpers.js';
 
 async function setup(containers = exampleLab) {
   const server = await loadServer({ HOMEGANTRY_HOST: '192.168.1.100' });
@@ -273,30 +266,7 @@ describe('GET /api/health', () => {
 });
 
 describe('GET /api/events (SSE)', () => {
-  /** Open the SSE stream on a real port and collect parsed events. */
-  async function openStream(app: http.RequestListener) {
-    const srv = http.createServer(app).listen(0);
-    servers.push(srv);
-    await new Promise((r) => srv.once('listening', r));
-    const { port } = srv.address() as AddressInfo;
-    const events: Array<{ type: string; data: unknown }> = [];
-    const res = await new Promise<http.IncomingMessage>((resolve) =>
-      http.get({ port, path: '/api/events' }, resolve),
-    );
-    let buf = '';
-    res.setEncoding('utf8');
-    res.on('data', (chunk: string) => {
-      buf += chunk;
-      let idx;
-      while ((idx = buf.indexOf('\n\n')) !== -1) {
-        events.push(JSON.parse(buf.slice(0, idx).replace(/^data: /, '')));
-        buf = buf.slice(idx + 2);
-      }
-    });
-    const waitFor = (n: number) =>
-      vi.waitFor(() => expect(events.length).toBeGreaterThanOrEqual(n));
-    return { res, events, waitFor, close: () => res.destroy() };
-  }
+  const openStream = openSse;
 
   it('sends the initial state then forwards service, settings and stack events', async () => {
     const s = await setup([container({ id: 'c1', name: 'jellyfin', image: 'jellyfin/jellyfin' })]);

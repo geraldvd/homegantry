@@ -2,6 +2,7 @@ import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import { config } from './config.js';
 import { matchContainer, type MatchInput } from './matcher.js';
+import { stripSecretLabels } from './sanitize.js';
 import type { Service } from './types.js';
 
 /** The subset of the Dockerode API that HomeGantry uses (read-only). */
@@ -29,7 +30,8 @@ const matchInputCache = new Map<string, MatchInput>();
 function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
   const names = info.Names ?? [];
   const name = (names[0] ?? '').replace(/^\//, '');
-  const labels = info.Labels ?? {};
+  // Secret-looking labels never enter HomeGantry's state (they are not needed for matching).
+  const labels = stripSecretLabels(info.Labels ?? {});
   const ports = (info.Ports ?? [])
     .filter((p) => p.PublicPort && p.PrivatePort)
     .map((p) => ({ private: p.PrivatePort!, public: p.PublicPort! }));

@@ -22,6 +22,7 @@ import type {
   StackConfig,
   SSEEvent,
 } from './types.js';
+import { publicService, publicSettings, publicStack, publicStacks } from './sanitize.js';
 
 export const router = Router();
 
@@ -66,7 +67,7 @@ function mergeServices(includeHidden: boolean): Service[] {
 
 router.get('/api/services', (_req: Request, res: Response) => {
   const includeHidden = _req.query.includeHidden === 'true';
-  res.json(mergeServices(includeHidden));
+  res.json(mergeServices(includeHidden).map(publicService));
 });
 
 router.put('/api/services/:id/override', (req: Request, res: Response) => {
@@ -157,7 +158,7 @@ router.get('/api/stacks', (_req: Request, res: Response) => {
   for (const name of discovered) {
     merged[name] = stored[name] ?? { visible: true };
   }
-  res.json(merged);
+  res.json(publicStacks(merged));
 });
 
 router.patch('/api/stacks/:name', (req: Request, res: Response) => {
@@ -175,7 +176,7 @@ router.patch('/api/stacks/:name', (req: Request, res: Response) => {
   }
   dockerEvents.emit('stacks_updated', merged);
 
-  res.json(stacks[name]);
+  res.json(publicStack(stacks[name]));
 });
 
 // ---- SSE ----
@@ -191,21 +192,21 @@ router.get('/api/events', (_req: Request, res: Response) => {
     res.write(`data: ${JSON.stringify(event)}\n\n`);
   };
 
-  // Send initial state
-  send({ type: 'initial_state', data: mergeServices(false) });
+  // Every event goes through the same allow-lists as the REST API.
+  send({ type: 'initial_state', data: mergeServices(false).map(publicService) });
 
   // Forward docker events
   const onUpdated = (svc: Service) => {
-    send({ type: 'service_updated', data: svc });
+    send({ type: 'service_updated', data: publicService(svc) });
   };
   const onRemoved = (data: { id: string }) => {
-    send({ type: 'service_removed', data });
+    send({ type: 'service_removed', data: { id: data.id } });
   };
   const onSettings = (data: DashboardSettings) => {
-    send({ type: 'settings_updated', data });
+    send({ type: 'settings_updated', data: publicSettings(data) });
   };
   const onStacksUpdated = (data: Record<string, StackConfig>) => {
-    send({ type: 'stacks_updated', data });
+    send({ type: 'stacks_updated', data: publicStacks(data) });
   };
 
   dockerEvents.on('service_updated', onUpdated);
@@ -230,7 +231,7 @@ router.get('/api/events', (_req: Request, res: Response) => {
 // ---- Settings ----
 
 router.get('/api/settings', (_req: Request, res: Response) => {
-  res.json(settingsStore.get());
+  res.json(publicSettings(settingsStore.get()));
 });
 
 router.patch('/api/settings', (req: Request, res: Response) => {
@@ -238,7 +239,7 @@ router.patch('/api/settings', (req: Request, res: Response) => {
   const updated: DashboardSettings = { ...current, ...(req.body as Partial<DashboardSettings>) };
   settingsStore.set(updated);
   dockerEvents.emit('settings_updated', updated);
-  res.json(updated);
+  res.json(publicSettings(updated));
 });
 
 // ---- Health ----
