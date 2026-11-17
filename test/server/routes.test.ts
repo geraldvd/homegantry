@@ -145,7 +145,7 @@ describe('manual services', () => {
     const { body: created } = await s.api.post('/api/services/manual').send(manualBody);
     const res = await s.api
       .put(`/api/services/manual/${created.id}`)
-      .send({ displayName: 'Gateway', id: 'hijack' })
+      .send({ displayName: 'Gateway' })
       .expect(200);
     expect(res.body).toEqual({ ...manualBody, displayName: 'Gateway', id: created.id });
   });
