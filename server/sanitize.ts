@@ -10,6 +10,7 @@ import type {
   DashboardSettings,
   ManualService,
   Service,
+  ServiceHealth,
   StackConfig,
 } from './types.js';
 import { safeIcon, safeServiceUrl } from './urls.js';
@@ -65,6 +66,18 @@ export function publicService(s: Service): Service {
     container: s.container ? publicContainer(s.container) : undefined,
     hidden: s.hidden,
     sortOrder: s.sortOrder,
+    exposure: s.exposure,
+    exposureSource: s.exposureSource,
+    health: s.health ? publicHealth(s.health) : undefined,
+  });
+}
+
+function publicHealth(h: ServiceHealth): ServiceHealth {
+  return compact({
+    status: h.status,
+    checkedAt: h.checkedAt,
+    reason: h.reason,
+    httpStatus: h.httpStatus,
   });
 }
 

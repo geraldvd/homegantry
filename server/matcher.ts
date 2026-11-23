@@ -3,7 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from './config.js';
 import type { ContainerInfo, KnownService, Service } from './types.js';
-import { resolveOverride } from './storage.js';
+import { overridesStore, resolveOverride } from './storage.js';
+import { parseRule } from './traefik-rule.js';
+import type { TraefikRoute } from './traefik.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -58,10 +60,8 @@ function getLabel(labels: Record<string, string>, key: string): string | undefin
 function extractTraefikUrl(labels: Record<string, string>): string | undefined {
   for (const [key, value] of Object.entries(labels)) {
     if (/^traefik\.http\.routers\..+\.rule$/i.test(key)) {
-      const match = value.match(/Host\(`([^`]+)`\)/i);
-      if (match?.[1]) {
-        return `https://${match[1]}`;
-      }
+      const { host } = parseRule(value);
+      if (host) return `https://${host}`;
     }
   }
   return undefined;
@@ -69,7 +69,7 @@ function extractTraefikUrl(labels: Record<string, string>): string | undefined {
 
 // ---- URL resolution with priority cascade ----
 
-function resolveUrl(input: MatchInput): string {
+function resolveUrl(input: MatchInput, route?: TraefikRoute): string {
   // 1. homegantry.url label (explicit)
   const hgUrl = getLabel(input.labels, 'homegantry.url');
   if (hgUrl) return hgUrl;
@@ -80,18 +80,21 @@ function resolveUrl(input: MatchInput): string {
     if (hpHref) return hpHref;
   }
 
-  // 3. Traefik router rules
+  // 3. Traefik API (knows the real TLS setup and path)
+  if (route) return route.url;
+
+  // 4. Traefik router rules in labels
   const traefikUrl = extractTraefikUrl(input.labels);
   if (traefikUrl) return traefikUrl;
 
-  // 4. localhost + public port fallback
+  // 5. localhost + public port fallback
   const host = config.host || 'localhost';
   if (input.ports.length > 0) {
     const publicPort = input.ports[0]!.public;
     if (publicPort) return `http://${host}:${publicPort}`;
   }
 
-  // 5. No URL available
+  // 6. No URL available
   return '#';
 }
 
@@ -103,12 +106,42 @@ export interface MatchInput {
   image: string;
   state: string;
   labels: Record<string, string>;
+  traefikLabelKeys?: readonly string[];
   compose_project?: string;
   compose_service?: string;
   ports: ContainerInfo['ports'];
 }
 
-export function matchContainer(input: MatchInput): Service {
+/** A service for a Traefik router without a container (file provider and the like). */
+export function matchRoute(route: TraefikRoute): Service {
+  const candidates = [route.routerName, route.serviceName];
+  let matched: KnownService | undefined;
+  for (const candidate of candidates) {
+    matched ??= findByAlias(candidate) ?? findByAlias(stripPrefixSuffix(candidate));
+  }
+
+  // By id only: the name fallback is for containers and could hit an unrelated one.
+  const override = overridesStore.get()[route.id];
+  const hidden = override?.hidden ?? matched?.infrastructure ?? false;
+
+  return {
+    id: route.id,
+    source: 'traefik',
+    name: override?.displayName ?? matched?.name ?? route.routerName,
+    description: override?.description ?? matched?.description ?? '',
+    url: override?.url ?? route.url,
+    icon: override?.icon ?? matched?.icon ?? '',
+    category: override?.category ?? matched?.category ?? 'Other',
+    // Traefik only says the route exists; the health check says whether it answers.
+    status: 'unknown',
+    hidden,
+    sortOrder: override?.sortOrder ?? 0,
+    exposure: route.exposure,
+    exposureSource: route.exposureSource,
+  };
+}
+
+export function matchContainer(input: MatchInput, route?: TraefikRoute): Service {
   const container: ContainerInfo = {
     name: input.name,
     image: input.image,
@@ -124,7 +157,7 @@ export function matchContainer(input: MatchInput): Service {
   let description = '';
 
   // Resolve URL via priority cascade
-  let url = resolveUrl(input);
+  let url = resolveUrl(input, route);
 
   // Priority 1: HomeGantry labels (name, icon, category, description — URL handled by resolveUrl)
   const hgName = getLabel(input.labels, 'homegantry.name');
@@ -222,5 +255,6 @@ export function matchContainer(input: MatchInput): Service {
     container,
     hidden,
     sortOrder: override?.sortOrder ?? 0,
+    ...(route ? { exposure: route.exposure, exposureSource: route.exposureSource } : {}),
   };
 }

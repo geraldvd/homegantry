@@ -1,8 +1,16 @@
 import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import { config } from './config.js';
-import { matchContainer, type MatchInput } from './matcher.js';
+import { matchContainer, matchRoute, type MatchInput } from './matcher.js';
 import { stripSecretLabels } from './sanitize.js';
+import {
+  isTraefikEnabled,
+  refreshTraefik,
+  routeForContainer,
+  standaloneRoute,
+  standaloneRoutes,
+  traefikAvailable,
+} from './traefik.js';
 import type { Service } from './types.js';
 
 /** The subset of the Dockerode API that HomeGantry uses (read-only). */
@@ -51,6 +59,10 @@ function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
     image: info.Image ?? '',
     state: info.State ?? 'unknown',
     labels,
+    // Keys only: a router called "keycloak" must still match, though its labels look secret.
+    traefikLabelKeys: Object.keys(info.Labels ?? {}).filter((key) =>
+      /^traefik\.http\.(routers|services)\./i.test(key),
+    ),
     compose_project: labels['com.docker.compose.project'],
     compose_service: labels['com.docker.compose.service'],
     ports,
@@ -59,8 +71,25 @@ function containerToMatchInput(info: Dockerode.ContainerInfo): MatchInput {
 
 // ---- scanning ----
 
+/**
+ * Refresh Traefik data for this scan. While the API is down the scan does not wait for it (Docker
+ * stays responsive); when it comes back, one more scan picks up the new routes.
+ */
+async function syncTraefik(): Promise<void> {
+  if (!isTraefikEnabled()) return;
+  const pending = refreshTraefik();
+  if (traefikAvailable() === false) {
+    void pending.then((changed) => {
+      if (changed) void fullScan();
+    });
+    return;
+  }
+  await pending;
+}
+
 export async function fullScan(): Promise<void> {
   try {
+    await syncTraefik();
     const filters: Record<string, string[]> = {};
     if (!config.showStopped) {
       filters['status'] = ['running'];
@@ -87,8 +116,12 @@ export async function fullScan(): Promise<void> {
       // Cache the match input for rematch support
       matchInputCache.set(input.id, input);
 
-      const svc = matchContainer(input);
+      const svc = matchContainer(input, routeForContainer(input));
       next.set(svc.id, svc);
+    }
+
+    for (const route of standaloneRoutes()) {
+      next.set(route.id, matchRoute(route));
     }
 
     services = next;
@@ -171,8 +204,9 @@ export function isConnected(): boolean {
 /** Re-run matchContainer for a cached input (picks up new overrides). */
 export function rematchService(id: string): Service | undefined {
   const input = matchInputCache.get(id);
-  if (!input) return undefined;
-  const svc = matchContainer(input);
+  const route = input ? undefined : standaloneRoute(id);
+  if (!input && !route) return undefined;
+  const svc = input ? matchContainer(input, routeForContainer(input)) : matchRoute(route!);
   services.set(svc.id, svc);
   return svc;
 }

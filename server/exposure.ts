@@ -25,7 +25,12 @@ export interface ExposureResult {
 const LEVELS: readonly ExposureLevel[] = ['public', 'sso', 'vpn-only', 'unknown'];
 
 /** Higher wins when a router has several middlewares. */
-const STRICTNESS: Record<ExposureLevel, number> = { public: 0, unknown: 1, sso: 2, 'vpn-only': 3 };
+export const EXPOSURE_STRICTNESS: Record<ExposureLevel, number> = {
+  public: 0,
+  unknown: 1,
+  sso: 2,
+  'vpn-only': 3,
+};
 
 export const DEFAULT_EXPOSURE_RULES: readonly ExposureRule[] = [
   { pattern: '*forwardauth*', level: 'sso' },
@@ -109,22 +114,25 @@ function ruleLevel(rules: readonly ExposureRule[], name: string): ExposureLevel 
   return rules.find((r) => globMatches(r.pattern, base) || globMatches(r.pattern, name))?.level;
 }
 
-/** Flatten router middlewares through chains; a name may lack its `@provider`. */
-function flatten(
+/** Router middlewares with chains expanded; a name may lack its `@provider`. */
+export function flattenMiddlewares(
   names: readonly string[],
   middlewares: ReadonlyMap<string, MiddlewareInfo>,
   provider: string | undefined,
-  seen: Set<string>,
-  out: Array<{ name: string; info?: MiddlewareInfo }>,
-): void {
+  seen: Set<string> = new Set(),
+): Array<{ name: string; info?: MiddlewareInfo }> {
+  const out: Array<{ name: string; info?: MiddlewareInfo }> = [];
   for (const raw of names) {
     const full = providerOf(raw) || !provider ? raw : `${raw}@${provider}`;
     if (seen.has(full)) continue;
     seen.add(full);
     const info = middlewares.get(full);
     out.push({ name: full, info });
-    if (info?.chain) flatten(info.chain, middlewares, providerOf(full), seen, out);
+    if (info?.chain) {
+      out.push(...flattenMiddlewares(info.chain, middlewares, providerOf(full), seen));
+    }
   }
+  return out;
 }
 
 /** The exposure of a router with these middlewares (the strictest one wins). */
@@ -136,13 +144,12 @@ export function resolveExposure(
 ): ExposureResult {
   if (names.length === 0) return { level: 'public', source: 'No access middleware on the router' };
 
-  const flat: Array<{ name: string; info?: MiddlewareInfo }> = [];
-  flatten(names, middlewares, routerProvider, new Set(), flat);
+  const flat = flattenMiddlewares(names, middlewares, routerProvider);
 
   let level: ExposureLevel = 'public';
   const reasons: string[] = [];
   const consider = (candidate: ExposureLevel, reason: string) => {
-    if (STRICTNESS[candidate] > STRICTNESS[level]) {
+    if (EXPOSURE_STRICTNESS[candidate] > EXPOSURE_STRICTNESS[level]) {
       level = candidate;
       reasons.length = 0;
     }

@@ -41,8 +41,9 @@ export async function loadServer(env: Env = {}) {
   const storage = await import('../server/storage.js');
   const matcher = await import('../server/matcher.js');
   const docker = await import('../server/docker.js');
+  const traefik = await import('../server/traefik.js');
   const app = await import('../server/app.js');
-  return { dataDir, ...config, ...storage, ...matcher, ...docker, ...app };
+  return { dataDir, ...config, ...storage, ...matcher, ...docker, ...traefik, ...app };
 }
 
 /**
