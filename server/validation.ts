@@ -5,6 +5,7 @@
  */
 import type { RequestHandler } from 'express';
 import { z } from 'zod';
+import { safeHttpUrl } from './urls.js';
 
 const RESERVED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
@@ -15,16 +16,13 @@ const key = z
   .regex(/^[A-Za-z0-9][A-Za-z0-9_.-]*$/, 'letters, digits, ".", "_" and "-" only')
   .refine((k) => !RESERVED_KEYS.has(k), 'reserved name');
 
-function isHttpUrl(value: string): boolean {
-  try {
-    const u = new URL(value);
-    return u.protocol === 'http:' || u.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-const httpUrl = z.string().trim().max(2048).refine(isHttpUrl, 'must be an http(s) URL');
+/** An http(s) URL; userinfo (`user:pass@`) is stripped so credentials are never stored. */
+const httpUrl = z
+  .string()
+  .trim()
+  .max(2048)
+  .refine((value) => safeHttpUrl(value) !== undefined, 'must be an http(s) URL')
+  .transform((value) => safeHttpUrl(value)!);
 /** Service link: an http(s) URL, or "#" for "no link". */
 const serviceUrl = z.union([z.literal('#'), httpUrl]);
 /** dashboard-icons slug (`jellyfin`), an http(s) image URL, or empty for the letter fallback. */

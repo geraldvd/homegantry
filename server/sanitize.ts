@@ -5,7 +5,14 @@
  * label sets; none of that may reach a client. Every response object is rebuilt field by field
  * here instead of being passed through, so new internal fields stay private by default.
  */
-import type { ContainerInfo, DashboardSettings, Service, StackConfig } from './types.js';
+import type {
+  ContainerInfo,
+  DashboardSettings,
+  ManualService,
+  Service,
+  StackConfig,
+} from './types.js';
+import { safeIcon, safeServiceUrl } from './urls.js';
 
 const SECRET_LABEL = /password|passwd|secret|token|key|credential/i;
 
@@ -49,8 +56,9 @@ export function publicService(s: Service): Service {
     source: s.source,
     name: s.name,
     description: s.description,
-    url: s.url,
-    icon: s.icon,
+    // Re-validated here: labels and values stored before M1 never passed request validation.
+    url: (s.url === undefined ? undefined : safeServiceUrl(s.url)) as string,
+    icon: (s.icon === undefined ? undefined : safeIcon(s.icon)) as string,
     category: s.category,
     status: s.status,
     stack: s.stack,
@@ -58,6 +66,19 @@ export function publicService(s: Service): Service {
     hidden: s.hidden,
     sortOrder: s.sortOrder,
   });
+}
+
+/** The public shape of a stored manual service (write responses). */
+export function publicManualService(m: ManualService): ManualService {
+  return {
+    id: m.id,
+    displayName: m.displayName,
+    url: safeServiceUrl(m.url),
+    icon: safeIcon(m.icon),
+    category: m.category,
+    description: m.description,
+    sortOrder: m.sortOrder,
+  };
 }
 
 export function publicStack(c: StackConfig): StackConfig {

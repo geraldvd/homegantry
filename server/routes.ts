@@ -22,7 +22,13 @@ import type {
   StackConfig,
   SSEEvent,
 } from './types.js';
-import { publicService, publicSettings, publicStack, publicStacks } from './sanitize.js';
+import {
+  publicManualService,
+  publicService,
+  publicSettings,
+  publicStack,
+  publicStacks,
+} from './sanitize.js';
 import {
   idParams,
   manualCreateBody,
@@ -133,7 +139,7 @@ router.post(
     // Emit SSE for new manual service
     dockerEvents.emit('service_updated', manualToService(entry));
 
-    res.status(201).json(entry);
+    res.status(201).json(publicManualService(entry));
   },
 );
 
@@ -155,7 +161,7 @@ router.put(
     // Emit SSE for updated manual service
     dockerEvents.emit('service_updated', manualToService(manual[idx]!));
 
-    res.json(manual[idx]);
+    res.json(publicManualService(manual[idx]!));
   },
 );
 
