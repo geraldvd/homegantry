@@ -20,7 +20,8 @@ export const TEMPLATE_FILE = '_template.yaml';
 const FILE_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const ICON_SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // A repository without tag or digest; `*` is the only glob character.
-const IMAGE_PATTERN = /^[a-z0-9*]([a-z0-9._*-]*[a-z0-9*])?(:[0-9]+)?(\/[a-z0-9*]([a-z0-9._*-]*[a-z0-9*])?)*$/i;
+const IMAGE_PATTERN =
+  /^[a-z0-9*]([a-z0-9._*-]*[a-z0-9*])?(:[0-9]+)?(\/[a-z0-9*]([a-z0-9._*-]*[a-z0-9*])?)*$/i;
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 

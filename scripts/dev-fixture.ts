@@ -36,7 +36,7 @@ const { createApp } = await import('../server/app.js');
 const { dockerEvents, getServices, setDockerClient, startWatching } =
   await import('../server/docker.js');
 const { runHealthChecks } = await import('../server/health.js');
-const { exampleLab } = await import('../test/fixtures/containers.js');
+const { exampleLab, knowledgeBaseExamples } = await import('../test/fixtures/containers.js');
 
 // ---- fake backends for the health checks ----
 
@@ -112,7 +112,7 @@ async function checkFixtureHealth() {
 // ---- app ----
 
 setDockerClient({
-  listContainers: async () => exampleLab,
+  listContainers: async () => [...exampleLab, ...knowledgeBaseExamples],
   getEvents: async () => new PassThrough(),
 } as unknown as Parameters<typeof setDockerClient>[0]);
 

@@ -121,3 +121,37 @@ export const exampleLab: Dockerode.ContainerInfo[] = [
     },
   }),
 ];
+
+/** Dev fixture only: services added in M3, and images the knowledge base does not recognise. */
+export const knowledgeBaseExamples: Dockerode.ContainerInfo[] = [
+  container({
+    name: 'dawarich',
+    image: 'freikin/dawarich:latest',
+    project: 'home',
+    ports: [{ PrivatePort: 3000, PublicPort: 3010 }],
+  }),
+  container({
+    name: 'beszel',
+    image: 'henrygd/beszel:latest',
+    project: 'monitoring',
+    ports: [{ PrivatePort: 8090, PublicPort: 8090 }],
+  }),
+  container({
+    name: 'karakeep',
+    image: 'ghcr.io/karakeep-app/karakeep:release',
+    project: 'tools',
+    ports: [{ PrivatePort: 3000, PublicPort: 3020 }],
+  }),
+  container({
+    name: 'komodo',
+    image: 'ghcr.io/moghtech/komodo-core:latest',
+    project: 'tools',
+    ports: [{ PrivatePort: 9120, PublicPort: 9120 }],
+  }),
+  container({
+    name: 'custom-app',
+    image: 'registry.example.com/team/custom-app:1.4',
+    project: 'tools',
+    ports: [{ PrivatePort: 8080, PublicPort: 8081 }],
+  }),
+];

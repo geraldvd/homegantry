@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { parse } from 'yaml';
 import {
   buildKnowledgeBase,
   checkDirectory,
@@ -34,7 +35,14 @@ describe('the shipped knowledge base', () => {
   it('has an entry for every service the milestone names', () => {
     const names = readEntries(KB_DIR).entries.map((e) => e.name);
     expect(names).toEqual(
-      expect.arrayContaining(['Dawarich', 'AirTrail', 'Komodo', 'Beszel', 'Karakeep', 'Proxmox VE']),
+      expect.arrayContaining([
+        'Dawarich',
+        'AirTrail',
+        'Komodo',
+        'Beszel',
+        'Karakeep',
+        'Proxmox VE',
+      ]),
     );
   });
 
@@ -67,8 +75,14 @@ describe('kb:check', () => {
   it.each([
     ['a missing field', 'name: One\ncategory: Media\naliases: [one]\n'],
     ['an unknown field', `${valid('One', 'example/one', 'one')}secret: nope\n`],
-    ['a wrong type', 'name: One\ndescription: x\ncategory: Media\ndefaultPort: web\naliases: [a]\n'],
-    ['a port out of range', 'name: One\ndescription: x\ncategory: M\ndefaultPort: 70000\naliases: [a]\n'],
+    [
+      'a wrong type',
+      'name: One\ndescription: x\ncategory: Media\ndefaultPort: web\naliases: [a]\n',
+    ],
+    [
+      'a port out of range',
+      'name: One\ndescription: x\ncategory: M\ndefaultPort: 70000\naliases: [a]\n',
+    ],
     ['no way to match', 'name: One\ndescription: An example\ncategory: Media\n'],
     ['a tag in a pattern', valid('One', 'example/one:latest', 'one')],
     ['broken YAML', 'name: [unclosed\n'],
@@ -131,6 +145,18 @@ describe('contribution template', () => {
   it('uses only example data', () => {
     const template = fs.readFileSync(path.join(KB_DIR, TEMPLATE_FILE), 'utf-8');
     expect(template).toContain('example/my-service');
+  });
+});
+
+describe('Missing service issue template', () => {
+  it('asks for image name, homepage and icon', () => {
+    const form = parse(
+      fs.readFileSync(path.resolve('.github/ISSUE_TEMPLATE/missing_service.yml'), 'utf-8'),
+    ) as { name: string; body: Array<{ id?: string; validations?: { required?: boolean } }> };
+    expect(form.name).toBe('Missing service');
+    for (const id of ['images', 'homepage', 'icon']) {
+      expect(form.body.find((field) => field.id === id)?.validations?.required, id).toBe(true);
+    }
   });
 });
 
