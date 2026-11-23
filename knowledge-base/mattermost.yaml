@@ -1,0 +1,10 @@
+name: Mattermost
+description: Open-source team messaging
+icon: mattermost
+category: Communication
+defaultPort: 8065
+patterns:
+  - mattermost/mattermost-team-edition
+  - mattermost/mattermost-enterprise-edition
+aliases:
+  - mattermost

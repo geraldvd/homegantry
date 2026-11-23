@@ -1,0 +1,8 @@
+name: QNAP QTS
+description: QNAP NAS management
+icon: qnap
+category: Storage
+defaultPort: 443
+traefik:
+  - qnap
+  - qts

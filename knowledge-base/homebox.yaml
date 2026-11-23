@@ -1,0 +1,10 @@
+name: Homebox
+description: Home inventory management
+icon: homebox
+category: Home
+defaultPort: 7745
+patterns:
+  - ghcr.io/sysadminsmedia/homebox
+  - ghcr.io/hay-kot/homebox
+aliases:
+  - homebox

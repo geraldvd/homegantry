@@ -1,0 +1,11 @@
+name: Stash
+description: Organizer and metadata scraper for media
+icon: stash
+category: Media
+defaultPort: 9999
+patterns:
+  - stashapp/stash
+  - ghcr.io/stashapp/stash
+aliases:
+  - stash
+  - stashapp

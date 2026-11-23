@@ -1,0 +1,8 @@
+name: XCP-ng
+description: Open-source virtualisation platform
+icon: xcp-ng
+category: Infrastructure
+defaultPort: 443
+traefik:
+  - xcp-ng
+  - xcpng

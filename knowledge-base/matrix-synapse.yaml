@@ -1,0 +1,12 @@
+name: Matrix Synapse
+description: Decentralized messaging homeserver
+icon: matrix
+category: Communication
+defaultPort: 8008
+patterns:
+  - matrixdotorg/synapse
+  - ghcr.io/element-hq/synapse
+aliases:
+  - synapse
+  - matrix
+  - matrix-synapse

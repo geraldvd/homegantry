@@ -1,0 +1,7 @@
+name: Unraid
+description: NAS and application server operating system
+icon: unraid
+category: Storage
+defaultPort: 443
+traefik:
+  - unraid

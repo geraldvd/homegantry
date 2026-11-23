@@ -1,0 +1,7 @@
+name: iDRAC
+description: Dell server remote management
+icon: idrac
+category: Infrastructure
+defaultPort: 443
+traefik:
+  - idrac

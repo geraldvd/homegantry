@@ -1,0 +1,10 @@
+name: Alertmanager
+description: Alert routing for Prometheus
+icon: alertmanager
+category: Monitoring
+defaultPort: 9093
+patterns:
+  - prom/alertmanager
+  - quay.io/prometheus/alertmanager
+aliases:
+  - alertmanager

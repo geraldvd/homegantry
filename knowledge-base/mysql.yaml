@@ -1,0 +1,13 @@
+name: MySQL
+description: Popular open-source relational database
+icon: mysql
+category: Databases
+defaultPort: 3306
+patterns:
+  - mysql
+  - library/mysql
+  - bitnami/mysql
+  - mysql/mysql-server
+aliases:
+  - mysql
+infrastructure: true

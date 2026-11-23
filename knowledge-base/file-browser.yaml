@@ -1,0 +1,11 @@
+name: File Browser
+description: Web-based file manager interface
+icon: filebrowser
+category: Storage
+defaultPort: 8080
+patterns:
+  - filebrowser/filebrowser
+  - ghcr.io/filebrowser/filebrowser
+aliases:
+  - filebrowser
+  - file-browser

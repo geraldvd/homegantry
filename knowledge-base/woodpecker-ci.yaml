@@ -1,0 +1,10 @@
+name: Woodpecker CI
+description: Simple continuous integration engine
+icon: woodpecker-ci
+category: Development
+defaultPort: 8000
+patterns:
+  - woodpeckerci/woodpecker-server
+aliases:
+  - woodpecker
+  - woodpecker-server

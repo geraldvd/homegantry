@@ -1,0 +1,12 @@
+name: Minecraft Server
+description: Dedicated Minecraft game server
+icon: minecraft
+category: Games
+defaultPort: 25565
+patterns:
+  - itzg/minecraft-server
+  - itzg/minecraft-bedrock-server
+aliases:
+  - minecraft
+  - minecraft-server
+  - mc-server

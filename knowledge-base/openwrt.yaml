@@ -1,0 +1,8 @@
+name: OpenWrt
+description: Linux operating system for routers
+icon: openwrt
+category: Network
+defaultPort: 80
+traefik:
+  - openwrt
+  - luci

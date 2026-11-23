@@ -1,0 +1,10 @@
+name: KeyDB
+description: High-performance Redis-compatible database
+category: Databases
+defaultPort: 6379
+patterns:
+  - eqalpha/keydb
+  - ghcr.io/eqalpha/keydb
+aliases:
+  - keydb
+infrastructure: true

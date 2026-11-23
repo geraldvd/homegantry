@@ -1,0 +1,8 @@
+name: iLO
+description: HPE server remote management
+icon: ilo
+category: Infrastructure
+defaultPort: 443
+traefik:
+  - ilo
+  - hpe-ilo

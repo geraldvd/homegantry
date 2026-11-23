@@ -1,0 +1,10 @@
+name: Invoice Ninja
+description: Invoicing and payments
+icon: invoice-ninja
+category: Productivity
+defaultPort: 80
+patterns:
+  - invoiceninja/invoiceninja
+aliases:
+  - invoiceninja
+  - invoice-ninja

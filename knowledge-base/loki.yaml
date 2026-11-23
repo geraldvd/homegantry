@@ -1,0 +1,9 @@
+name: Loki
+description: Log aggregation system
+icon: loki
+category: Monitoring
+defaultPort: 3100
+patterns:
+  - grafana/loki
+aliases:
+  - loki

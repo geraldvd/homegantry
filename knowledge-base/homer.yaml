@@ -1,0 +1,10 @@
+name: Homer
+description: Simple static HOMEpage for your server
+icon: homer
+category: Dashboard
+defaultPort: 8080
+patterns:
+  - b4bz/homer
+  - ghcr.io/bastienwirtz/homer
+aliases:
+  - homer

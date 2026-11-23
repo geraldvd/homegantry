@@ -1,0 +1,12 @@
+name: Changedetection.io
+description: Website change detection and monitoring
+icon: changedetection
+category: Productivity
+defaultPort: 5000
+patterns:
+  - dgtlmoon/changedetection.io
+  - ghcr.io/dgtlmoon/changedetection.io
+aliases:
+  - changedetection
+  - changedetection-io
+  - changedetectionio

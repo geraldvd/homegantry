@@ -1,0 +1,10 @@
+name: Dozzle
+description: Real-time Docker container log viewer
+icon: dozzle
+category: Monitoring
+defaultPort: 8080
+patterns:
+  - amir20/dozzle
+  - ghcr.io/amir20/dozzle
+aliases:
+  - dozzle

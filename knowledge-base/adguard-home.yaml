@@ -1,0 +1,12 @@
+name: AdGuard Home
+description: Network-wide ad and tracker blocking DNS
+icon: adguard-home
+category: Network
+defaultPort: 3000
+patterns:
+  - adguard/adguardhome
+  - ghcr.io/adguardteam/adguardhome
+aliases:
+  - adguardhome
+  - adguard-home
+  - adguard

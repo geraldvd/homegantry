@@ -1,0 +1,10 @@
+name: Linkding
+description: Self-hosted bookmark manager
+icon: linkding
+category: Productivity
+defaultPort: 9090
+patterns:
+  - sissbruecker/linkding
+  - ghcr.io/sissbruecker/linkding
+aliases:
+  - linkding

@@ -1,0 +1,13 @@
+name: Docker Socket Proxy
+description: Secured Docker socket proxy
+icon: docker
+category: Infrastructure
+defaultPort: 2375
+patterns:
+  - tecnativa/docker-socket-proxy
+  - ghcr.io/tecnativa/docker-socket-proxy
+  - linuxserver/socket-proxy
+aliases:
+  - docker-socket-proxy
+  - socket-proxy
+infrastructure: true

@@ -1,0 +1,10 @@
+name: Dockge
+description: Docker compose stack manager with UI
+icon: dockge
+category: Infrastructure
+defaultPort: 5001
+patterns:
+  - louislam/dockge
+  - ghcr.io/louislam/dockge
+aliases:
+  - dockge

@@ -85,7 +85,16 @@ export interface KnownService {
   defaultPort?: number;
   patterns: string[];
   aliases: string[];
+  /** Traefik router/service names, for services that do not run in Docker. */
+  traefik?: string[];
   infrastructure?: boolean;
+}
+
+/** `GET /api/kb/coverage` (edit rights): image names only, never labels or other details. */
+export interface KbCoverage {
+  total: number;
+  recognised: number;
+  unrecognised: string[];
 }
 
 export type SSEEvent =

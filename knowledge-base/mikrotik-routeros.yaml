@@ -1,0 +1,8 @@
+name: MikroTik RouterOS
+description: MikroTik router management
+icon: mikrotik
+category: Network
+defaultPort: 80
+traefik:
+  - mikrotik
+  - routeros

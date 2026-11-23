@@ -1,0 +1,10 @@
+name: Frigate
+description: NVR with real-time object detection
+icon: frigate
+category: Home
+defaultPort: 5000
+patterns:
+  - ghcr.io/blakeblackshear/frigate
+  - blakeblackshear/frigate
+aliases:
+  - frigate

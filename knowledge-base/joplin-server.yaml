@@ -1,0 +1,10 @@
+name: Joplin Server
+description: Sync server for Joplin notes
+icon: joplin
+category: Productivity
+defaultPort: 22300
+patterns:
+  - joplin/server
+aliases:
+  - joplin
+  - joplin-server

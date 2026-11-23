@@ -1,0 +1,10 @@
+name: NetBox
+description: Network source of truth
+icon: netbox
+category: Network
+defaultPort: 8080
+patterns:
+  - netboxcommunity/netbox
+  - linuxserver/netbox
+aliases:
+  - netbox

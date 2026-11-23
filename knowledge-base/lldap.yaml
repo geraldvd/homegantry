@@ -1,0 +1,10 @@
+name: LLDAP
+description: Lightweight LDAP server
+icon: lldap
+category: Security
+defaultPort: 17170
+patterns:
+  - lldap/lldap
+  - nitnelave/lldap
+aliases:
+  - lldap

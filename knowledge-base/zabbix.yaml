@@ -1,0 +1,11 @@
+name: Zabbix
+description: Enterprise monitoring
+icon: zabbix
+category: Monitoring
+defaultPort: 8080
+patterns:
+  - zabbix/zabbix-web-nginx-pgsql
+  - zabbix/zabbix-web-nginx-mysql
+aliases:
+  - zabbix
+  - zabbix-web

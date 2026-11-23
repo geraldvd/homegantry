@@ -1,0 +1,10 @@
+name: Diun
+description: Docker image update notifier
+icon: diun
+category: Infrastructure
+defaultPort: 8080
+patterns:
+  - crazymax/diun
+  - ghcr.io/crazy-max/diun
+aliases:
+  - diun

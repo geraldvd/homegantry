@@ -1,0 +1,10 @@
+name: Tailscale
+description: Zero-config mesh VPN built on WireGuard
+icon: tailscale
+category: Network
+defaultPort: 41641
+patterns:
+  - tailscale/tailscale
+  - ghcr.io/tailscale/tailscale
+aliases:
+  - tailscale

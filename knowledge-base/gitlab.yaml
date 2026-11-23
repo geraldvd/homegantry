@@ -1,0 +1,10 @@
+name: GitLab
+description: DevOps platform with Git hosting
+icon: gitlab
+category: Development
+defaultPort: 80
+patterns:
+  - gitlab/gitlab-ce
+  - gitlab/gitlab-ee
+aliases:
+  - gitlab

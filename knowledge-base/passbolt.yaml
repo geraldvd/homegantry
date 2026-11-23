@@ -1,0 +1,9 @@
+name: Passbolt
+description: Team password manager
+icon: passbolt
+category: Security
+defaultPort: 443
+patterns:
+  - passbolt/passbolt
+aliases:
+  - passbolt

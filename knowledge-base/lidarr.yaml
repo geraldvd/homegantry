@@ -1,0 +1,11 @@
+name: Lidarr
+description: Music collection management and automation
+icon: lidarr
+category: Media
+defaultPort: 8686
+patterns:
+  - linuxserver/lidarr
+  - ghcr.io/linuxserver/lidarr
+  - hotio/lidarr
+aliases:
+  - lidarr

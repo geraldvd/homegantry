@@ -1,0 +1,11 @@
+name: Immich
+description: High-performance self-hosted photo and video
+icon: immich
+category: Storage
+defaultPort: 2283
+patterns:
+  - ghcr.io/immich-app/immich-server
+  - altran1502/immich-server
+aliases:
+  - immich
+  - immich-server

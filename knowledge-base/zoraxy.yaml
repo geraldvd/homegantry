@@ -1,0 +1,9 @@
+name: Zoraxy
+description: General-purpose reverse proxy
+icon: zoraxy
+category: Network
+defaultPort: 8000
+patterns:
+  - zoraxydocker/zoraxy
+aliases:
+  - zoraxy

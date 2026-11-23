@@ -1,0 +1,9 @@
+name: Komga
+description: Comics and manga server
+icon: komga
+category: Media
+defaultPort: 25600
+patterns:
+  - gotson/komga
+aliases:
+  - komga

@@ -1,0 +1,13 @@
+name: Tautulli
+description: Monitoring and tracking for Plex Media Server
+icon: tautulli
+category: Media
+defaultPort: 8181
+patterns:
+  - linuxserver/tautulli
+  - ghcr.io/linuxserver/tautulli
+  - tautulli/tautulli
+  - ghcr.io/tautulli/tautulli
+aliases:
+  - tautulli
+  - plexpy

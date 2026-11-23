@@ -1,0 +1,9 @@
+name: Linkwarden
+description: Collaborative bookmark manager
+icon: linkwarden
+category: Productivity
+defaultPort: 3000
+patterns:
+  - ghcr.io/linkwarden/linkwarden
+aliases:
+  - linkwarden

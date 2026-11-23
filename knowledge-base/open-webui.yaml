@@ -1,0 +1,10 @@
+name: Open WebUI
+description: Web interface for local AI models
+icon: open-webui
+category: AI
+defaultPort: 8080
+patterns:
+  - ghcr.io/open-webui/open-webui
+aliases:
+  - open-webui
+  - openwebui

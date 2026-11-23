@@ -1,0 +1,10 @@
+name: NetBird
+description: WireGuard-based overlay network
+icon: netbird
+category: Network
+defaultPort: 80
+patterns:
+  - netbirdio/dashboard
+  - netbirdio/management
+aliases:
+  - netbird

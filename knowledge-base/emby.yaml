@@ -1,0 +1,12 @@
+name: Emby
+description: Personal media server
+icon: emby
+category: Media
+defaultPort: 8096
+patterns:
+  - emby/embyserver
+  - linuxserver/emby
+  - ghcr.io/linuxserver/emby
+aliases:
+  - emby
+  - embyserver

@@ -1,0 +1,11 @@
+name: NZBGet
+description: Efficient Usenet downloader
+icon: nzbget
+category: Downloads
+defaultPort: 6789
+patterns:
+  - linuxserver/nzbget
+  - ghcr.io/linuxserver/nzbget
+  - hotio/nzbget
+aliases:
+  - nzbget

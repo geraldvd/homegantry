@@ -1,0 +1,12 @@
+name: Nginx Proxy Manager
+description: Easy-to-use reverse proxy with SSL management
+icon: nginx-proxy-manager
+category: Network
+defaultPort: 81
+patterns:
+  - jc21/nginx-proxy-manager
+  - ghcr.io/nginxproxymanager/nginx-proxy-manager
+aliases:
+  - nginx-proxy-manager
+  - nginxproxymanager
+  - npm

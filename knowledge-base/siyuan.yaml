@@ -1,0 +1,9 @@
+name: SiYuan
+description: Privacy-first knowledge management
+icon: siyuan
+category: Productivity
+defaultPort: 6806
+patterns:
+  - b3log/siyuan
+aliases:
+  - siyuan

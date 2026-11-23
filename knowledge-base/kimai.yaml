@@ -1,0 +1,9 @@
+name: Kimai
+description: Time tracking
+icon: kimai
+category: Productivity
+defaultPort: 8001
+patterns:
+  - kimai/kimai2
+aliases:
+  - kimai

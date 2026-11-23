@@ -1,0 +1,9 @@
+name: Beszel
+description: Lightweight server monitoring hub
+icon: beszel
+category: Monitoring
+defaultPort: 8090
+patterns:
+  - henrygd/beszel
+aliases:
+  - beszel

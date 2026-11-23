@@ -1,0 +1,10 @@
+name: Z-Wave JS UI
+description: Z-Wave control panel and gateway
+icon: z-wave-js-ui
+category: Home
+defaultPort: 8091
+patterns:
+  - zwavejs/zwave-js-ui
+aliases:
+  - zwave-js-ui
+  - zwavejs

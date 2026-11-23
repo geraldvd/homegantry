@@ -1,0 +1,9 @@
+name: Piwigo
+description: Photo gallery
+icon: piwigo
+category: Storage
+defaultPort: 80
+patterns:
+  - linuxserver/piwigo
+aliases:
+  - piwigo

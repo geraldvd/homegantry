@@ -1,0 +1,10 @@
+name: Telegraf
+description: Metrics collection agent
+icon: telegraf
+category: Monitoring
+defaultPort: 8125
+patterns:
+  - telegraf
+aliases:
+  - telegraf
+infrastructure: true

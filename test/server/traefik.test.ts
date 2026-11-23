@@ -172,7 +172,7 @@ describe('Traefik discovery', () => {
     await s.refreshTraefik({ force: true });
     await s.fullScan();
     expect(byId(s.getServices(), 'traefik-proxmox-file')).toMatchObject({
-      name: 'proxmox',
+      name: 'Proxmox VE',
       hidden: false,
     });
   });
@@ -182,7 +182,9 @@ describe('Traefik discovery', () => {
     const proxmox = byId(s.getServices(), 'traefik-proxmox-file');
     expect(proxmox).toMatchObject({
       source: 'traefik',
-      name: 'proxmox',
+      name: 'Proxmox VE',
+      icon: 'proxmox',
+      category: 'Infrastructure',
       url: 'https://proxmox.example.com',
       exposure: 'private',
       hidden: false,

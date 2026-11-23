@@ -1,0 +1,10 @@
+name: Mylar3
+description: Comic book collection manager
+icon: mylar
+category: Media
+defaultPort: 8090
+patterns:
+  - linuxserver/mylar3
+aliases:
+  - mylar
+  - mylar3

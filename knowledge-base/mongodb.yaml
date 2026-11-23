@@ -1,0 +1,13 @@
+name: MongoDB
+description: General-purpose document-oriented database
+icon: mongodb
+category: Databases
+defaultPort: 27017
+patterns:
+  - mongo
+  - library/mongo
+  - bitnami/mongodb
+aliases:
+  - mongo
+  - mongodb
+infrastructure: true

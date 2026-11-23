@@ -1,0 +1,9 @@
+name: Music Assistant
+description: Music library manager for your speakers
+icon: music-assistant
+category: Home
+defaultPort: 8095
+patterns:
+  - ghcr.io/music-assistant/server
+aliases:
+  - music-assistant

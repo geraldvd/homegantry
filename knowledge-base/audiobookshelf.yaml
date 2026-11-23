@@ -1,0 +1,10 @@
+name: Audiobookshelf
+description: Self-hosted audiobook and podcast server
+icon: audiobookshelf
+category: Media
+defaultPort: 13378
+patterns:
+  - ghcr.io/advplyr/audiobookshelf
+  - advplyr/audiobookshelf
+aliases:
+  - audiobookshelf

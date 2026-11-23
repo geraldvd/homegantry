@@ -1,0 +1,11 @@
+name: Transmission
+description: Lightweight and fast BitTorrent client
+icon: transmission
+category: Downloads
+defaultPort: 9091
+patterns:
+  - linuxserver/transmission
+  - ghcr.io/linuxserver/transmission
+  - haugene/transmission-openvpn
+aliases:
+  - transmission

@@ -1,0 +1,11 @@
+name: Bookstack
+description: Platform for organizing and storing information
+icon: bookstack
+category: Productivity
+defaultPort: 6875
+patterns:
+  - linuxserver/bookstack
+  - ghcr.io/linuxserver/bookstack
+  - solidnerd/bookstack
+aliases:
+  - bookstack

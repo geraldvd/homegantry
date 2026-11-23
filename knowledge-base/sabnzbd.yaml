@@ -1,0 +1,12 @@
+name: SABnzbd
+description: Free and easy Usenet binary newsreader
+icon: sabnzbd
+category: Downloads
+defaultPort: 8080
+patterns:
+  - linuxserver/sabnzbd
+  - ghcr.io/linuxserver/sabnzbd
+  - hotio/sabnzbd
+aliases:
+  - sabnzbd
+  - sab

@@ -1,0 +1,10 @@
+name: Forgejo
+description: Self-hosted lightweight software forge
+icon: forgejo
+category: Productivity
+defaultPort: 3000
+patterns:
+  - codeberg.org/forgejo/forgejo
+  - ghcr.io/forgejo/forgejo
+aliases:
+  - forgejo

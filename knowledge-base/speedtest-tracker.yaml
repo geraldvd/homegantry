@@ -1,0 +1,12 @@
+name: Speedtest Tracker
+description: Internet speed tracking and monitoring
+icon: speedtest-tracker
+category: Network
+defaultPort: 8080
+patterns:
+  - ghcr.io/alexjustesen/speedtest-tracker
+  - linuxserver/speedtest-tracker
+  - henrywhitaker3/speedtest-tracker
+aliases:
+  - speedtest-tracker
+  - speedtest

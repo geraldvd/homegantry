@@ -1,0 +1,9 @@
+name: NocoDB
+description: Open-source Airtable alternative
+icon: nocodb
+category: Productivity
+defaultPort: 8080
+patterns:
+  - nocodb/nocodb
+aliases:
+  - nocodb

@@ -1,0 +1,9 @@
+name: Planka
+description: Kanban board for teams
+icon: planka
+category: Productivity
+defaultPort: 1337
+patterns:
+  - ghcr.io/plankanban/planka
+aliases:
+  - planka

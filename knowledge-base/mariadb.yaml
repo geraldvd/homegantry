@@ -1,0 +1,12 @@
+name: MariaDB
+description: Community-developed MySQL-compatible database
+icon: mariadb
+category: Databases
+defaultPort: 3306
+patterns:
+  - mariadb
+  - library/mariadb
+  - linuxserver/mariadb
+aliases:
+  - mariadb
+infrastructure: true

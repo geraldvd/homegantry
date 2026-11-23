@@ -1,0 +1,10 @@
+name: Gatus
+description: Health dashboard for monitoring endpoints
+icon: gatus
+category: Monitoring
+defaultPort: 8080
+patterns:
+  - twinproduction/gatus
+  - ghcr.io/twin/gatus
+aliases:
+  - gatus

@@ -1,0 +1,10 @@
+name: Heimdall
+description: Application dashboard and launcher
+icon: heimdall
+category: Dashboard
+defaultPort: 443
+patterns:
+  - linuxserver/heimdall
+  - ghcr.io/linuxserver/heimdall
+aliases:
+  - heimdall

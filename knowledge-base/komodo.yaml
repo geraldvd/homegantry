@@ -1,0 +1,12 @@
+name: Komodo
+description: Multi-server Docker and service manager
+icon: komodo
+category: Infrastructure
+defaultPort: 9120
+patterns:
+  - ghcr.io/mbecker20/komodo
+  - ghcr.io/moghtech/komodo
+  - ghcr.io/moghtech/komodo-*
+  - ghcr.io/mbecker20/komodo-*
+aliases:
+  - komodo

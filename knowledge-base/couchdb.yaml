@@ -1,0 +1,10 @@
+name: CouchDB
+description: Document database with sync
+icon: couchdb
+category: Databases
+defaultPort: 5984
+patterns:
+  - couchdb
+aliases:
+  - couchdb
+infrastructure: true

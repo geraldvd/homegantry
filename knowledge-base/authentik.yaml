@@ -1,0 +1,10 @@
+name: Authentik
+description: Open-source identity provider and SSO
+icon: authentik
+category: Security
+defaultPort: 9000
+patterns:
+  - ghcr.io/goauthentik/server
+  - beryju/authentik
+aliases:
+  - authentik

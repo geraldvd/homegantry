@@ -1,0 +1,11 @@
+name: Radarr
+description: Movie collection management and automation
+icon: radarr
+category: Media
+defaultPort: 7878
+patterns:
+  - linuxserver/radarr
+  - ghcr.io/linuxserver/radarr
+  - hotio/radarr
+aliases:
+  - radarr

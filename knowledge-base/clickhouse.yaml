@@ -1,0 +1,10 @@
+name: ClickHouse
+description: Column-oriented analytics database
+icon: clickhouse
+category: Databases
+defaultPort: 8123
+patterns:
+  - clickhouse/clickhouse-server
+aliases:
+  - clickhouse
+infrastructure: true

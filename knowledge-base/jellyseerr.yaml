@@ -1,0 +1,10 @@
+name: Jellyseerr
+description: Media request management for Jellyfin
+icon: jellyseerr
+category: Media
+defaultPort: 5055
+patterns:
+  - fallenbagel/jellyseerr
+  - ghcr.io/fallenbagel/jellyseerr
+aliases:
+  - jellyseerr

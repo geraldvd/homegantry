@@ -53,9 +53,26 @@ describe('matchContainer: knowledge base by image', () => {
     expect(svc).toMatchObject({ name: 'my-thing', category: 'Other', icon: '', description: '' });
   });
 
-  it('uses substring matching on the repository (current behaviour)', async () => {
-    // "redis" is a pattern of the Redis entry, so any repo containing it matches.
-    expect((await match({ image: 'example/redis-exporter:1' })).name).toBe('Redis');
+  it.each([
+    'example/redis-exporter:1',
+    'oliver006/redis_exporter:latest',
+    'prometheuscommunity/postgres-exporter',
+    'example/postgres-db:1',
+    'mongo-express:1',
+    'traefik/whoami',
+    'grafana/grafana-image-renderer',
+  ])('does not match the look-alike %s (#13 c)', async (image) => {
+    const svc = await match({ image });
+    expect(svc).toMatchObject({ name: 'some-container', category: 'Other', hidden: false });
+  });
+
+  it('recognises the real repository under another namespace', async () => {
+    expect((await match({ image: 'ghcr.io/example/redis:7' })).name).toBe('Redis');
+  });
+
+  it('a bouncer image resolves to its own entry, not to Traefik', async () => {
+    const svc = await match({ image: 'fbonalair/traefik-crowdsec-bouncer:latest' });
+    expect(svc.name).toBe('CrowdSec Bouncer');
   });
 });
 
@@ -161,8 +178,7 @@ describe('matchContainer: label precedence', () => {
     expect(svc).toMatchObject({ name: 'HG Name', category: 'HG Cat', icon: '' });
   });
 
-  it('without homegantry.name, homepage.* values are applied after homegantry.* (current behaviour)', async () => {
-    // Characterisation: homepage.icon currently overwrites homegantry.icon when no homegantry.name is set.
+  it('homegantry.icon beats homepage.icon when no name label is set (#13 a)', async () => {
     const svc = await match({
       labels: {
         'homegantry.icon': 'hg-icon',
@@ -170,16 +186,60 @@ describe('matchContainer: label precedence', () => {
         'homepage.icon': 'hp-icon',
       },
     });
-    expect(svc).toMatchObject({ name: 'HP Name', icon: 'hp-icon' });
+    expect(svc).toMatchObject({ name: 'HP Name', icon: 'hg-icon' });
   });
 
-  it('homegantry.icon without a name is kept while the knowledge base fills in the rest', async () => {
+  it('homepage.icon is used when there is no homegantry.icon (#13 a)', async () => {
+    const svc = await match({ labels: { 'homepage.icon': 'hp-icon' } });
+    expect(svc.icon).toBe('hp-icon');
+  });
+
+  it('homegantry.category beats homepage.group', async () => {
+    const svc = await match({
+      labels: { 'homegantry.category': 'Mine', 'homepage.group': 'Theirs' },
+    });
+    expect(svc.category).toBe('Mine');
+  });
+
+  it('homegantry.category beats the knowledge base (#13 d)', async () => {
     const svc = await match({
       image: 'jellyfin/jellyfin',
       labels: { 'homegantry.icon': 'custom-icon', 'homegantry.category': 'Mine' },
     });
-    // Characterisation: the knowledge-base category currently wins over homegantry.category here.
-    expect(svc).toMatchObject({ name: 'Jellyfin', icon: 'custom-icon', category: 'Media' });
+    expect(svc).toMatchObject({ name: 'Jellyfin', icon: 'custom-icon', category: 'Mine' });
+  });
+
+  it('an explicit category "Other" still beats the knowledge base (#13 d)', async () => {
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: { 'homegantry.category': 'Other' },
+    });
+    expect(svc).toMatchObject({ name: 'Jellyfin', category: 'Other' });
+  });
+
+  it('homepage.group beats the knowledge base without a name label (#13 d)', async () => {
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: { 'homepage.group': 'Streaming' },
+    });
+    expect(svc).toMatchObject({ name: 'Jellyfin', category: 'Streaming' });
+  });
+
+  it('ignores homepage.group for the category when compat is off', async () => {
+    const svc = await match(
+      { image: 'jellyfin/jellyfin', labels: { 'homepage.group': 'Streaming' } },
+      { HOMEGANTRY_HOMEPAGE_COMPAT: 'false' },
+    );
+    expect(svc.category).toBe('Media');
+  });
+
+  it('a stored override still beats every label', async () => {
+    const server = await loadServer();
+    server.overridesStore.set({ abc123: { category: 'Override', icon: 'override-icon' } });
+    const svc = server.matchContainer(
+      input({ labels: { 'homegantry.category': 'Mine', 'homegantry.icon': 'hg-icon' } }),
+    );
+    expect(svc).toMatchObject({ category: 'Override', icon: 'override-icon' });
   });
 
   it('homegantry.description alone is ignored', async () => {

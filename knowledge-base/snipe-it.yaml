@@ -1,0 +1,11 @@
+name: Snipe-IT
+description: IT asset management
+icon: snipe-it
+category: Productivity
+defaultPort: 80
+patterns:
+  - snipe/snipe-it
+  - linuxserver/snipe-it
+aliases:
+  - snipe-it
+  - snipeit

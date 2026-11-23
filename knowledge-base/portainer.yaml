@@ -1,0 +1,13 @@
+name: Portainer
+description: Container management GUI for Docker
+icon: portainer
+category: Infrastructure
+defaultPort: 9000
+patterns:
+  - portainer/portainer-ce
+  - portainer/portainer
+  - portainer/portainer-ee
+aliases:
+  - portainer
+  - portainer-ce
+  - portainer-ee

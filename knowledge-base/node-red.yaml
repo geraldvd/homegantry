@@ -1,0 +1,11 @@
+name: Node-RED
+description: Flow-based programming for IoT automation
+icon: node-red
+category: Home
+defaultPort: 1880
+patterns:
+  - nodered/node-red
+  - ghcr.io/node-red/node-red
+aliases:
+  - nodered
+  - node-red

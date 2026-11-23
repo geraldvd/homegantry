@@ -1,0 +1,12 @@
+name: qBittorrent
+description: Free and open-source BitTorrent client
+icon: qbittorrent
+category: Downloads
+defaultPort: 8080
+patterns:
+  - linuxserver/qbittorrent
+  - ghcr.io/linuxserver/qbittorrent
+  - hotio/qbittorrent
+aliases:
+  - qbittorrent
+  - qbt

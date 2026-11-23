@@ -1,0 +1,11 @@
+name: Pi-hole
+description: Network-wide ad blocking DNS server
+icon: pi-hole
+category: Network
+defaultPort: 80
+patterns:
+  - pihole/pihole
+  - ghcr.io/pi-hole/pihole
+aliases:
+  - pihole
+  - pi-hole

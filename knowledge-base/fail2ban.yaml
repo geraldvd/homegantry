@@ -1,0 +1,11 @@
+name: Fail2Ban
+description: Intrusion prevention framework
+icon: fail2ban
+category: Security
+patterns:
+  - linuxserver/fail2ban
+  - ghcr.io/linuxserver/fail2ban
+  - crazymax/fail2ban
+aliases:
+  - fail2ban
+infrastructure: true

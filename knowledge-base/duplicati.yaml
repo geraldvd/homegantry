@@ -1,0 +1,10 @@
+name: Duplicati
+description: Encrypted cloud backups
+icon: duplicati
+category: Storage
+defaultPort: 8200
+patterns:
+  - linuxserver/duplicati
+  - duplicati/duplicati
+aliases:
+  - duplicati

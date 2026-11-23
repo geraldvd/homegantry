@@ -1,0 +1,11 @@
+name: Jackett
+description: Proxy server for torrent indexer queries
+icon: jackett
+category: Downloads
+defaultPort: 9117
+patterns:
+  - linuxserver/jackett
+  - ghcr.io/linuxserver/jackett
+  - hotio/jackett
+aliases:
+  - jackett

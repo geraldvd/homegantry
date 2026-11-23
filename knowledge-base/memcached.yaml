@@ -1,0 +1,11 @@
+name: Memcached
+description: Distributed memory object caching system
+category: Databases
+defaultPort: 11211
+patterns:
+  - memcached
+  - library/memcached
+  - bitnami/memcached
+aliases:
+  - memcached
+infrastructure: true

@@ -1,0 +1,9 @@
+name: Scrutiny
+description: Hard drive health dashboard
+icon: scrutiny
+category: Monitoring
+defaultPort: 8080
+patterns:
+  - ghcr.io/analogj/scrutiny
+aliases:
+  - scrutiny

@@ -6,3 +6,6 @@ docs/.vitepress/dist/
 docs/.vitepress/cache/
 docs/public/
 data/
+server/knowledge-base.generated.json
+knowledge-base/_meta/
+test/fixtures/kb/known-services.legacy.json

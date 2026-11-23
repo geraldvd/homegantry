@@ -1,0 +1,10 @@
+name: Ntfy
+description: Simple HTTP-based push notification service
+icon: ntfy
+category: Communication
+defaultPort: 80
+patterns:
+  - binwiederhier/ntfy
+  - ghcr.io/binwiederhier/ntfy
+aliases:
+  - ntfy

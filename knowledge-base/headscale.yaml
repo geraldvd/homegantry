@@ -1,0 +1,10 @@
+name: Headscale
+description: Self-hosted Tailscale control server
+icon: headscale
+category: Network
+defaultPort: 8080
+patterns:
+  - headscale/headscale
+  - ghcr.io/juanfont/headscale
+aliases:
+  - headscale

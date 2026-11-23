@@ -1,0 +1,13 @@
+name: Wiki.js
+description: Modern and powerful wiki application
+icon: wikijs
+category: Productivity
+defaultPort: 3000
+patterns:
+  - linuxserver/wikijs
+  - ghcr.io/requarks/wiki
+  - requarks/wiki
+aliases:
+  - wikijs
+  - wiki-js
+  - wiki

@@ -1,0 +1,10 @@
+name: Homepage
+description: Highly customizable application dashboard
+icon: homepage
+category: Dashboard
+defaultPort: 3000
+patterns:
+  - ghcr.io/gethomepage/homepage
+  - ghcr.io/benphelps/homepage
+aliases:
+  - homepage

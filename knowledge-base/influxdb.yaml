@@ -1,0 +1,13 @@
+name: InfluxDB
+description: Time-series database for metrics and events
+icon: influxdb
+category: Databases
+defaultPort: 8086
+patterns:
+  - influxdb
+  - library/influxdb
+  - bitnami/influxdb
+aliases:
+  - influxdb
+  - influx
+infrastructure: true

@@ -1,0 +1,9 @@
+name: PrivateBin
+description: Encrypted pastebin
+icon: privatebin
+category: Security
+defaultPort: 8080
+patterns:
+  - privatebin/nginx-fpm-alpine
+aliases:
+  - privatebin

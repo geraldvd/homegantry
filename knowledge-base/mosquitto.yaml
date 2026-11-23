@@ -1,0 +1,13 @@
+name: Mosquitto
+description: Lightweight MQTT message broker
+icon: mosquitto
+category: Home
+defaultPort: 1883
+patterns:
+  - eclipse-mosquitto
+  - library/eclipse-mosquitto
+aliases:
+  - mosquitto
+  - eclipse-mosquitto
+  - mqtt
+infrastructure: true

@@ -1,0 +1,9 @@
+name: Grocy
+description: Groceries and household management
+icon: grocy
+category: Home
+defaultPort: 80
+patterns:
+  - linuxserver/grocy
+aliases:
+  - grocy

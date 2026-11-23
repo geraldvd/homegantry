@@ -1,0 +1,10 @@
+name: Memos
+description: Lightweight self-hosted memo hub
+icon: memos
+category: Productivity
+defaultPort: 5230
+patterns:
+  - neosmemo/memos
+  - ghcr.io/usememos/memos
+aliases:
+  - memos

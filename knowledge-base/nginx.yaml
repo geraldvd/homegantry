@@ -1,0 +1,12 @@
+name: Nginx
+description: High-performance web server and reverse proxy
+icon: nginx
+category: Network
+defaultPort: 80
+patterns:
+  - nginx
+  - library/nginx
+  - linuxserver/nginx
+  - nginxinc/nginx-unprivileged
+aliases:
+  - nginx

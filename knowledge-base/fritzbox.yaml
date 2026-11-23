@@ -1,0 +1,8 @@
+name: FRITZ!Box
+description: AVM home router
+icon: fritzbox
+category: Network
+defaultPort: 80
+traefik:
+  - fritzbox
+  - fritz-box

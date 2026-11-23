@@ -1,0 +1,10 @@
+name: n8n
+description: Workflow automation tool
+icon: n8n
+category: Productivity
+defaultPort: 5678
+patterns:
+  - n8nio/n8n
+  - ghcr.io/n8n-io/n8n
+aliases:
+  - n8n

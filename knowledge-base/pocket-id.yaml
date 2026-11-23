@@ -1,0 +1,11 @@
+name: Pocket ID
+description: Simple passkey-based OIDC provider
+icon: pocket-id
+category: Security
+defaultPort: 1411
+patterns:
+  - ghcr.io/pocket-id/pocket-id
+  - stonith404/pocket-id
+aliases:
+  - pocket-id
+  - pocketid

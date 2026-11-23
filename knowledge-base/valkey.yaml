@@ -1,0 +1,12 @@
+name: Valkey
+description: Open-source Redis-compatible key-value store
+icon: valkey
+category: Databases
+defaultPort: 6379
+patterns:
+  - valkey/valkey
+  - bitnami/valkey
+  - ghcr.io/valkey-io/valkey
+aliases:
+  - valkey
+infrastructure: true

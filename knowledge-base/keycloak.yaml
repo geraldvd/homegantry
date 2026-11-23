@@ -1,0 +1,10 @@
+name: Keycloak
+description: Identity and access management
+icon: keycloak
+category: Security
+defaultPort: 8080
+patterns:
+  - quay.io/keycloak/keycloak
+  - keycloak/keycloak
+aliases:
+  - keycloak

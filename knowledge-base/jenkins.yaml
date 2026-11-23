@@ -1,0 +1,9 @@
+name: Jenkins
+description: Automation server
+icon: jenkins
+category: Development
+defaultPort: 8080
+patterns:
+  - jenkins/jenkins
+aliases:
+  - jenkins

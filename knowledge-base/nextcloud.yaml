@@ -1,0 +1,12 @@
+name: Nextcloud
+description: Self-hosted productivity and file sharing
+icon: nextcloud
+category: Storage
+defaultPort: 443
+patterns:
+  - nextcloud
+  - library/nextcloud
+  - linuxserver/nextcloud
+  - nextcloud/all-in-one
+aliases:
+  - nextcloud

@@ -1,0 +1,9 @@
+name: Proxmox VE
+description: Virtualisation management platform
+icon: proxmox
+category: Infrastructure
+defaultPort: 8006
+traefik:
+  - proxmox
+  - pve
+  - proxmox-ve

@@ -1,0 +1,9 @@
+name: Adminer
+description: Database management in one file
+icon: adminer
+category: Databases
+defaultPort: 8080
+patterns:
+  - adminer
+aliases:
+  - adminer

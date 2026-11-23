@@ -1,0 +1,10 @@
+name: Navidrome
+description: Modern music server and streamer
+icon: navidrome
+category: Media
+defaultPort: 4533
+patterns:
+  - deluan/navidrome
+  - ghcr.io/navidrome/navidrome
+aliases:
+  - navidrome

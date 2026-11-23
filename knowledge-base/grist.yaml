@@ -1,0 +1,9 @@
+name: Grist
+description: Modern relational spreadsheet
+icon: grist
+category: Productivity
+defaultPort: 8484
+patterns:
+  - gristlabs/grist
+aliases:
+  - grist

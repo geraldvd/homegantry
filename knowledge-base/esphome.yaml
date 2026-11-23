@@ -1,0 +1,10 @@
+name: ESPHome
+description: Firmware for ESP devices
+icon: esphome
+category: Home
+defaultPort: 6052
+patterns:
+  - esphome/esphome
+  - ghcr.io/esphome/esphome
+aliases:
+  - esphome

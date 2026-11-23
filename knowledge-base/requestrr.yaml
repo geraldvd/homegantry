@@ -1,0 +1,10 @@
+name: Requestrr
+description: Chatbot for media requests via Discord
+icon: requestrr
+category: Media
+defaultPort: 4545
+patterns:
+  - darkalfx/requestrr
+  - ghcr.io/darkalfx/requestrr
+aliases:
+  - requestrr

@@ -1,0 +1,11 @@
+name: Element
+description: Matrix web client
+icon: element
+category: Communication
+defaultPort: 80
+patterns:
+  - vectorim/element-web
+  - ghcr.io/element-hq/element-web
+aliases:
+  - element
+  - element-web

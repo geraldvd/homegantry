@@ -1,21 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { config } from './config.js';
+import { findByAlias, findByImage, findByRouteName } from './knowledge-base.js';
 import type { ContainerInfo, KnownService, Service } from './types.js';
 import { overridesStore, resolveOverride } from './storage.js';
 import { parseRule } from './traefik-rule.js';
 import type { TraefikRoute } from './traefik.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-let knownServices: KnownService[] = [];
-try {
-  const raw = fs.readFileSync(path.join(__dirname, 'known-services.json'), 'utf-8');
-  knownServices = JSON.parse(raw) as KnownService[];
-} catch {
-  // known-services.json may not exist yet
-}
 
 // ---- helpers ----
 
@@ -27,26 +15,15 @@ function stripPrefixSuffix(name: string): string {
     .replace(/[-_]\d+$/, '');
 }
 
-function normalise(s: string): string {
-  return s.toLowerCase().replace(/[-_.\s]/g, '');
-}
-
-function parseImage(image: string): { repo: string; name: string } {
-  // Strip tag/digest
-  const withoutTag = image.split(':')[0]!.split('@')[0]!;
-  const parts = withoutTag.split('/');
-  const name = parts[parts.length - 1]!;
-  return { repo: withoutTag, name };
-}
-
-function findByAlias(alias: string): KnownService | undefined {
-  const norm = normalise(alias);
-  return knownServices.find((ks) => ks.aliases.some((a) => normalise(a) === norm));
-}
-
-function findByPattern(image: string): KnownService | undefined {
-  const lower = image.toLowerCase();
-  return knownServices.find((ks) => ks.patterns.some((p) => lower.includes(p.toLowerCase())));
+/** The knowledge-base entry for a container: compose service, then container name, then image. */
+export function findKnownService(
+  input: Pick<MatchInput, 'name' | 'image' | 'compose_service'>,
+): KnownService | undefined {
+  return (
+    (input.compose_service ? findByAlias(input.compose_service) : undefined) ??
+    findByAlias(stripPrefixSuffix(input.name)) ??
+    findByImage(input.image)
+  );
 }
 
 // ---- labels ----
@@ -126,7 +103,7 @@ export function matchRoute(route: TraefikRoute): Service {
   const candidates = [route.routerName, route.serviceName];
   let matched: KnownService | undefined;
   for (const candidate of candidates) {
-    matched ??= findByAlias(candidate) ?? findByAlias(stripPrefixSuffix(candidate));
+    matched ??= findByRouteName(candidate) ?? findByRouteName(stripPrefixSuffix(candidate));
   }
 
   // By id only: the name fallback is for containers and could hit an unrelated one.
@@ -190,11 +167,18 @@ export function matchContainer(input: MatchInput, route?: TraefikRoute): Service
 
     if (hpName || hpIcon || hpGroup) {
       if (hpName) name = hpName;
-      if (hpIcon) icon = hpIcon;
-      if (hpGroup) category = hpGroup;
-      if (hpDesc) description = hpDesc;
+      // #13 (a): a homegantry.* label always beats its homepage.* counterpart.
+      if (hpIcon && !icon) icon = hpIcon;
+      if (hpGroup && !hgCategory) category = hpGroup;
+      if (hpDesc && !description) description = hpDesc;
     }
   }
+
+  // #13 (d): a category from a label (even "Other") beats the knowledge base.
+  const hasLabelCategory = !!(
+    hgCategory ||
+    (!hgName && config.homepageCompat && getLabel(input.labels, 'homepage.group'))
+  );
 
   // Only attempt knowledge-base matching if labels didn't resolve
   const resolvedByLabels = !!(
@@ -205,27 +189,13 @@ export function matchContainer(input: MatchInput, route?: TraefikRoute): Service
   let matched: KnownService | undefined;
 
   if (!resolvedByLabels) {
-    // Priority 3: Compose service name lookup
-    if (!matched && input.compose_service) {
-      matched = findByAlias(input.compose_service);
-    }
-
-    // Priority 4: Container name lookup
-    if (!matched) {
-      const stripped = stripPrefixSuffix(input.name);
-      matched = findByAlias(stripped);
-    }
-
-    // Priority 5: Docker image pattern matching
-    if (!matched) {
-      const { repo } = parseImage(input.image);
-      matched = findByPattern(repo);
-    }
+    // Priority 3-5: compose service name, container name, Docker image
+    matched = findKnownService(input);
 
     if (matched) {
       name = matched.name;
       icon = icon || matched.icon;
-      category = matched.category;
+      if (!hasLabelCategory) category = matched.category;
       description = description || matched.description;
     }
   }

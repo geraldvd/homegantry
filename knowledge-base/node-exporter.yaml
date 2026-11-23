@@ -1,0 +1,11 @@
+name: Node Exporter
+description: Prometheus host metrics exporter
+icon: prometheus
+category: Monitoring
+defaultPort: 9100
+patterns:
+  - prom/node-exporter
+  - quay.io/prometheus/node-exporter
+aliases:
+  - node-exporter
+infrastructure: true

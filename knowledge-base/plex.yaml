@@ -1,0 +1,13 @@
+name: Plex
+description: Stream movies and TV shows
+icon: plex
+category: Media
+defaultPort: 32400
+patterns:
+  - plexinc/pms-docker
+  - linuxserver/plex
+  - ghcr.io/linuxserver/plex
+aliases:
+  - plex
+  - plex-media-server
+  - plexmediaserver
