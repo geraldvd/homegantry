@@ -103,6 +103,12 @@ Service URLs and icons are re-checked on the way out, including values from labe
 only `http(s)` is served, `user:pass@` is removed, and the UI renders anything else as a card without a link. Hidden
 services and services in hidden stacks are left out of every `/api/events` message.
 
+Hidden services are also left out of `GET /api/services`. Listing them with `GET /api/services?includeHidden=true`
+needs the same rights as editing (admin token or trusted auth header). Without them the request gets the same answer a
+write would: `401` when editing is enabled but the request is not authorised, `403` when editing is disabled or
+`HOMEGANTRY_READONLY=true`. Hidden services are not secret by design, but a read-only visitor should see exactly what
+the dashboard shows and nothing more.
+
 ## Traefik API and health checks
 
 - **Traefik credentials** (`HOMEGANTRY_TRAEFIK_API_*`) are only sent to the configured API. Redirects are refused, and

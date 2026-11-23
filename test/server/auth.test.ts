@@ -121,6 +121,73 @@ describe.each(MUTATING_ROUTES)('$method mutating route %#', (route) => {
   });
 });
 
+describe('GET /api/services?includeHidden=true needs edit rights', () => {
+  const HIDDEN = '/api/services?includeHidden=true';
+  const names = (body: unknown) => (body as Array<{ name: string }>).map((x) => x.name);
+
+  it('anonymous: 401 when editing is enabled, and nothing is listed', async () => {
+    const s = await setup(TOKEN_ENV);
+    const res = await request(s.app).get(HIDDEN).expect(401);
+    expect(res.body).toEqual({ error: 'authentication required' });
+  });
+
+  it('wrong token: 401 and counted as a failed attempt', async () => {
+    const s = await setup(TOKEN_ENV);
+    const res = await request(s.app)
+      .get(HIDDEN)
+      .set('Authorization', 'Bearer wrong-token')
+      .expect(401);
+    expect(res.body.error).toBe('invalid token');
+  });
+
+  it('editing disabled (no token, no header): 403 with the hint', async () => {
+    const s = await setup({});
+    const res = await request(s.app).get(HIDDEN).expect(403);
+    expect(res.body.error).toBe('editing is disabled');
+    expect(res.body.hint).toMatch(/HOMEGANTRY_ADMIN_TOKEN/);
+  });
+
+  it('READONLY: 403 even with a correct token', async () => {
+    const s = await setup({ ...TOKEN_ENV, HOMEGANTRY_READONLY: 'true' });
+    const res = await request(s.app)
+      .get(HIDDEN)
+      .set('Authorization', `Bearer ${TOKEN}`)
+      .expect(403);
+    expect(res.body.error).toMatch(/read-only/i);
+  });
+
+  it('admin token: lists hidden services, not cached', async () => {
+    const s = await setup(TOKEN_ENV);
+    const res = await request(s.app)
+      .get(HIDDEN)
+      .set('Authorization', `Bearer ${TOKEN}`)
+      .expect(200);
+    expect(names(res.body)).toContain('MariaDB');
+    expect(res.headers['cache-control']).toBe('no-store');
+  });
+
+  it('auth header from a trusted proxy: lists hidden services', async () => {
+    const s = await setup(HEADER_ENV(LOOPBACK));
+    const res = await request(s.app).get(HIDDEN).set('Remote-User', 'admin').expect(200);
+    expect(names(res.body)).toContain('MariaDB');
+  });
+
+  it('auth header from an untrusted IP: 401', async () => {
+    const s = await setup(HEADER_ENV('192.168.1.0/24'));
+    await request(s.app).get(HIDDEN).set('Remote-User', 'admin').expect(401);
+  });
+
+  it.each(['/api/services', '/api/services?includeHidden=false'])(
+    'anonymous %s still works and leaves hidden services out',
+    async (path) => {
+      const s = await setup(TOKEN_ENV);
+      const res = await request(s.app).get(path).expect(200);
+      expect(names(res.body)).toContain('Jellyfin');
+      expect(names(res.body)).not.toContain('MariaDB');
+    },
+  );
+});
+
 describe('mutations are guarded before they touch state', () => {
   it('a rejected request does not change anything', async () => {
     const s = await setup(TOKEN_ENV);

@@ -182,6 +182,31 @@ export function createSecurity(options: SecurityOptions = {}) {
     next();
   };
 
+  /**
+   * Mounted on `GET /api/services`: `?includeHidden=true` also lists hidden services, so it needs
+   * the same rights as editing (admin token or trusted auth header). Without them the request is
+   * refused with the same status a write would get (403 when editing is off, 401 otherwise).
+   */
+  const guardHiddenServices: RequestHandler = (req, res, next) => {
+    if (req.query.includeHidden === undefined || req.query.includeHidden === 'false') return next();
+    if (config.readonly) {
+      res.status(403).json({ error: 'read-only mode: hidden services are not listed' });
+      return;
+    }
+    if (!authMethods.token && !authMethods.header) {
+      res.status(403).json({ error: 'editing is disabled', hint: ENABLE_HINT });
+      return;
+    }
+    const auth = checkAuth(req, res);
+    if (!auth) return;
+    if (!auth.canEdit) {
+      res.status(401).json({ error: 'authentication required' });
+      return;
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  };
+
   /** `GET /api/auth`: what the current request may do (the UI uses it to unlock editing). */
   const authStatus: RequestHandler = (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -195,7 +220,7 @@ export function createSecurity(options: SecurityOptions = {}) {
     });
   };
 
-  return { guardMutations, authStatus };
+  return { guardMutations, guardHiddenServices, authStatus };
 }
 
 // ---- errors ----

@@ -11,6 +11,9 @@ import {
 } from '../fixtures/traefik.js';
 import { loadApp, openSse, type Env } from '../helpers.js';
 
+/** Admin token for listing hidden services (not the Traefik API token). */
+const ADMIN_TOKEN = 'admin-change-me-0123456789abcdef';
+
 const fakes: Array<Awaited<ReturnType<typeof startFakeTraefik>>> = [];
 
 afterEach(async () => {
@@ -843,9 +846,16 @@ describe('Traefik credentials (security regression)', () => {
       exampleLab,
       fixture,
       { authorization: `Bearer ${TOKEN}` },
-      { HOMEGANTRY_TRAEFIK_API_TOKEN: TOKEN, HOMEGANTRY_TRAEFIK_API_PASSWORD: PASSWORD },
+      {
+        HOMEGANTRY_TRAEFIK_API_TOKEN: TOKEN,
+        HOMEGANTRY_TRAEFIK_API_PASSWORD: PASSWORD,
+        HOMEGANTRY_ADMIN_TOKEN: ADMIN_TOKEN,
+      },
     );
-    const rest = await request(s.app).get('/api/services?includeHidden=true').expect(200);
+    const rest = await request(s.app)
+      .get('/api/services?includeHidden=true')
+      .set('Authorization', `Bearer ${ADMIN_TOKEN}`)
+      .expect(200);
     const auth = await request(s.app).get('/api/auth').expect(200);
     const settings = await request(s.app).get('/api/settings').expect(200);
     const health = await request(s.app).get('/api/health').expect(200);

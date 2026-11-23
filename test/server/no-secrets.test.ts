@@ -8,6 +8,9 @@ import { describe, expect, it } from 'vitest';
 import { container } from '../fixtures/containers.js';
 import { loadApp, openSse } from '../helpers.js';
 
+/** Lets the test list hidden services too (that needs edit rights). */
+const ADMIN_TOKEN = 'change-me-0123456789abcdefghij';
+
 const SECRET_VALUES = [
   'change-me-env-password',
   'change-me-config-token',
@@ -57,8 +60,11 @@ function assertClean(body: unknown) {
 
 describe('no secrets in the API (#7)', () => {
   it('GET /api/services returns only allow-listed fields', async () => {
-    const { app } = await loadApp([leakyContainer()]);
-    const res = await request(app).get('/api/services?includeHidden=true').expect(200);
+    const { app } = await loadApp([leakyContainer()], { HOMEGANTRY_ADMIN_TOKEN: ADMIN_TOKEN });
+    const res = await request(app)
+      .get('/api/services?includeHidden=true')
+      .set('Authorization', `Bearer ${ADMIN_TOKEN}`)
+      .expect(200);
     assertClean(res.body);
     expect(res.body).toHaveLength(1);
     expect(Object.keys(res.body[0]).sort()).toEqual(

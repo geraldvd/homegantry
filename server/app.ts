@@ -33,6 +33,7 @@ export function createApp(clientDir: string, options: SecurityOptions = {}): Exp
   app.use('/api', security.guardMutations);
   app.use('/api', express.json({ limit: BODY_LIMIT }));
   app.get('/api/auth', security.authStatus);
+  app.get('/api/services', security.guardHiddenServices);
   app.use(router);
 
   // Serve static files in production
