@@ -60,24 +60,19 @@ function manualToService(m: ManualService): Service {
   };
 }
 
+function stackVisible(s: Service): boolean {
+  return !s.stack || getStackConfig(s.stack).visible;
+}
+
+/** What a read-only client may see; the same rule for REST and every SSE event. */
+function isVisible(s: Service): boolean {
+  return !s.hidden && stackVisible(s);
+}
+
 function mergeServices(includeHidden: boolean): Service[] {
   const docker = getServices();
   const manual = manualServicesStore.get().map(manualToService);
-  let all = [...docker, ...manual];
-
-  // Filter out services whose stack has visible: false
-  all = all.filter((s) => {
-    if (s.stack) {
-      const cfg = getStackConfig(s.stack);
-      if (!cfg.visible) return false;
-    }
-    return true;
-  });
-
-  if (!includeHidden) {
-    return all.filter((s) => !s.hidden);
-  }
-  return all;
+  return [...docker, ...manual].filter(includeHidden ? stackVisible : isVisible);
 }
 
 // ---- Service routes ----
@@ -234,13 +229,24 @@ router.get('/api/events', (_req: Request, res: Response) => {
   };
 
   // Every event goes through the same allow-lists as the REST API.
-  send({ type: 'initial_state', data: mergeServices(false).map(publicService) });
+  const initial = mergeServices(false);
+  send({ type: 'initial_state', data: initial.map(publicService) });
+
+  // Services this client currently knows about: one that stops being visible is removed from
+  // its dashboard without sending the new data.
+  const shown = new Set(initial.map((s) => s.id));
 
   // Forward docker events
   const onUpdated = (svc: Service) => {
-    send({ type: 'service_updated', data: publicService(svc) });
+    if (isVisible(svc)) {
+      shown.add(svc.id);
+      send({ type: 'service_updated', data: publicService(svc) });
+    } else if (shown.delete(svc.id)) {
+      send({ type: 'service_removed', data: { id: svc.id } });
+    }
   };
   const onRemoved = (data: { id: string }) => {
+    shown.delete(data.id);
     send({ type: 'service_removed', data: { id: data.id } });
   };
   const onSettings = (data: DashboardSettings) => {
@@ -248,6 +254,10 @@ router.get('/api/events', (_req: Request, res: Response) => {
   };
   const onStacksUpdated = (data: Record<string, StackConfig>) => {
     send({ type: 'stacks_updated', data: publicStacks(data) });
+    // A toggled stack changes which services are visible.
+    for (const svc of getServices()) {
+      if (isVisible(svc) !== shown.has(svc.id)) onUpdated(svc);
+    }
   };
 
   dockerEvents.on('service_updated', onUpdated);
