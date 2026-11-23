@@ -108,7 +108,9 @@ describe('checkUrl', () => {
 
   it('falls back to GET when HEAD is not allowed', async () => {
     const { health } = await loadHealth();
-    const srv = await fakeHttp((req, res) => res.writeHead(req.method === 'HEAD' ? 405 : 200).end());
+    const srv = await fakeHttp((req, res) =>
+      res.writeHead(req.method === 'HEAD' ? 405 : 200).end(),
+    );
     expect(await health.checkUrl(srv.url)).toMatchObject({ status: 'up', httpStatus: 200 });
     expect(srv.seen.map((r) => r.method)).toEqual(['HEAD', 'GET']);
   });

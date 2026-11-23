@@ -56,7 +56,10 @@ describe('SSE visibility filter (#19)', () => {
   it('does not send updates for services in an invisible stack', async () => {
     const s = await setup();
     s.stacksStore.set({ media: { visible: false } });
-    s.dockerEvents.emit('service_updated', s.getServices().find((x) => x.id === 'c1'));
+    s.dockerEvents.emit(
+      'service_updated',
+      s.getServices().find((x) => x.id === 'c1'),
+    );
     s.dockerEvents.emit(
       'service_updated',
       s.getServices().find((x) => x.id === 'c2'),

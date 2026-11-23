@@ -288,9 +288,14 @@ describe('Traefik discovery', () => {
   });
 
   it('applies a custom HOMEGANTRY_EXPOSURE_MAP', async () => {
-    const s = await setup(exampleLab, exampleTraefik, {}, {
-      HOMEGANTRY_EXPOSURE_MAP: 'custom-*=vpn-only',
-    });
+    const s = await setup(
+      exampleLab,
+      exampleTraefik,
+      {},
+      {
+        HOMEGANTRY_EXPOSURE_MAP: 'custom-*=vpn-only',
+      },
+    );
     expect(byId(s.getServices(), 'id-nextcloud')?.exposure).toBe('vpn-only');
   });
 
@@ -399,9 +404,14 @@ describe('Traefik API failures', () => {
 
   it('times out on an API that never answers', async () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const s = await setup(exampleLab, exampleTraefik, { hang: true }, {
-      HOMEGANTRY_TRAEFIK_TIMEOUT: '0.05',
-    });
+    const s = await setup(
+      exampleLab,
+      exampleTraefik,
+      { hang: true },
+      {
+        HOMEGANTRY_TRAEFIK_TIMEOUT: '0.05',
+      },
+    );
     dockerOnly(s.getServices());
     expect(String(error.mock.calls[0]![0])).toMatch(/timeout/);
   });

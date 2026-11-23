@@ -19,7 +19,8 @@ export interface HealthTarget {
 type OnChange = (id: string) => void;
 
 const MIN_INTERVAL_SECONDS = 5;
-const TLS_ERROR = /^(CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|ERR_TLS|ERR_SSL|HOSTNAME_MISMATCH|EPROTO)/;
+const TLS_ERROR =
+  /^(CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|ERR_TLS|ERR_SSL|HOSTNAME_MISMATCH|EPROTO)/;
 
 const results = new Map<string, ServiceHealth>();
 let timer: ReturnType<typeof setInterval> | null = null;
@@ -48,9 +49,7 @@ function probe(url: string, method: 'HEAD' | 'GET'): Promise<Probe> {
       method,
       agent: false,
       headers: { 'User-Agent': 'HomeGantry-healthcheck', Accept: '*/*' },
-      ...(url.startsWith('https:')
-        ? { rejectUnauthorized: !config.healthcheckInsecureTls }
-        : {}),
+      ...(url.startsWith('https:') ? { rejectUnauthorized: !config.healthcheckInsecureTls } : {}),
     });
 
     const timeout = setTimeout(
