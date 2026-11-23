@@ -99,6 +99,24 @@ project/service and port numbers. Container environment variables, mounts and fu
 response. Labels whose key looks secret (`*password*`, `*passwd*`, `*secret*`, `*token*`, `*key*`, `*credential*`)
 are dropped as soon as containers are read, so they never enter HomeGantry's state at all.
 
+Service URLs and icons are re-checked on the way out, including values from labels and data stored by older versions:
+only `http(s)` is served, `user:pass@` is removed, and the UI renders anything else as a card without a link. Hidden
+services and services in hidden stacks are left out of every `/api/events` message.
+
+## Traefik API and health checks
+
+- **Traefik credentials** (`HOMEGANTRY_TRAEFIK_API_*`) are only sent to the configured API. Redirects are refused, and
+  they never appear in logs or API responses.
+- **Traefik configuration:** from each middleware only its name, type and chain members are kept. Basic-auth users,
+  forward-auth addresses, IP ranges and backend server URLs are dropped on arrival. Middleware names are visible in the
+  exposure badge tooltip.
+- **Health checks** send no credentials and return only a status, a fixed reason, the HTTP code and a time. Logged URLs
+  have no userinfo or query string.
+- **Outgoing requests:** HomeGantry requests the URLs of your services, so someone who can edit the dashboard or set
+  container labels can point it at any address it can reach. Only the status is exposed. Set
+  `HOMEGANTRY_HEALTHCHECK=false` if that is not acceptable on your network.
+- **Exposure badges are a hint.** They describe the Traefik configuration, not what is actually reachable.
+
 ## Request hardening
 
 - **Same-origin check:** writes whose `Origin` (or `Referer`) is not HomeGantry's own host are rejected (403). This
