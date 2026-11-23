@@ -118,6 +118,7 @@ export function startServiceHealthChecks(): void {
 
 // ---- Service routes ----
 
+// `?includeHidden=true` is only reached with edit rights (guardHiddenServices in security.ts).
 router.get('/api/services', validate({ query: servicesQuery }), (_req: Request, res: Response) => {
   const includeHidden = _req.query.includeHidden === 'true';
   res.json(mergeServices(includeHidden).map(publicService));

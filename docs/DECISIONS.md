@@ -51,3 +51,14 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-23 — Exposure level `vpn-only` renamed to `private` (badge "Private"). — An IP allow-list means "only from your own
   networks" (LAN or VPN), not necessarily a VPN; the old name described one lab. `vpn-only` is still accepted in
   `HOMEGANTRY_EXPOSURE_MAP`. Badges for other proxies (Caddy, Nginx Proxy Manager) are #26.
+- 2026-11-23 — `GET /api/services?includeHidden=true` requires edit rights (admin token or trusted auth header); without
+  them it returns 401 (editing enabled) or 403 (editing disabled or read-only), like a write. — REST and SSE now share
+  one visibility rule (#19); refusing instead of silently ignoring the parameter tells a script that its token is
+  missing. Alternative: ignore the parameter for read-only clients (hides mistakes).
+- 2026-11-23 — Non-blocking findings from the M2 review (#25) are filed as issues for the milestone they belong to:
+  knowledge base and icons → M3, UX → M4, hardening and discovery edge cases → M5. #13's open quirks (icon label
+  precedence, image matching, category precedence) belong to the knowledge base and move to M3. — Keeps each milestone's
+  scope in one place; nothing from the review is lost.
+- 2026-11-23 — The card keeps the green/grey dot for the container state next to the health badge for now, even when
+  that reads as "running" next to "Down". — Both facts are true and useful; the redesign of how the two are shown
+  belongs to the UX milestone (M4) rather than a quick patch.
