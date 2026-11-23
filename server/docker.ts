@@ -1,7 +1,14 @@
 import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import { config } from './config.js';
-import { isLocalhostFallback, matchContainer, matchRoute, type MatchInput } from './matcher.js';
+import { repositoryName } from './image-ref.js';
+import {
+  findKnownService,
+  isLocalhostFallback,
+  matchContainer,
+  matchRoute,
+  type MatchInput,
+} from './matcher.js';
 import { stripSecretLabels } from './sanitize.js';
 import {
   isTraefikEnabled,
@@ -11,7 +18,7 @@ import {
   standaloneRoutes,
   traefikAvailable,
 } from './traefik.js';
-import type { Service } from './types.js';
+import type { KbCoverage, Service } from './types.js';
 
 /** The subset of the Dockerode API that HomeGantry uses (read-only). */
 export type DockerClient = Pick<Dockerode, 'listContainers' | 'getEvents'>;
@@ -220,6 +227,17 @@ export function getServiceLabels(id: string): Readonly<Record<string, string>> {
 export function usesLocalhostFallback(svc: Service): boolean {
   const input = matchInputCache.get(svc.id);
   return input !== undefined && isLocalhostFallback(input, svc.url);
+}
+
+/** How many current containers the knowledge base recognises, and the images it does not. */
+export function getKbCoverage(): KbCoverage {
+  const inputs = [...services.keys()].flatMap((id) => matchInputCache.get(id) ?? []);
+  const missing = inputs.filter((input) => !findKnownService(input));
+  return {
+    total: inputs.length,
+    recognised: inputs.length - missing.length,
+    unrecognised: [...new Set(missing.map((input) => repositoryName(input.image)))].sort(),
+  };
 }
 
 /** Returns sorted unique stack names from current services. */

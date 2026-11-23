@@ -13,6 +13,7 @@ import type {
   ServiceHealth,
   StackConfig,
 } from './types.js';
+import { iconSource, type IconSource } from './icons.js';
 import { safeIcon, safeServiceUrl } from './urls.js';
 
 const SECRET_LABEL = /password|passwd|secret|token|key|credential/i;
@@ -50,6 +51,19 @@ function publicContainer(c: ContainerInfo): ContainerInfo {
   });
 }
 
+/** A safe icon value; with the icon source `off`, explicit URLs are dropped too. */
+function publicIcon(value: unknown): string {
+  const icon = safeIcon(value);
+  return iconSource.mode === 'off' && /^https?:/i.test(icon) ? '' : icon;
+}
+
+/** What the client needs to build icon URLs (`GET /api/ui-config`). */
+export function publicUiConfig(source: IconSource = iconSource): { icons: IconSource } {
+  return {
+    icons: source.mode === 'off' ? { mode: 'off' } : { mode: source.mode, baseUrl: source.baseUrl },
+  };
+}
+
 /** The public shape of a service. */
 export function publicService(s: Service): Service {
   return compact({
@@ -59,7 +73,7 @@ export function publicService(s: Service): Service {
     description: s.description,
     // Re-validated here: labels and values stored before M1 never passed request validation.
     url: (s.url === undefined ? undefined : safeServiceUrl(s.url)) as string,
-    icon: (s.icon === undefined ? undefined : safeIcon(s.icon)) as string,
+    icon: (s.icon === undefined ? undefined : publicIcon(s.icon)) as string,
     category: s.category,
     status: s.status,
     stack: s.stack,
@@ -87,7 +101,7 @@ export function publicManualService(m: ManualService): ManualService {
     id: m.id,
     displayName: m.displayName,
     url: safeServiceUrl(m.url),
-    icon: safeIcon(m.icon),
+    icon: publicIcon(m.icon),
     category: m.category,
     description: m.description,
     sortOrder: m.sortOrder,
@@ -95,7 +109,11 @@ export function publicManualService(m: ManualService): ManualService {
 }
 
 export function publicStack(c: StackConfig): StackConfig {
-  return compact({ visible: c.visible, icon: c.icon, displayName: c.displayName });
+  return compact({
+    visible: c.visible,
+    icon: c.icon === undefined ? undefined : publicIcon(c.icon),
+    displayName: c.displayName,
+  });
 }
 
 export function publicStacks(stacks: Record<string, StackConfig>): Record<string, StackConfig> {

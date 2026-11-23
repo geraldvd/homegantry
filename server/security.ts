@@ -5,19 +5,20 @@
 import type { ErrorRequestHandler, NextFunction, Request, RequestHandler, Response } from 'express';
 import { config } from './config.js';
 import { authenticate, authMethods, clientIp, ENABLE_HINT, fromTrustedProxy } from './auth.js';
+import { imgSrc } from './icons.js';
 
 // ---- security headers ----
 
 /**
  * CSP fitting the built client: scripts and styles from our own origin (inline style attributes
- * are used by React for sizes), icons from anywhere over http(s) (dashboard-icons CDN or custom
- * icon URLs), API calls and SSE to our own origin only, and no framing.
+ * are used by React for sizes), images as allowed by the icon source (none external when it is
+ * `off`), API calls and SSE to our own origin only, and no framing.
  */
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https: http:",
+  imgSrc(),
   "connect-src 'self'",
   "font-src 'self' data:",
   "object-src 'none'",
@@ -183,14 +184,13 @@ export function createSecurity(options: SecurityOptions = {}) {
   };
 
   /**
-   * Mounted on `GET /api/services`: `?includeHidden=true` also lists hidden services, so it needs
-   * the same rights as editing (admin token or trusted auth header). Without them the request is
-   * refused with the same status a write would get (403 when editing is off, 401 otherwise).
+   * For reads that need the same rights as editing (admin token or trusted auth header). Without
+   * them the request is refused with the status a write would get (403 when editing is off, 401
+   * otherwise). Responses are never cached.
    */
-  const guardHiddenServices: RequestHandler = (req, res, next) => {
-    if (req.query.includeHidden === undefined || req.query.includeHidden === 'false') return next();
+  function requireEditRights(req: Request, res: Response, next: NextFunction, readonly: string) {
     if (config.readonly) {
-      res.status(403).json({ error: 'read-only mode: hidden services are not listed' });
+      res.status(403).json({ error: readonly });
       return;
     }
     if (!authMethods.token && !authMethods.header) {
@@ -205,6 +205,17 @@ export function createSecurity(options: SecurityOptions = {}) {
     }
     res.setHeader('Cache-Control', 'no-store');
     next();
+  }
+
+  /** Mounted on `GET /api/services`: `?includeHidden=true` also lists hidden services. */
+  const guardHiddenServices: RequestHandler = (req, res, next) => {
+    if (req.query.includeHidden === undefined || req.query.includeHidden === 'false') return next();
+    requireEditRights(req, res, next, 'read-only mode: hidden services are not listed');
+  };
+
+  /** Mounted on `GET /api/kb/coverage`: which images a lab runs is for editors only. */
+  const guardCoverage: RequestHandler = (req, res, next) => {
+    requireEditRights(req, res, next, 'read-only mode: the coverage report is not available');
   };
 
   /** `GET /api/auth`: what the current request may do (the UI uses it to unlock editing). */
@@ -220,7 +231,7 @@ export function createSecurity(options: SecurityOptions = {}) {
     });
   };
 
-  return { guardMutations, guardHiddenServices, authStatus };
+  return { guardMutations, guardHiddenServices, guardCoverage, authStatus };
 }
 
 // ---- errors ----
