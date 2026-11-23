@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 Once running, HomeGantry will:
 
 1. Connect to the Docker socket and scan for running containers
-2. Match containers against its built-in knowledge base of 60+ services
+2. Match containers against its built-in knowledge base of 200+ services
 3. Attempt to resolve URLs from Traefik labels, `homepage.*` labels, or `HOMEGANTRY_HOST` + exposed ports
 4. Stream updates in real time via SSE — new containers appear automatically
 

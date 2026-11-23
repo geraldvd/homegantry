@@ -109,6 +109,9 @@ write would: `401` when editing is enabled but the request is not authorised, `4
 `HOMEGANTRY_READONLY=true`. Hidden services are not secret by design, but a read-only visitor should see exactly what
 the dashboard shows and nothing more.
 
+The knowledge-base coverage report (`GET /api/kb/coverage`) follows the same rule. It returns counts and image
+repositories only: no tags, labels, environment or other container details.
+
 ## Traefik API and health checks
 
 - **Traefik credentials** (`HOMEGANTRY_TRAEFIK_API_*`) are only sent to the configured API. Redirects are refused, and
@@ -132,7 +135,8 @@ the dashboard shows and nothing more.
   overlong strings and non-`http(s)` URLs are rejected with 400.
 - **Limits:** request bodies up to 16 kB; 120 writes per minute per client IP (behind a reverse proxy, see the
   warning under [Option 1](#option-1-admin-token)).
-- **Headers:** `Content-Security-Policy` (scripts and connections only to HomeGantry itself, no framing),
+- **Headers:** `Content-Security-Policy` (scripts and connections only to HomeGantry itself, no framing; images from
+  anywhere over http(s) for icons, or only from HomeGantry itself with `HOMEGANTRY_ICON_SOURCE=off`),
   `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, `X-Frame-Options: DENY`.
 - **CORS** is off. Set `HOMEGANTRY_CORS_ORIGINS` only if another web app must call the API from the browser.
 
