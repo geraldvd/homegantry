@@ -1,5 +1,7 @@
 import type {
   AuthStatus,
+  KbCoverage,
+  UiConfig,
   Service,
   ServiceOverride,
   ManualService,
@@ -119,6 +121,14 @@ export function deleteManualService(id: string): Promise<void> {
   return request<void>(`/services/manual/${encodeURIComponent(id)}`, {
     method: 'DELETE',
   });
+}
+
+export function getUiConfig(): Promise<UiConfig> {
+  return request<UiConfig>('/ui-config');
+}
+
+export function getKbCoverage(): Promise<KbCoverage> {
+  return request<KbCoverage>('/kb/coverage');
 }
 
 export function getSettings(): Promise<DashboardSettings> {

@@ -75,7 +75,8 @@ export default function EditServiceModal({ service, onClose }: Props) {
         await updateManualService(service.id, {
           displayName: name.trim(),
           url: checked.url,
-          icon: icon.trim(),
+          // Unchanged stays unsent: with icons off the API hides a stored icon URL as "".
+          icon: icon.trim() === service.icon ? undefined : icon.trim(),
           category: category.trim() || 'Uncategorized',
           description: description.trim(),
         });

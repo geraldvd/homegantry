@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSettings, useStacks } from '../context/ServiceContext';
 import { updateSettings, updateStack } from '../api/client';
 import type { DashboardSettings, StackConfig } from '../types';
+import KbCoverageSection from './KbCoverageSection';
 import ServiceIcon from './ServiceIcon';
 
 interface Props {
@@ -146,6 +147,8 @@ export default function SettingsDrawer({ open, onClose }: Props) {
                 ))}
               </div>
             </div>
+
+            <KbCoverageSection open={open} />
 
             {/* Stacks section */}
             {Object.keys(stacks).length > 0 && (

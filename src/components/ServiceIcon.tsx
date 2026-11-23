@@ -1,6 +1,6 @@
 import { useState } from 'react';
-
-const ICON_CDN = 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png';
+import { useIconSource } from '../context/IconSourceContext';
+import { iconCandidates } from '../lib/icons';
 
 const COLORS = [
   'bg-cyan-700',
@@ -28,9 +28,13 @@ interface Props {
 }
 
 export default function ServiceIcon({ slug, name, size = 48 }: Props) {
-  const [failed, setFailed] = useState(false);
+  const source = useIconSource();
+  const candidates = iconCandidates(slug, source);
+  // Remember which URL failed rather than an index, so a changed icon or source starts over.
+  const [failed, setFailed] = useState<readonly string[]>([]);
+  const src = candidates.find((url) => !failed.includes(url));
 
-  if (failed || !slug) {
+  if (!src) {
     const letter = name.charAt(0).toUpperCase() || '?';
     return (
       <div
@@ -42,10 +46,6 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
     );
   }
 
-  // If slug is already a full URL, use it directly (fixes double-CDN bug)
-  const src =
-    slug.startsWith('http://') || slug.startsWith('https://') ? slug : `${ICON_CDN}/${slug}.png`;
-
   return (
     <img
       src={src}
@@ -53,7 +53,7 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
       width={size}
       height={size}
       className="rounded-lg object-contain shrink-0"
-      onError={() => setFailed(true)}
+      onError={() => setFailed((urls) => [...urls, src])}
     />
   );
 }

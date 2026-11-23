@@ -82,6 +82,21 @@ export type SSEEvent =
   | { type: 'stacks_updated'; data: Record<string, StackConfig> }
   | { type: 'heartbeat'; data: Record<string, never> };
 
+/** Where icons come from (`HOMEGANTRY_ICON_SOURCE`). */
+export type IconSource = { mode: 'cdn' | 'custom'; baseUrl: string } | { mode: 'off' };
+
+/** `GET /api/ui-config`. */
+export interface UiConfig {
+  icons: IconSource;
+}
+
+/** `GET /api/kb/coverage` (edit rights). */
+export interface KbCoverage {
+  total: number;
+  recognised: number;
+  unrecognised: string[];
+}
+
 /** `GET /api/auth`: what the current browser session may do. */
 export interface AuthStatus {
   canEdit: boolean;
