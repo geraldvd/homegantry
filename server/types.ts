@@ -12,9 +12,12 @@ export interface ContainerInfo {
   ports: PortMapping[];
 }
 
+/** How a service is reachable, derived from its reverse-proxy middlewares. */
+export type ExposureLevel = 'public' | 'sso' | 'vpn-only' | 'unknown';
+
 export interface Service {
   id: string;
-  source: 'docker' | 'manual';
+  source: 'docker' | 'manual' | 'traefik';
   name: string;
   description: string;
   url: string;
@@ -25,6 +28,18 @@ export interface Service {
   container?: ContainerInfo;
   hidden: boolean;
   sortOrder: number;
+  exposure?: ExposureLevel;
+  /** Why the service has this exposure (badge tooltip); middleware names only. */
+  exposureSource?: string;
+  health?: ServiceHealth;
+}
+
+export interface ServiceHealth {
+  status: 'up' | 'down' | 'unknown';
+  /** ISO timestamp of the last check. */
+  checkedAt: string;
+  reason?: 'timeout' | 'tls' | 'unreachable' | 'http';
+  httpStatus?: number;
 }
 
 export interface ServiceOverride {
