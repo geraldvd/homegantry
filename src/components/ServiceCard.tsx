@@ -3,6 +3,7 @@ import type { Service } from '../types';
 import ServiceIcon from './ServiceIcon';
 import { updateOverride } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { safeHref } from '../lib/url';
 
 function statusClass(status: string): string {
   switch (status) {
@@ -38,12 +39,15 @@ export default function ServiceCard({ service, showStatus, onEdit }: Props) {
     onEdit(service);
   };
 
+  // Only http(s) URLs become links (defence in depth, the server filters them too).
+  const href = safeHref(service.url);
+  const Root: React.ElementType = href ? 'a' : 'div';
+  const linkProps = href ? { href, target: '_blank', rel: 'noopener noreferrer' } : {};
+
   return (
-    <a
-      href={service.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="glass-card p-4 flex items-start gap-3 relative group cursor-pointer"
+    <Root
+      {...linkProps}
+      className={`glass-card p-4 flex items-start gap-3 relative group ${href ? 'cursor-pointer' : ''}`}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
@@ -91,6 +95,6 @@ export default function ServiceCard({ service, showStatus, onEdit }: Props) {
           </button>
         </div>
       )}
-    </a>
+    </Root>
   );
 }

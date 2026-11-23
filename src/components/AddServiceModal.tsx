@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useServices } from '../context/ServiceContext';
 import { addManualService } from '../api/client';
+import { normaliseUrlInput } from '../lib/url';
 
 interface Props {
   open: boolean;
@@ -33,12 +34,17 @@ export default function AddServiceModal({ open, onClose }: Props) {
       setError('Name and URL are required.');
       return;
     }
+    const checked = normaliseUrlInput(url);
+    if (checked.error !== undefined) {
+      setError(checked.error);
+      return;
+    }
     setSaving(true);
     setError('');
     try {
       await addManualService({
         displayName: name.trim(),
-        url: url.trim(),
+        url: checked.url,
         icon: icon.trim(),
         category: category.trim() || 'Uncategorized',
         description: description.trim(),

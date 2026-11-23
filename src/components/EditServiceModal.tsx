@@ -7,6 +7,7 @@ import {
   updateManualService,
   deleteManualService,
 } from '../api/client';
+import { normaliseUrlInput } from '../lib/url';
 
 interface Props {
   service: Service | null;
@@ -42,13 +43,22 @@ export default function EditServiceModal({ service, onClose }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Discovered services may clear the URL (back to auto-detected) or use "#" for no link.
+    const checked =
+      isDocker && !url.trim()
+        ? { url: undefined, error: undefined }
+        : normaliseUrlInput(url, { allowNone: isDocker });
+    if (checked.error !== undefined) {
+      setError(checked.error);
+      return;
+    }
     setSaving(true);
     setError('');
     try {
       if (isDocker) {
         await updateOverride(service.id, {
           displayName: name.trim() || undefined,
-          url: url.trim() || undefined,
+          url: checked.url,
           icon: icon.trim() || undefined,
           category: category.trim() || undefined,
           description: description.trim() || undefined,
@@ -57,7 +67,7 @@ export default function EditServiceModal({ service, onClose }: Props) {
       } else {
         await updateManualService(service.id, {
           displayName: name.trim(),
-          url: url.trim(),
+          url: checked.url,
           icon: icon.trim(),
           category: category.trim() || 'Uncategorized',
           description: description.trim(),
