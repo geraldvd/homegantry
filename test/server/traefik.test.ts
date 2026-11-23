@@ -287,6 +287,102 @@ describe('Traefik discovery', () => {
     expect(s.getServices()[0]).toMatchObject({ id: 'traefik-wiki-file', exposure: 'public' });
   });
 
+  describe('routers that cannot produce a link still count for exposure', () => {
+    const backend = (provider: string, service: string) => {
+      const route = (name: string, rule: string, middlewares: string[]) => ({
+        name: `${name}@${provider}`,
+        provider,
+        rule,
+        service,
+        status: 'enabled',
+        tls: {},
+        middlewares,
+      });
+      return { route };
+    };
+    const login = [
+      { name: 'login@file', provider: 'file', type: 'forwardauth' },
+    ] as TraefikFixture['middlewares'];
+    const unlinkable = ['PathPrefix(`/app`)', 'HostRegexp(`.+`)', 'Host(`*.example.com`)'];
+
+    it.each(unlinkable)('standalone service with an open %s router is public', async (rule) => {
+      const { route } = backend('file', 'app');
+      const s = await setup([], {
+        routers: [
+          route('app-login', 'Host(`app.example.com`)', ['login@file']),
+          route('app-open', rule, []),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(s.getServices()).toHaveLength(1);
+      expect(s.getServices()[0]).toMatchObject({
+        url: 'https://app.example.com',
+        exposure: 'public',
+      });
+    });
+
+    it.each(unlinkable)('container with an open %s router is public', async (rule) => {
+      const { route } = backend('docker', 'app-tools');
+      const app = container({ id: 'c1', name: 'app', image: 'example/app:1', project: 'tools' });
+      const s = await setup([app], {
+        routers: [
+          route('app-tools', 'Host(`app.example.com`)', ['login@file']),
+          route('app-open', rule, []),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(byId(s.getServices(), 'c1')).toMatchObject({
+        url: 'https://app.example.com',
+        exposure: 'public',
+      });
+    });
+
+    it('keeps SSO when every router on the backend is protected', async () => {
+      const { route } = backend('file', 'app');
+      const s = await setup([], {
+        routers: [
+          route('app-login', 'Host(`app.example.com`)', ['login@file']),
+          route('app-path', 'PathPrefix(`/app`)', ['login@file']),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(s.getServices()[0]).toMatchObject({ exposure: 'sso' });
+    });
+
+    it('gives a container with only unlinkable routers a badge and keeps its own URL', async () => {
+      const { route } = backend('docker', 'app-tools');
+      const app = container({
+        id: 'c1',
+        name: 'app',
+        image: 'example/app:1',
+        project: 'tools',
+        ports: [{ PrivatePort: 80, PublicPort: 8080 }],
+      });
+      const s = await setup([app], {
+        routers: [route('app-tools', 'PathPrefix(`/app`)', ['login@file'])],
+        services: [],
+        middlewares: login,
+      });
+      expect(byId(s.getServices(), 'c1')).toMatchObject({
+        url: 'http://192.168.1.100:8080',
+        exposure: 'sso',
+      });
+    });
+
+    it('creates no standalone card for a backend without a linkable router', async () => {
+      const { route } = backend('file', 'app');
+      const s = await setup([], {
+        routers: [route('app-open', 'PathPrefix(`/app`)', [])],
+        services: [],
+        middlewares: [],
+      });
+      expect(s.getServices()).toEqual([]);
+    });
+  });
+
   it('applies a custom HOMEGANTRY_EXPOSURE_MAP', async () => {
     const s = await setup(
       exampleLab,

@@ -81,7 +81,7 @@ function resolveUrl(input: MatchInput, route?: TraefikRoute): string {
   }
 
   // 3. Traefik API (knows the real TLS setup and path)
-  if (route) return route.url;
+  if (route?.url) return route.url;
 
   // 4. Traefik router rules in labels
   const traefikUrl = extractTraefikUrl(input.labels);
@@ -96,6 +96,15 @@ function resolveUrl(input: MatchInput, route?: TraefikRoute): string {
 
   // 6. No URL available
   return '#';
+}
+
+/**
+ * True when `url` is the `localhost` link fallback (no HOMEGANTRY_HOST). That link is meant for a
+ * browser on the Docker host; from inside the HomeGantry container it points at HomeGantry itself.
+ */
+export function isLocalhostFallback(input: MatchInput, url: string): boolean {
+  const port = input.ports[0]?.public;
+  return !config.host && port !== undefined && url === `http://localhost:${port}`;
 }
 
 // ---- main matching function ----
@@ -129,7 +138,7 @@ export function matchRoute(route: TraefikRoute): Service {
     source: 'traefik',
     name: override?.displayName ?? matched?.name ?? route.routerName,
     description: override?.description ?? matched?.description ?? '',
-    url: override?.url ?? route.url,
+    url: override?.url ?? route.url ?? '#',
     icon: override?.icon ?? matched?.icon ?? '',
     category: override?.category ?? matched?.category ?? 'Other',
     // Traefik only says the route exists; the health check says whether it answers.

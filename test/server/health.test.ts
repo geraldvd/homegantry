@@ -348,6 +348,57 @@ describe('health targets and API', () => {
     expect(srv.seen).toEqual([]);
   });
 
+  describe('localhost link fallback (empty HOMEGANTRY_HOST)', () => {
+    const published = (port: number, labels: Record<string, string> = {}) =>
+      container({
+        id: 'c1',
+        name: 'app',
+        image: 'example/app:1',
+        ports: [{ PrivatePort: 80, PublicPort: port }],
+        labels,
+      });
+
+    it('does not probe the synthesised localhost URL and shows no badge', async () => {
+      const srv = await fakeHttp(ok);
+      const s = await loadApp([published(srv.port)], { HOMEGANTRY_HOST: '' });
+      expect(s.getServices()[0]!.url).toBe(`http://localhost:${srv.port}`);
+      const routes = await import('../../server/routes.js');
+      await routes.checkServicesNow();
+      expect(srv.seen).toEqual([]);
+      const res = await request(s.app).get('/api/services').expect(200);
+      expect(res.body[0].health).toBeUndefined();
+    });
+
+    it('still probes homegantry.healthcheck.url', async () => {
+      const srv = await fakeHttp(ok);
+      const s = await loadApp(
+        [published(8080, { 'homegantry.healthcheck.url': `${srv.url}/healthz` })],
+        { HOMEGANTRY_HOST: '' },
+      );
+      const routes = await import('../../server/routes.js');
+      await routes.checkServicesNow();
+      expect(srv.seen.map((r) => r.url)).toEqual(['/healthz']);
+      const res = await request(s.app).get('/api/services').expect(200);
+      expect(res.body[0].health.status).toBe('up');
+    });
+
+    it('still probes an explicit URL when HOMEGANTRY_HOST is empty', async () => {
+      const srv = await fakeHttp(ok);
+      await loadApp([published(8080, { 'homegantry.url': srv.url })], { HOMEGANTRY_HOST: '' });
+      const routes = await import('../../server/routes.js');
+      await routes.checkServicesNow();
+      expect(srv.seen).toHaveLength(1);
+    });
+
+    it('still probes the published port when HOMEGANTRY_HOST is set', async () => {
+      const srv = await fakeHttp(ok);
+      await loadApp([published(srv.port)], { HOMEGANTRY_HOST: '127.0.0.1' });
+      const routes = await import('../../server/routes.js');
+      await routes.checkServicesNow();
+      expect(srv.seen).toHaveLength(1);
+    });
+  });
+
   it('checks manual services', async () => {
     const srv = await fakeHttp(ok);
     const s = await loadApp([]);

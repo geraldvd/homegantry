@@ -14,6 +14,7 @@ import {
   rematchService,
   getDiscoveredStacks,
   getServiceLabels,
+  usesLocalhostFallback,
 } from './docker.js';
 import { config } from './config.js';
 import { getHealth, runHealthChecks, startHealthChecks, type HealthTarget } from './health.js';
@@ -92,7 +93,9 @@ function healthTargets(): HealthTarget[] {
     if (s.source === 'docker' && s.status !== 'running') continue;
     const labels = getServiceLabels(s.id);
     if (labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false') continue;
-    const url = safeHttpUrl(labels['homegantry.healthcheck.url']) ?? safeHttpUrl(s.url);
+    const labelUrl = safeHttpUrl(labels['homegantry.healthcheck.url']);
+    if (!labelUrl && usesLocalhostFallback(s)) continue;
+    const url = labelUrl ?? safeHttpUrl(s.url);
     if (url) targets.push({ id: s.id, url });
   }
   return targets;
@@ -284,8 +287,8 @@ router.get('/api/events', (_req: Request, res: Response) => {
     }
   };
   const onRemoved = (data: { id: string }) => {
-    shown.delete(data.id);
-    send({ type: 'service_removed', data: { id: data.id } });
+    // Only for services this client was shown: the id of a hidden service stays private.
+    if (shown.delete(data.id)) send({ type: 'service_removed', data: { id: data.id } });
   };
   const onSettings = (data: DashboardSettings) => {
     send({ type: 'settings_updated', data: publicSettings(data) });

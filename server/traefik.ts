@@ -24,7 +24,8 @@ export interface TraefikRoute {
   routerName: string;
   serviceName: string;
   provider: string;
-  url: string;
+  /** Absent when no router on the backend has a literal host to link to. */
+  url?: string;
   https: boolean;
   exposure: ExposureLevel;
   exposureSource: string;
@@ -142,12 +143,10 @@ function isIgnored(
 function toRoute(
   router: RouterInfo,
   middlewares: ReadonlyMap<string, MiddlewareInfo>,
-): TraefikRoute | undefined {
+): TraefikRoute {
   const { host, path } = parseRule(router.rule);
-  if (!host) return undefined;
   const https = router.tls || router.entryPoints.some((ep) => HTTPS_ENTRYPOINT.test(ep));
-  const url = safeHttpUrl(`${https ? 'https' : 'http'}://${host}${path ?? ''}`);
-  if (!url) return undefined;
+  const url = host ? safeHttpUrl(`${https ? 'https' : 'http'}://${host}${path ?? ''}`) : undefined;
   const { level, source } = resolveExposure(
     router.middlewares,
     middlewares,
@@ -169,12 +168,16 @@ function toRoute(
 }
 
 /**
- * One route for a set of routers on the same backend: HTTPS first, then by name, for a stable
- * URL. The badge shows the loosest exposure: a service with one public router is public.
+ * One route for a set of routers on the same backend: linkable first, then HTTPS, then by name,
+ * for a stable URL. The badge shows the loosest exposure of all of them, including routers that
+ * cannot produce a link: a service with one public router is public.
  */
 function pickRoute(routes: readonly TraefikRoute[]): TraefikRoute | undefined {
   const sorted = [...routes].sort(
-    (a, b) => Number(b.https) - Number(a.https) || a.routerName.localeCompare(b.routerName),
+    (a, b) =>
+      Number(Boolean(b.url)) - Number(Boolean(a.url)) ||
+      Number(b.https) - Number(a.https) ||
+      a.routerName.localeCompare(b.routerName),
   );
   const primary = sorted[0];
   if (!primary) return undefined;
@@ -209,7 +212,6 @@ function buildRoutes(rawRouters: unknown[], rawServices: unknown[], rawMw: unkno
     const router = parseRouter(raw);
     if (!router || isIgnored(router, disabledServices, middlewares)) continue;
     const route = toRoute(router, middlewares);
-    if (!route) continue;
     if (CONTAINER_PROVIDERS.has(router.provider)) {
       container.push(route);
     } else {
@@ -219,7 +221,8 @@ function buildRoutes(rawRouters: unknown[], rawServices: unknown[], rawMw: unkno
 
   const standalone = [...byBackend.values()]
     .map(pickRoute)
-    .filter((r): r is TraefikRoute => r !== undefined);
+    // A card needs a link; a backend with only unlinkable routers gets none.
+    .filter((r): r is TraefikRoute => r?.url !== undefined);
   return { container, standalone };
 }
 

@@ -82,6 +82,21 @@ describe('SSE visibility filter (#19)', () => {
     s.stream.close();
   });
 
+  it('does not reveal the removal of a service this client was never shown', async () => {
+    const s = await loadApp(lab);
+    s.overridesStore.set({ c1: { hidden: true } });
+    s.rematchService('c1');
+    const stream = await openSse(s.app);
+    await stream.waitFor(1);
+    s.fake.state.containers = [];
+    await s.fullScan();
+    await stream.waitFor(2);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(ofType(stream.events, 'service_removed')).toEqual([{ id: 'c2' }]);
+    expect(JSON.stringify(stream.events)).not.toContain('"c1"');
+    stream.close();
+  });
+
   it('never announces a hidden service that appears during a scan', async () => {
     const s = await setup();
     s.overridesStore.set({ c3: { hidden: true } });

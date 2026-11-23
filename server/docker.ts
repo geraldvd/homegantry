@@ -1,7 +1,7 @@
 import Dockerode from 'dockerode';
 import { EventEmitter } from 'node:events';
 import { config } from './config.js';
-import { matchContainer, matchRoute, type MatchInput } from './matcher.js';
+import { isLocalhostFallback, matchContainer, matchRoute, type MatchInput } from './matcher.js';
 import { stripSecretLabels } from './sanitize.js';
 import {
   isTraefikEnabled,
@@ -214,6 +214,12 @@ export function rematchService(id: string): Service | undefined {
 /** Non-secret labels of a container service (health-check opt-out and URL). */
 export function getServiceLabels(id: string): Readonly<Record<string, string>> {
   return matchInputCache.get(id)?.labels ?? {};
+}
+
+/** True when the service's URL is only the `localhost` link fallback (not checkable from here). */
+export function usesLocalhostFallback(svc: Service): boolean {
+  const input = matchInputCache.get(svc.id);
+  return input !== undefined && isLocalhostFallback(input, svc.url);
 }
 
 /** Returns sorted unique stack names from current services. */

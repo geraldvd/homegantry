@@ -21,6 +21,9 @@ The tooltip shows the detail and the last-checked time. The **Show Status** sett
 - At most `HOMEGANTRY_HEALTHCHECK_CONCURRENCY` checks run at once, every `HOMEGANTRY_HEALTHCHECK_INTERVAL` seconds. A
   slow round is never overlapped by the next one.
 - Stopped containers, hidden services, services in hidden stacks and services without a URL are skipped.
+- With `HOMEGANTRY_HOST` empty, a service whose only URL is the `http://localhost:<port>` link fallback is skipped and
+  has no badge, because `localhost` inside the container is HomeGantry itself. Set `HOMEGANTRY_HOST` or
+  `homegantry.healthcheck.url` to check it.
 
 ::: tip Checks run from the HomeGantry container
 The URL must resolve and be reachable from inside that container. If a public hostname does not work there, point the
