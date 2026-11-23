@@ -13,7 +13,11 @@ import {
   dockerEvents,
   rematchService,
   getDiscoveredStacks,
+  getServiceLabels,
 } from './docker.js';
+import { config } from './config.js';
+import { getHealth, runHealthChecks, startHealthChecks, type HealthTarget } from './health.js';
+import { safeHttpUrl } from './urls.js';
 import type {
   Service,
   ServiceOverride,
@@ -69,10 +73,44 @@ function isVisible(s: Service): boolean {
   return !s.hidden && stackVisible(s);
 }
 
+function withHealth(s: Service): Service {
+  const health = getHealth(s.id);
+  return health ? { ...s, health } : s;
+}
+
 function mergeServices(includeHidden: boolean): Service[] {
   const docker = getServices();
   const manual = manualServicesStore.get().map(manualToService);
-  return [...docker, ...manual].filter(includeHidden ? stackVisible : isVisible);
+  return [...docker, ...manual].filter(includeHidden ? stackVisible : isVisible).map(withHealth);
+}
+
+// ---- health checks ----
+
+function healthTargets(): HealthTarget[] {
+  const targets: HealthTarget[] = [];
+  for (const s of mergeServices(false)) {
+    if (s.source === 'docker' && s.status !== 'running') continue;
+    const labels = getServiceLabels(s.id);
+    if (labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false') continue;
+    const url = safeHttpUrl(labels['homegantry.healthcheck.url']) ?? safeHttpUrl(s.url);
+    if (url) targets.push({ id: s.id, url });
+  }
+  return targets;
+}
+
+function announceHealth(id: string): void {
+  const svc = mergeServices(true).find((s) => s.id === id);
+  if (svc) dockerEvents.emit('service_updated', svc);
+}
+
+/** Run one round of health checks now. */
+export async function checkServicesNow(): Promise<void> {
+  if (config.healthcheck) await runHealthChecks(healthTargets(), announceHealth);
+}
+
+/** Start the periodic health checks (unless HOMEGANTRY_HEALTHCHECK=false). */
+export function startServiceHealthChecks(): void {
+  if (config.healthcheck) startHealthChecks(healthTargets, announceHealth);
 }
 
 // ---- Service routes ----
@@ -240,7 +278,7 @@ router.get('/api/events', (_req: Request, res: Response) => {
   const onUpdated = (svc: Service) => {
     if (isVisible(svc)) {
       shown.add(svc.id);
-      send({ type: 'service_updated', data: publicService(svc) });
+      send({ type: 'service_updated', data: publicService(withHealth(svc)) });
     } else if (shown.delete(svc.id)) {
       send({ type: 'service_removed', data: { id: svc.id } });
     }

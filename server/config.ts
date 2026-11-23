@@ -42,4 +42,10 @@ export const config = {
   traefikApiToken: envString('HOMEGANTRY_TRAEFIK_API_TOKEN', '').trim(),
   traefikTimeout: envNumber('HOMEGANTRY_TRAEFIK_TIMEOUT', 5),
   exposureMap: envString('HOMEGANTRY_EXPOSURE_MAP', ''),
+  // ---- HTTP health checks (see docs/guide/health-checks.md) ----
+  healthcheck: envBool('HOMEGANTRY_HEALTHCHECK', true),
+  healthcheckInterval: envNumber('HOMEGANTRY_HEALTHCHECK_INTERVAL', 60),
+  healthcheckTimeout: envNumber('HOMEGANTRY_HEALTHCHECK_TIMEOUT', 5),
+  healthcheckConcurrency: envNumber('HOMEGANTRY_HEALTHCHECK_CONCURRENCY', 8),
+  healthcheckInsecureTls: envBool('HOMEGANTRY_HEALTHCHECK_INSECURE_TLS', false),
 } as const;

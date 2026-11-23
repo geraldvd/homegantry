@@ -211,6 +211,11 @@ export function rematchService(id: string): Service | undefined {
   return svc;
 }
 
+/** Non-secret labels of a container service (health-check opt-out and URL). */
+export function getServiceLabels(id: string): Readonly<Record<string, string>> {
+  return matchInputCache.get(id)?.labels ?? {};
+}
+
 /** Returns sorted unique stack names from current services. */
 export function getDiscoveredStacks(): string[] {
   const stacks = new Set<string>();
