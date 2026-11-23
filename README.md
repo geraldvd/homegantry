@@ -5,7 +5,7 @@
 
 **Auto-discovering Docker homelab dashboard with real-time updates.**
 
-HomeGantry watches your Docker daemon for running containers, matches them against a built-in knowledge base of 60+ services, and presents them in a clean dashboard — no manual configuration required.
+HomeGantry watches your Docker daemon for running containers, matches them against a built-in knowledge base of 200+ services, and presents them in a clean dashboard — no manual configuration required.
 
 > **Status: pre-1.0, under active development.** Expect breaking changes between releases. See the
 > [roadmap](docs/MISSION.md#how-it-is-built).
@@ -16,7 +16,9 @@ HomeGantry watches your Docker daemon for running containers, matches them again
 
 ## Features
 
-- **Auto-discovery** — Detects running Docker containers and identifies them from a knowledge base of 60+ services
+- **Auto-discovery** — Detects running Docker containers and identifies them from a knowledge base of 200+ services
+- **Easy to extend** — One small YAML file per service; editors see which images are not recognised yet
+- **Icons your way** — dashboard-icons from a CDN, your own mirror, or off (no external requests)
 - **Real-time updates** — Server-Sent Events push changes instantly, no polling or page refresh
 - **Traefik discovery** — Reads router labels, or the optional Traefik API to also find non-Docker services (Proxmox, a NAS, ...)
 - **Exposure badges** — Shows whether a service is public, behind SSO or private (LAN/VPN only), derived from its Traefik middlewares
@@ -83,6 +85,7 @@ Details: [Security model](https://homegantry.com/guide/security). To report a vu
 | `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                                |
 | `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                                  |
 | `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects                     |
+| `HOMEGANTRY_ICON_SOURCE`     | `cdn`        | Icons: `cdn`, a self-hosted base URL, or `off`                 |
 | `HOMEGANTRY_ADMIN_TOKEN`     | _(empty)_    | Token that unlocks editing (≥ 24 characters)                   |
 | `HOMEGANTRY_AUTH_HEADER`     | _(empty)_    | Forward-auth header that allows editing (e.g. `Remote-User`)   |
 | `HOMEGANTRY_TRUSTED_PROXIES` | _(empty)_    | IPs/CIDRs of the proxy allowed to set that header              |
@@ -114,6 +117,7 @@ Full documentation is available at [homegantry.com](https://homegantry.com).
 - [Getting Started](https://homegantry.com/guide/getting-started) — Requirements and quick start
 - [Configuration](https://homegantry.com/guide/configuration) — Environment variables reference
 - [Docker Labels](https://homegantry.com/guide/docker-labels) — Controlling service display
+- [Knowledge Base](https://homegantry.com/guide/knowledge-base) — Matching rules and adding a service
 - [Traefik Discovery](https://homegantry.com/guide/traefik) — Traefik API, exposure badges and mapping
 - [Health Checks](https://homegantry.com/guide/health-checks) — HTTP status per service
 - [Deployment](https://homegantry.com/guide/deployment) — Production deployment guides

@@ -1,0 +1,12 @@
+name: Healthchecks
+description: Cron job and background task monitoring
+icon: healthchecks
+category: Monitoring
+defaultPort: 8000
+patterns:
+  - linuxserver/healthchecks
+  - ghcr.io/linuxserver/healthchecks
+  - healthchecks/healthchecks
+aliases:
+  - healthchecks
+  - healthchecks-io

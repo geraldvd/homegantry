@@ -1,0 +1,9 @@
+name: Gluetun
+description: VPN client in a thin Docker container
+icon: gluetun
+category: Network
+patterns:
+  - qmcgaw/gluetun
+  - ghcr.io/qdm12/gluetun
+aliases:
+  - gluetun

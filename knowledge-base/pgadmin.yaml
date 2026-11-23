@@ -1,0 +1,10 @@
+name: pgAdmin
+description: PostgreSQL administration
+icon: pgadmin
+category: Databases
+defaultPort: 80
+patterns:
+  - dpage/pgadmin4
+aliases:
+  - pgadmin
+  - pgadmin4

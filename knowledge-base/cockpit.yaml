@@ -1,0 +1,7 @@
+name: Cockpit
+description: Web console for Linux servers
+icon: cockpit
+category: Infrastructure
+defaultPort: 9090
+traefik:
+  - cockpit

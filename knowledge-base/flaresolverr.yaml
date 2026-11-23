@@ -1,0 +1,10 @@
+name: FlareSolverr
+description: Proxy to bypass Cloudflare protections
+icon: flaresolverr
+category: Downloads
+defaultPort: 8191
+patterns:
+  - ghcr.io/flaresolverr/flaresolverr
+  - flaresolverr/flaresolverr
+aliases:
+  - flaresolverr

@@ -1,0 +1,9 @@
+name: Dawarich
+description: Self-hosted location history tracker
+icon: dawarich
+category: Home
+defaultPort: 3000
+patterns:
+  - freikin/dawarich
+aliases:
+  - dawarich

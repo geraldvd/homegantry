@@ -18,6 +18,19 @@ All configuration is done through environment variables. None are required — s
 | `HOMEGANTRY_DATA_DIR`        | `/data`                | Directory for persistent JSON data (overrides, settings, manual services)                                                      |
 | `HOMEGANTRY_LOG_LEVEL`       | `info`                 | Log level: `debug`, `info`, `warn`, `error`                                                                                    |
 
+## Icons
+
+| Variable                 | Default | Description                                                                                                                    |
+| ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `HOMEGANTRY_ICON_SOURCE` | `cdn`   | `cdn` (dashboard-icons on jsDelivr), a self-hosted base URL (e.g. `https://icons.example.com`), or `off` (letter avatars only) |
+
+A self-hosted base URL must serve the dashboard-icons layout: `<base>/svg/<slug>.svg` and `<base>/png/<slug>.png`.
+HomeGantry tries the SVG first, then the PNG, then shows a letter avatar.
+
+With `off` the browser makes no external image request: the Content-Security-Policy allows only HomeGantry itself, and
+explicit icon URLs from labels or overrides are not sent to the client (they stay stored). An invalid value also turns
+icons off, so a typo cannot cause external requests.
+
 ## Security
 
 See the [Security model](/guide/security) for how these fit together.

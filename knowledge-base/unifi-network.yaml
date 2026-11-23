@@ -1,0 +1,16 @@
+name: UniFi Network
+description: Ubiquiti network controller
+icon: unifi
+category: Network
+defaultPort: 8443
+patterns:
+  - linuxserver/unifi-network-application
+  - linuxserver/unifi-controller
+  - jacobalberty/unifi
+aliases:
+  - unifi
+  - unifi-controller
+  - unifi-network-application
+traefik:
+  - unifi-network
+  - udm

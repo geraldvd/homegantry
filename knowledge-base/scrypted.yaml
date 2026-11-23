@@ -1,0 +1,10 @@
+name: Scrypted
+description: Home video integration platform
+icon: scrypted
+category: Home
+defaultPort: 10443
+patterns:
+  - ghcr.io/koush/scrypted
+  - koush/scrypted
+aliases:
+  - scrypted

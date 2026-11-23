@@ -1,0 +1,9 @@
+name: Ghostfolio
+description: Wealth management software
+icon: ghostfolio
+category: Productivity
+defaultPort: 3333
+patterns:
+  - ghostfolio/ghostfolio
+aliases:
+  - ghostfolio

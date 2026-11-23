@@ -1,0 +1,10 @@
+name: Technitium DNS
+description: Authoritative and recursive DNS server
+icon: technitium
+category: Network
+defaultPort: 5380
+patterns:
+  - technitium/dns-server
+aliases:
+  - technitium
+  - dns-server

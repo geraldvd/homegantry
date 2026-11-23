@@ -1,0 +1,11 @@
+name: Bazarr
+description: Automatic subtitle download manager
+icon: bazarr
+category: Media
+defaultPort: 6767
+patterns:
+  - linuxserver/bazarr
+  - ghcr.io/linuxserver/bazarr
+  - hotio/bazarr
+aliases:
+  - bazarr

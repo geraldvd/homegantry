@@ -1,0 +1,11 @@
+name: Karakeep
+description: Bookmark everything, with AI tagging
+icon: karakeep
+category: Productivity
+defaultPort: 3000
+patterns:
+  - ghcr.io/karakeep-app/karakeep
+  - ghcr.io/hoarder-app/hoarder
+aliases:
+  - karakeep
+  - hoarder

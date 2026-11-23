@@ -1,0 +1,9 @@
+name: Ollama
+description: Run large language models locally
+icon: ollama
+category: AI
+defaultPort: 11434
+patterns:
+  - ollama/ollama
+aliases:
+  - ollama

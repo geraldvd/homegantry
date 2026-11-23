@@ -7,14 +7,14 @@ HomeGantry is a lightweight dashboard for Docker homelabs that **automatically d
 Most homelab dashboards require you to manually configure every service. HomeGantry takes a different approach:
 
 1. **Connect to the Docker socket** — HomeGantry watches for container start/stop events in real time.
-2. **Match against a knowledge base** — A built-in database of 60+ popular self-hosted applications provides icons, categories, and display names automatically.
+2. **Match against a knowledge base** — A built-in database of 200+ popular self-hosted applications provides icons, categories, and display names automatically.
 3. **Extract URLs from labels** — Traefik router rules, `homepage.*` labels, and `homegantry.*` labels are all read to determine service URLs.
 
 The result is a dashboard that works out of the box with zero configuration for most setups.
 
 ## Features
 
-- **Auto-discovery** — Detects running Docker containers and matches them against a knowledge base of 60+ services
+- **Auto-discovery** — Detects running Docker containers and matches them against a knowledge base of 200+ services
 - **Dark mode glass-morphism UI** — Responsive grid and list layouts
 - **Real-time updates** — Server-Sent Events (SSE) push changes instantly, no polling needed
 - **Stack management** — Group services by Docker Compose project, toggle stack visibility

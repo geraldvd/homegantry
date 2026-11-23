@@ -1,0 +1,10 @@
+name: Authelia
+description: SSO and 2FA authentication portal
+icon: authelia
+category: Security
+defaultPort: 9091
+patterns:
+  - authelia/authelia
+  - ghcr.io/authelia/authelia
+aliases:
+  - authelia

@@ -1,0 +1,9 @@
+name: Synology DSM
+description: Synology NAS management
+icon: synology-dsm
+category: Storage
+defaultPort: 5001
+traefik:
+  - synology
+  - synology-dsm
+  - dsm

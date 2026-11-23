@@ -1,0 +1,11 @@
+name: Zigbee2MQTT
+description: Bridge Zigbee devices to MQTT network
+icon: zigbee2mqtt
+category: Home
+defaultPort: 8080
+patterns:
+  - koenkk/zigbee2mqtt
+  - ghcr.io/koenkk/zigbee2mqtt
+aliases:
+  - zigbee2mqtt
+  - z2m

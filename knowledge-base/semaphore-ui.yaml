@@ -1,0 +1,9 @@
+name: Semaphore UI
+description: Web UI for Ansible and Terraform
+icon: semaphore
+category: Development
+defaultPort: 3000
+patterns:
+  - semaphoreui/semaphore
+aliases:
+  - semaphore

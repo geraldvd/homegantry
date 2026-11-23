@@ -12,7 +12,6 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
-COPY server/known-services.json ./dist/server/known-services.json
 
 ENV NODE_ENV=production
 ENV HOMEGANTRY_DATA_DIR=/data

@@ -1,0 +1,12 @@
+name: Tandoor
+description: Recipe management and meal planning tool
+icon: tandoor-recipes
+category: Productivity
+defaultPort: 8080
+patterns:
+  - ghcr.io/tandoorrecipes/recipes
+  - vabene1111/recipes
+aliases:
+  - tandoor
+  - tandoor-recipes
+  - recipes

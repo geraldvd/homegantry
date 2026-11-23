@@ -1,0 +1,7 @@
+name: pfSense
+description: Open-source firewall and router
+icon: pfsense
+category: Network
+defaultPort: 443
+traefik:
+  - pfsense

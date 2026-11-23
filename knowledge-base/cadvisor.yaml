@@ -1,0 +1,11 @@
+name: cAdvisor
+description: Container resource metrics
+icon: cadvisor
+category: Monitoring
+defaultPort: 8080
+patterns:
+  - gcr.io/cadvisor/cadvisor
+  - ghcr.io/google/cadvisor
+aliases:
+  - cadvisor
+infrastructure: true

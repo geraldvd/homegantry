@@ -1,0 +1,12 @@
+name: Paperless-ngx
+description: Document management system with OCR
+icon: paperless-ngx
+category: Productivity
+defaultPort: 8000
+patterns:
+  - ghcr.io/paperless-ngx/paperless-ngx
+  - linuxserver/paperless-ngx
+aliases:
+  - paperless-ngx
+  - paperless
+  - paperlessngx

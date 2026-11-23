@@ -58,8 +58,8 @@ npm run typecheck    # Type-check frontend and backend without emitting
 │   ├── routes.ts         # API route definitions
 │   ├── docker.ts         # Docker Engine API integration
 │   ├── matcher.ts        # Service knowledge base matching
-│   ├── storage.ts        # JSON file persistence
-│   └── known-services.json  # Service database
+│   └── storage.ts        # JSON file persistence
+├── knowledge-base/       # One YAML file per known service
 ├── docs/                 # VitePress documentation site
 ├── Dockerfile            # Production container image
 └── docker-compose.yml    # End-user deployment
@@ -67,9 +67,8 @@ npm run typecheck    # Type-check frontend and backend without emitting
 
 ## Adding a Known Service
 
-The service knowledge base is in `server/known-services.json`. See
-[Adding a service to the knowledge base](https://github.com/geraldvd/homegantry/blob/main/CONTRIBUTING.md#adding-a-service-to-the-knowledge-base)
-in CONTRIBUTING.md for the entry format, then add a test case to `test/server/matcher.test.ts` and run `npm test`.
+Each known service is one YAML file in `knowledge-base/`. Copy `knowledge-base/_template.yaml`, edit it and run
+`npm run kb:check`. See [Add a service to the knowledge base](/guide/knowledge-base#add-a-service-to-the-knowledge-base).
 
 ## Tests and Linting
 

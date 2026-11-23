@@ -1,0 +1,9 @@
+name: Ouroboros
+description: Automatic Docker container updater
+category: Infrastructure
+defaultPort: 8080
+patterns:
+  - pyouroboros/ouroboros
+  - ghcr.io/pyouroboros/ouroboros
+aliases:
+  - ouroboros

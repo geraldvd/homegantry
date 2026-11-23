@@ -1,0 +1,11 @@
+name: Unbound
+description: Validating recursive DNS resolver
+icon: unbound
+category: Network
+defaultPort: 53
+patterns:
+  - mvance/unbound
+  - klutchell/unbound
+aliases:
+  - unbound
+infrastructure: true

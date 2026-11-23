@@ -6,3 +6,4 @@ data/*.json
 docs/.vitepress/dist/
 docs/.vitepress/cache/
 coverage/
+server/knowledge-base.generated.json

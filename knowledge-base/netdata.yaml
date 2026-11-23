@@ -1,0 +1,10 @@
+name: Netdata
+description: Real-time infrastructure monitoring agent
+icon: netdata
+category: Monitoring
+defaultPort: 19999
+patterns:
+  - netdata/netdata
+  - ghcr.io/netdata/netdata
+aliases:
+  - netdata

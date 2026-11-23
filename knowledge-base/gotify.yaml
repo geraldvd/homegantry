@@ -1,0 +1,10 @@
+name: Gotify
+description: Self-hosted push notification server
+icon: gotify
+category: Communication
+defaultPort: 80
+patterns:
+  - gotify/server
+  - ghcr.io/gotify/server
+aliases:
+  - gotify

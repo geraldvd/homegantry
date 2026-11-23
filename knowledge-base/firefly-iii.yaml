@@ -1,0 +1,12 @@
+name: Firefly III
+description: Self-hosted personal finance manager
+icon: firefly-iii
+category: Productivity
+defaultPort: 8080
+patterns:
+  - fireflyiii/core
+  - ghcr.io/firefly-iii/core
+aliases:
+  - firefly-iii
+  - fireflyiii
+  - firefly

@@ -1,0 +1,11 @@
+name: Lychee
+description: Self-hosted photo management application
+icon: lychee
+category: Storage
+defaultPort: 8080
+patterns:
+  - lycheeorg/lychee
+  - ghcr.io/lycheeorg/lychee
+  - linuxserver/lychee
+aliases:
+  - lychee

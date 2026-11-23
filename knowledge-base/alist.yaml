@@ -1,0 +1,10 @@
+name: Alist
+description: File list program supporting multiple storage
+icon: alist
+category: Storage
+defaultPort: 5244
+patterns:
+  - xhofe/alist
+  - ghcr.io/alistgo/alist
+aliases:
+  - alist

@@ -1,0 +1,9 @@
+name: Unpackerr
+description: Extracts downloads for Starr apps
+icon: unpackerr
+category: Media
+patterns:
+  - ghcr.io/unpackerr/unpackerr
+  - golift/unpackerr
+aliases:
+  - unpackerr

@@ -1,0 +1,12 @@
+name: code-server
+description: VS Code in the browser
+icon: code-server
+category: Development
+defaultPort: 8080
+patterns:
+  - linuxserver/code-server
+  - ghcr.io/linuxserver/code-server
+  - codercom/code-server
+aliases:
+  - code-server
+  - codeserver

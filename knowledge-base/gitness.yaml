@@ -1,0 +1,9 @@
+name: Gitness
+description: Open-source developer platform with CI/CD
+category: Development
+defaultPort: 3000
+patterns:
+  - harness/gitness
+  - ghcr.io/harness/gitness
+aliases:
+  - gitness

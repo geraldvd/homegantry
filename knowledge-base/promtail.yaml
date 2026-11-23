@@ -1,0 +1,10 @@
+name: Promtail
+description: Log shipper for Loki
+icon: loki
+category: Monitoring
+defaultPort: 9080
+patterns:
+  - grafana/promtail
+aliases:
+  - promtail
+infrastructure: true

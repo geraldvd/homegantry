@@ -1,0 +1,10 @@
+name: Miniflux
+description: Minimalist and opinionated RSS reader
+icon: miniflux
+category: Productivity
+defaultPort: 8080
+patterns:
+  - miniflux/miniflux
+  - ghcr.io/miniflux/miniflux
+aliases:
+  - miniflux

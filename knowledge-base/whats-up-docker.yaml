@@ -1,0 +1,11 @@
+name: What's Up Docker
+description: Container update notifications
+icon: whats-up-docker
+category: Infrastructure
+defaultPort: 3000
+patterns:
+  - getwud/wud
+  - fmartinou/whats-up-docker
+aliases:
+  - wud
+  - whats-up-docker

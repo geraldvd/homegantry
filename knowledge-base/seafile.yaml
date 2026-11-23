@@ -1,0 +1,10 @@
+name: Seafile
+description: Enterprise file sync and share platform
+icon: seafile
+category: Storage
+defaultPort: 8082
+patterns:
+  - seafileltd/seafile-mc
+  - seafileltd/seafile
+aliases:
+  - seafile

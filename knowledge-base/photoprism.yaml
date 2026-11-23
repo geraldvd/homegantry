@@ -1,0 +1,10 @@
+name: PhotoPrism
+description: AI-powered photo management application
+icon: photoprism
+category: Storage
+defaultPort: 2342
+patterns:
+  - photoprism/photoprism
+  - ghcr.io/photoprism/photoprism
+aliases:
+  - photoprism

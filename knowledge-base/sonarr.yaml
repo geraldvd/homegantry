@@ -1,0 +1,11 @@
+name: Sonarr
+description: TV series management and automation
+icon: sonarr
+category: Media
+defaultPort: 8989
+patterns:
+  - linuxserver/sonarr
+  - ghcr.io/linuxserver/sonarr
+  - hotio/sonarr
+aliases:
+  - sonarr

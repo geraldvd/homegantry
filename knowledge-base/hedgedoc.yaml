@@ -1,0 +1,10 @@
+name: HedgeDoc
+description: Collaborative markdown editor
+icon: hedgedoc
+category: Productivity
+defaultPort: 3000
+patterns:
+  - quay.io/hedgedoc/hedgedoc
+  - linuxserver/hedgedoc
+aliases:
+  - hedgedoc

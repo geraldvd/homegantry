@@ -1,0 +1,10 @@
+name: Monica
+description: Personal relationship manager
+icon: monica
+category: Productivity
+defaultPort: 80
+patterns:
+  - monica
+  - ghcr.io/monicahq/monica-next
+aliases:
+  - monica

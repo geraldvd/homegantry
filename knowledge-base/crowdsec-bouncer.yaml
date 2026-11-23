@@ -1,0 +1,11 @@
+name: CrowdSec Bouncer
+description: CrowdSec traffic bouncer for Traefik
+icon: crowdsec
+category: Security
+patterns:
+  - fbonalair/traefik-crowdsec-bouncer
+  - ghcr.io/crowdsecurity/traefik-bouncer
+aliases:
+  - crowdsec-bouncer
+  - traefik-crowdsec-bouncer
+infrastructure: true

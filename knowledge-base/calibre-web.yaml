@@ -1,0 +1,12 @@
+name: Calibre-web
+description: Web-based e-book browser and reader
+icon: calibre-web
+category: Media
+defaultPort: 8083
+patterns:
+  - linuxserver/calibre-web
+  - ghcr.io/linuxserver/calibre-web
+  - johnguan/calibre-web
+aliases:
+  - calibre-web
+  - calibreweb

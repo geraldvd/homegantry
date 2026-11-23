@@ -1,0 +1,12 @@
+name: Valheim
+description: Dedicated Valheim game server
+icon: valheim
+category: Games
+defaultPort: 2456
+patterns:
+  - ghcr.io/lloesche/valheim-server
+  - lloesche/valheim-server
+  - ich777/valheimplus
+aliases:
+  - valheim
+  - valheim-server

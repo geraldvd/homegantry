@@ -1,0 +1,11 @@
+name: Overseerr
+description: Media request management for Plex
+icon: overseerr
+category: Media
+defaultPort: 5055
+patterns:
+  - linuxserver/overseerr
+  - sctx/overseerr
+  - ghcr.io/sctx/overseerr
+aliases:
+  - overseerr

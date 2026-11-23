@@ -1,0 +1,11 @@
+name: Jellyfin
+description: The free software media system
+icon: jellyfin
+category: Media
+defaultPort: 8096
+patterns:
+  - jellyfin/jellyfin
+  - linuxserver/jellyfin
+  - ghcr.io/jellyfin/jellyfin
+aliases:
+  - jellyfin

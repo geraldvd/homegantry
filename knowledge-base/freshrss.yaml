@@ -1,0 +1,11 @@
+name: FreshRSS
+description: Self-hosted RSS feed aggregator
+icon: freshrss
+category: Productivity
+defaultPort: 8080
+patterns:
+  - freshrss/freshrss
+  - linuxserver/freshrss
+  - ghcr.io/linuxserver/freshrss
+aliases:
+  - freshrss

@@ -1,0 +1,12 @@
+name: Caddy
+description: Fast web server with automatic HTTPS
+icon: caddy
+category: Network
+defaultPort: 443
+patterns:
+  - caddy
+  - library/caddy
+  - lucaslorentz/caddy-docker-proxy
+aliases:
+  - caddy
+  - caddy-server

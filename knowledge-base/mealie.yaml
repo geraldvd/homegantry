@@ -1,0 +1,10 @@
+name: Mealie
+description: Self-hosted recipe manager and meal planner
+icon: mealie
+category: Productivity
+defaultPort: 9925
+patterns:
+  - ghcr.io/mealie-recipes/mealie
+  - hkotel/mealie
+aliases:
+  - mealie

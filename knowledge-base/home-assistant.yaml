@@ -1,0 +1,17 @@
+name: Home Assistant
+description: Open-source home automation platform
+icon: home-assistant
+category: Home
+defaultPort: 8123
+patterns:
+  - homeassistant/home-assistant
+  - ghcr.io/home-assistant/home-assistant
+  - linuxserver/homeassistant
+aliases:
+  - homeassistant
+  - home-assistant
+  - hass
+traefik:
+  - haos
+  - hassio
+  - home-assistant-os

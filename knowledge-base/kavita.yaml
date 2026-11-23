@@ -1,0 +1,10 @@
+name: Kavita
+description: Self-hosted digital library for reading
+icon: kavita
+category: Media
+defaultPort: 5000
+patterns:
+  - jvmilazz0/kavita
+  - ghcr.io/kareadita/kavita
+aliases:
+  - kavita

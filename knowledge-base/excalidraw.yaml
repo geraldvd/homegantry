@@ -1,0 +1,9 @@
+name: Excalidraw
+description: Virtual whiteboard
+icon: excalidraw
+category: Productivity
+defaultPort: 80
+patterns:
+  - excalidraw/excalidraw
+aliases:
+  - excalidraw

@@ -1,0 +1,11 @@
+name: Traefik
+description: Cloud-native reverse proxy and load balancer
+icon: traefik
+category: Network
+defaultPort: 8080
+patterns:
+  - traefik
+  - library/traefik
+aliases:
+  - traefik
+  - traefik-proxy

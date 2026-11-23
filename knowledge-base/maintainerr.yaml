@@ -1,0 +1,10 @@
+name: Maintainerr
+description: Automatic media library cleanup
+icon: maintainerr
+category: Media
+defaultPort: 6246
+patterns:
+  - ghcr.io/jorenn92/maintainerr
+  - jorenn92/maintainerr
+aliases:
+  - maintainerr

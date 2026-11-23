@@ -1,0 +1,10 @@
+name: Blocky
+description: Fast DNS proxy and ad blocker
+icon: blocky
+category: Network
+defaultPort: 4000
+patterns:
+  - spx01/blocky
+  - ghcr.io/0xerr0r/blocky
+aliases:
+  - blocky

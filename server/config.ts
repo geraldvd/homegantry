@@ -27,6 +27,8 @@ export const config = {
   dataDir: envString('HOMEGANTRY_DATA_DIR', './data'),
   logLevel: envString('HOMEGANTRY_LOG_LEVEL', 'info'),
   composeOnly: envBool('HOMEGANTRY_COMPOSE_ONLY', true),
+  // `cdn`, `off` or a self-hosted base URL (see server/icons.ts).
+  iconSource: envString('HOMEGANTRY_ICON_SOURCE', 'cdn'),
   // ---- security (see docs/guide/security.md) ----
   adminToken: envString('HOMEGANTRY_ADMIN_TOKEN', '').trim(),
   authHeader: envString('HOMEGANTRY_AUTH_HEADER', '').trim(),

@@ -1,0 +1,10 @@
+name: AFFiNE
+description: Workspace for docs, whiteboards and databases
+icon: affine
+category: Productivity
+defaultPort: 3010
+patterns:
+  - ghcr.io/toeverything/affine-graphql
+  - ghcr.io/toeverything/affine
+aliases:
+  - affine

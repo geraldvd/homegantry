@@ -1,0 +1,11 @@
+name: IT-Tools
+description: Collection of handy developer utilities
+icon: it-tools
+category: Productivity
+defaultPort: 8080
+patterns:
+  - corentinth/it-tools
+  - ghcr.io/corentinth/it-tools
+aliases:
+  - it-tools
+  - ittools

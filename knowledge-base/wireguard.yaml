@@ -1,0 +1,13 @@
+name: WireGuard
+description: Fast and modern VPN tunnel
+icon: wireguard
+category: Network
+defaultPort: 51820
+patterns:
+  - linuxserver/wireguard
+  - ghcr.io/linuxserver/wireguard
+  - ghcr.io/wg-easy/wg-easy
+aliases:
+  - wireguard
+  - wg-easy
+  - wgeasy

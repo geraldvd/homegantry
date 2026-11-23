@@ -1,0 +1,9 @@
+name: Baserow
+description: Open-source no-code database
+icon: baserow
+category: Productivity
+defaultPort: 80
+patterns:
+  - baserow/baserow
+aliases:
+  - baserow

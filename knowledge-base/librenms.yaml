@@ -1,0 +1,9 @@
+name: LibreNMS
+description: Network monitoring
+icon: librenms
+category: Monitoring
+defaultPort: 8000
+patterns:
+  - librenms/librenms
+aliases:
+  - librenms

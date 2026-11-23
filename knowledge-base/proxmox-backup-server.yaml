@@ -1,0 +1,9 @@
+name: Proxmox Backup Server
+description: Backups for virtual machines and containers
+icon: proxmox-backup-server
+category: Infrastructure
+defaultPort: 8007
+traefik:
+  - pbs
+  - proxmox-backup
+  - proxmox-backup-server

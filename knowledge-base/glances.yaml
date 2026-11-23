@@ -1,0 +1,10 @@
+name: Glances
+description: Cross-platform system monitoring tool
+icon: glances
+category: Monitoring
+defaultPort: 61208
+patterns:
+  - nicolargo/glances
+  - ghcr.io/nicolargo/glances
+aliases:
+  - glances

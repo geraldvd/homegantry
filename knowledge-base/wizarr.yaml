@@ -1,0 +1,9 @@
+name: Wizarr
+description: Invitations for media servers
+icon: wizarr
+category: Media
+defaultPort: 5690
+patterns:
+  - ghcr.io/wizarrrr/wizarr
+aliases:
+  - wizarr

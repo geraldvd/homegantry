@@ -1,0 +1,9 @@
+name: Kopia
+description: Encrypted, deduplicated backups
+icon: kopia
+category: Storage
+defaultPort: 51515
+patterns:
+  - kopia/kopia
+aliases:
+  - kopia

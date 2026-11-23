@@ -33,6 +33,7 @@ Every pull request must keep these green (CI runs them on Node 20 and 22):
 ```bash
 npm run typecheck   # TypeScript, client + server + tests
 npm run lint        # ESLint + Prettier check (npm run format fixes formatting)
+npm run kb:check    # knowledge base: schema, duplicates, icon slugs
 npm test            # vitest unit + supertest API tests
 npm run build       # production build
 ```
@@ -64,30 +65,40 @@ focused, and update the README/docs in the same pull request as the behaviour ch
 
 ## Adding a service to the knowledge base
 
-The knowledge base is `server/known-services.json`, a list of entries like:
+Each service is one small YAML file in `knowledge-base/`; no code changes needed:
 
-```json
-{
-  "name": "Jellyfin",
-  "description": "The free software media system",
-  "icon": "jellyfin",
-  "category": "Media",
-  "defaultPort": 8096,
-  "patterns": ["jellyfin/jellyfin", "linuxserver/jellyfin", "ghcr.io/jellyfin/jellyfin"],
-  "aliases": ["jellyfin"]
-}
+```bash
+cp knowledge-base/_template.yaml knowledge-base/my-service.yaml
+# edit the file
+npm run kb:check
 ```
 
-- **`patterns`**: image repositories (without tag). Matching is a case-insensitive substring match on the image
-  repository, so `linuxserver/jellyfin` also matches `lscr.io/linuxserver/jellyfin:latest`. Keep patterns specific
-  enough that they do not match unrelated images.
+```yaml
+name: Jellyfin
+description: The free software media system
+icon: jellyfin
+category: Media
+defaultPort: 8096
+patterns:
+  - jellyfin/jellyfin
+  - linuxserver/jellyfin
+aliases:
+  - jellyfin
+```
+
+- **`patterns`**: image repositories (without tag). A pattern matches whole path segments on any registry, so
+  `linuxserver/jellyfin` matches `lscr.io/linuxserver/jellyfin:latest`, and `redis` never matches `redis-exporter`.
+  Use `*` for an explicit glob (`example/app-*`).
 - **`aliases`**: compose service names / container names. Comparison ignores case, `-`, `_` and `.`.
-- **`icon`**: a slug from [dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (e.g. `jellyfin`).
+- **`traefik`**: router/service names for services that do not run in Docker (Proxmox, a NAS, a router).
+- **`icon`**: a slug from [dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (e.g. `jellyfin`). Leave it
+  out if there is none.
 - **`category`**: reuse an existing category where possible (Media, Monitoring, Storage, Network, Security, ...).
 - **`infrastructure: true`**: hides the service by default (databases, caches, socket proxies).
 
-Entries are checked in order and the first match wins. Add a test case to `test/server/matcher.test.ts` for the new
-image, run the checks above, and open a pull request (the "New service" issue template lists the same information).
+`npm run kb:check` validates the format, icon slugs and duplicates. Use public images and products only. The full
+reference is in [docs/guide/knowledge-base.md](docs/guide/knowledge-base.md). If you cannot open a pull request, file a
+[Missing service](https://github.com/geraldvd/homegantry/issues/new?template=missing_service.yml) issue instead.
 
 ## Pull requests
 

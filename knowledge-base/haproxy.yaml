@@ -1,0 +1,12 @@
+name: HAProxy
+description: Reliable high-performance TCP/HTTP load balancer
+icon: haproxy
+category: Network
+defaultPort: 8404
+patterns:
+  - haproxy
+  - library/haproxy
+  - haproxytech/haproxy-alpine
+  - haproxytech/haproxy-*
+aliases:
+  - haproxy

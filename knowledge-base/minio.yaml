@@ -1,0 +1,10 @@
+name: MinIO
+description: High-performance S3-compatible object storage
+icon: minio
+category: Storage
+defaultPort: 9001
+patterns:
+  - minio/minio
+  - quay.io/minio/minio
+aliases:
+  - minio

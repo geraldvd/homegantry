@@ -1,0 +1,7 @@
+name: OPNsense
+description: Open-source firewall and routing platform
+icon: opnsense
+category: Network
+defaultPort: 443
+traefik:
+  - opnsense

@@ -1,0 +1,13 @@
+name: Stirling-PDF
+description: Self-hosted PDF manipulation tool
+icon: stirling-pdf
+category: Productivity
+defaultPort: 8080
+patterns:
+  - frooodle/s-pdf
+  - ghcr.io/stirling-tools/s-pdf
+  - ghcr.io/frooodle/s-pdf
+aliases:
+  - stirling-pdf
+  - stirlingpdf
+  - s-pdf

@@ -1,0 +1,12 @@
+name: Vaultwarden
+description: Lightweight Bitwarden-compatible password server
+icon: vaultwarden
+category: Security
+defaultPort: 8080
+patterns:
+  - vaultwarden/server
+  - ghcr.io/dani-garcia/vaultwarden
+aliases:
+  - vaultwarden
+  - bitwarden
+  - bitwarden-rs

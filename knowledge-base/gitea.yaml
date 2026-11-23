@@ -1,0 +1,10 @@
+name: Gitea
+description: Lightweight self-hosted Git service
+icon: gitea
+category: Productivity
+defaultPort: 3000
+patterns:
+  - gitea/gitea
+  - ghcr.io/gitea/gitea
+aliases:
+  - gitea

@@ -13,6 +13,7 @@ import {
   dockerEvents,
   rematchService,
   getDiscoveredStacks,
+  getKbCoverage,
   getServiceLabels,
   usesLocalhostFallback,
 } from './docker.js';
@@ -33,6 +34,7 @@ import {
   publicSettings,
   publicStack,
   publicStacks,
+  publicUiConfig,
 } from './sanitize.js';
 import {
   idParams,
@@ -333,6 +335,17 @@ router.patch('/api/settings', validate({ body: settingsBody }), (req: Request, r
   settingsStore.set(updated);
   dockerEvents.emit('settings_updated', updated);
   res.json(publicSettings(updated));
+});
+
+// ---- Client configuration and knowledge-base coverage ----
+
+router.get('/api/ui-config', (_req: Request, res: Response) => {
+  res.json(publicUiConfig());
+});
+
+// Only reached with edit rights (guardCoverage in security.ts).
+router.get('/api/kb/coverage', (_req: Request, res: Response) => {
+  res.json(getKbCoverage());
 });
 
 // ---- Health ----

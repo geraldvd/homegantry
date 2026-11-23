@@ -1,0 +1,11 @@
+name: Uptime Kuma
+description: Self-hosted monitoring tool with status pages
+icon: uptime-kuma
+category: Monitoring
+defaultPort: 3001
+patterns:
+  - louislam/uptime-kuma
+  - ghcr.io/louislam/uptime-kuma
+aliases:
+  - uptime-kuma
+  - uptimekuma

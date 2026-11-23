@@ -56,5 +56,9 @@ When multiple label sources are present, HomeGantry resolves them in this order:
 1. **UI overrides** — Changes made through the HomeGantry web interface
 2. **`homegantry.*` labels** — Native HomeGantry labels
 3. **`homepage.*` labels** — Homepage-compatible labels
-4. **Knowledge base** — Built-in service database (60+ services)
-5. **Docker metadata** — Container name, image name as final fallback
+4. **[Knowledge base](/guide/knowledge-base)** — Built-in service database (200+ services)
+5. **Docker metadata** — Container name as final fallback
+
+This applies per field: `homegantry.icon` beats `homepage.icon` and `homegantry.category` beats the knowledge-base
+category, even when no name label is set. See the
+[full precedence table](/guide/knowledge-base#order-of-precedence).

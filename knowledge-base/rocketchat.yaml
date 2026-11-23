@@ -1,0 +1,11 @@
+name: Rocket.Chat
+description: Team communication platform
+icon: rocket-chat
+category: Communication
+defaultPort: 3000
+patterns:
+  - rocketchat/rocket.chat
+  - registry.rocket.chat/rocketchat/rocket.chat
+aliases:
+  - rocketchat
+  - rocket-chat

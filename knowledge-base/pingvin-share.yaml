@@ -1,0 +1,11 @@
+name: Pingvin Share
+description: Self-hosted file sharing
+icon: pingvin-share
+category: Storage
+defaultPort: 3000
+patterns:
+  - stonith404/pingvin-share
+  - ghcr.io/stonith404/pingvin-share
+aliases:
+  - pingvin-share
+  - pingvin

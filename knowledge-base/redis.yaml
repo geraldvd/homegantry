@@ -1,0 +1,12 @@
+name: Redis
+description: In-memory data structure store and cache
+icon: redis
+category: Databases
+defaultPort: 6379
+patterns:
+  - redis
+  - library/redis
+  - bitnami/redis
+aliases:
+  - redis
+infrastructure: true

@@ -1,0 +1,10 @@
+name: Outline
+description: Team knowledge base and wiki
+icon: outline
+category: Productivity
+defaultPort: 3000
+patterns:
+  - outlinewiki/outline
+  - ghcr.io/outline/outline
+aliases:
+  - outline

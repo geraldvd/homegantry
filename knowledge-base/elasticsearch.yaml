@@ -1,0 +1,13 @@
+name: Elasticsearch
+description: Distributed search and analytics engine
+icon: elasticsearch
+category: Databases
+defaultPort: 9200
+patterns:
+  - elasticsearch
+  - library/elasticsearch
+  - docker.elastic.co/elasticsearch/elasticsearch
+aliases:
+  - elasticsearch
+  - elastic
+infrastructure: true

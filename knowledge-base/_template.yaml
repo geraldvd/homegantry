@@ -1,0 +1,35 @@
+# Copy this file to knowledge-base/<service-name>.yaml, edit it, and run `npm run kb:check`.
+# Format reference: docs/guide/knowledge-base.md
+
+# Display name and a one-line description (public product information only).
+name: My Service
+description: One line about what this service does
+
+# Slug from https://github.com/homarr-labs/dashboard-icons. Leave it out if there is no icon:
+# the dashboard then shows a letter avatar.
+icon: docker
+
+# Reuse an existing category where possible: Media, Network, Infrastructure, Monitoring, Storage,
+# Productivity, Security, Downloads, Communication, Games, Databases, Home, Dashboard,
+# Development, AI.
+category: Productivity
+
+# Default web UI port (optional).
+defaultPort: 8080
+
+# Image repositories, without tag or digest. A pattern matches whole path segments on any
+# registry; add a registry to pin it. `*` matches within one segment (example/app-*).
+patterns:
+  - example/my-service
+  - ghcr.io/example/my-service
+
+# Compose service / container names. Case, `-`, `_` and `.` are ignored.
+aliases:
+  - my-service
+
+# Optional: Traefik router/service names, for services that do not run in Docker.
+# traefik:
+#   - my-service
+
+# Optional: hide by default (databases, caches, agents, socket proxies).
+# infrastructure: true

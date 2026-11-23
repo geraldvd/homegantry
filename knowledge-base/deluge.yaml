@@ -1,0 +1,11 @@
+name: Deluge
+description: Lightweight cross-platform BitTorrent client
+icon: deluge
+category: Downloads
+defaultPort: 8112
+patterns:
+  - linuxserver/deluge
+  - ghcr.io/linuxserver/deluge
+  - binhex/arch-delugevpn
+aliases:
+  - deluge

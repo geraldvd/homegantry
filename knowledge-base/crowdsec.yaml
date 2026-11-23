@@ -1,0 +1,10 @@
+name: CrowdSec
+description: Collaborative open-source security engine
+icon: crowdsec
+category: Security
+defaultPort: 8080
+patterns:
+  - crowdsecurity/crowdsec
+  - ghcr.io/crowdsecurity/crowdsec
+aliases:
+  - crowdsec

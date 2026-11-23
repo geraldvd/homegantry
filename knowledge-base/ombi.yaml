@@ -1,0 +1,9 @@
+name: Ombi
+description: Media request management
+icon: ombi
+category: Media
+defaultPort: 3579
+patterns:
+  - linuxserver/ombi
+aliases:
+  - ombi

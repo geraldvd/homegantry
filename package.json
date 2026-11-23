@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "predev:server": "npm run kb:build",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "vite",
+    "predev:fixture": "npm run kb:build",
     "dev:fixture": "tsx scripts/dev-fixture.ts",
+    "kb:build": "tsx scripts/kb.ts build",
+    "kb:check": "tsx scripts/kb.ts check",
+    "kb:refresh-icons": "tsx scripts/kb.ts refresh-icons",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
-    "build:server": "tsc -p tsconfig.server.json",
+    "build:server": "tsc -p tsconfig.server.json && tsx scripts/kb.ts build dist/server/knowledge-base.generated.json",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.test.json",
     "lint": "eslint . && prettier --check .",
@@ -61,6 +66,7 @@
     "typescript-eslint": "^8.72.2",
     "vite": "^6.1.0",
     "vitepress": "^1.6.4",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "yaml": "^2.8.1"
   }
 }

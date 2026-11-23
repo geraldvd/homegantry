@@ -1,0 +1,10 @@
+name: Immich Machine Learning
+description: Machine-learning worker for Immich
+icon: immich
+category: Storage
+defaultPort: 3003
+patterns:
+  - ghcr.io/immich-app/immich-machine-learning
+aliases:
+  - immich-machine-learning
+infrastructure: true

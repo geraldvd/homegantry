@@ -1,0 +1,11 @@
+name: Vikunja
+description: Open-source to-do and task management app
+icon: vikunja
+category: Productivity
+defaultPort: 3456
+patterns:
+  - vikunja/vikunja
+  - vikunja/api
+  - ghcr.io/go-vikunja/vikunja
+aliases:
+  - vikunja

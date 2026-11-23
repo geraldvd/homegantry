@@ -1,0 +1,11 @@
+name: Syncthing
+description: Continuous peer-to-peer file synchronization
+icon: syncthing
+category: Storage
+defaultPort: 8384
+patterns:
+  - syncthing/syncthing
+  - linuxserver/syncthing
+  - ghcr.io/linuxserver/syncthing
+aliases:
+  - syncthing

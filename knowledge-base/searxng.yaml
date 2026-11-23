@@ -1,0 +1,9 @@
+name: SearXNG
+description: Privacy-respecting metasearch engine
+icon: searxng
+category: Productivity
+defaultPort: 8080
+patterns:
+  - searxng/searxng
+aliases:
+  - searxng

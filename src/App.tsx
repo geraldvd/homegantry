@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Service } from './types';
 import { ServiceProvider } from './context/ServiceContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { IconSourceProvider } from './context/IconSourceContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
@@ -13,9 +14,11 @@ import UnlockModal from './components/UnlockModal';
 export default function App() {
   return (
     <AuthProvider>
-      <ServiceProvider>
-        <Shell />
-      </ServiceProvider>
+      <IconSourceProvider>
+        <ServiceProvider>
+          <Shell />
+        </ServiceProvider>
+      </IconSourceProvider>
     </AuthProvider>
   );
 }

@@ -1,0 +1,11 @@
+name: Grafana
+description: Analytics and interactive visualization platform
+icon: grafana
+category: Monitoring
+defaultPort: 3000
+patterns:
+  - grafana/grafana
+  - grafana/grafana-oss
+  - grafana/grafana-enterprise
+aliases:
+  - grafana

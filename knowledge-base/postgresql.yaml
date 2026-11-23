@@ -1,0 +1,14 @@
+name: PostgreSQL
+description: Advanced open-source relational database
+icon: postgresql
+category: Databases
+defaultPort: 5432
+patterns:
+  - postgres
+  - library/postgres
+  - bitnami/postgresql
+aliases:
+  - postgres
+  - postgresql
+  - pgsql
+infrastructure: true

@@ -1,0 +1,9 @@
+name: Ofelia
+description: Docker job scheduler (cron alternative)
+category: Infrastructure
+patterns:
+  - mcuadros/ofelia
+  - ghcr.io/mcuadros/ofelia
+aliases:
+  - ofelia
+infrastructure: true

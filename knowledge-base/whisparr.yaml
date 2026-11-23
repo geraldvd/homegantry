@@ -1,0 +1,10 @@
+name: Whisparr
+description: Adult content collection manager
+icon: whisparr
+category: Media
+defaultPort: 6969
+patterns:
+  - hotio/whisparr
+  - ghcr.io/hotio/whisparr
+aliases:
+  - whisparr

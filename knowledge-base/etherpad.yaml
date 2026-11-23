@@ -1,0 +1,9 @@
+name: Etherpad
+description: Real-time collaborative editor
+icon: etherpad
+category: Productivity
+defaultPort: 9001
+patterns:
+  - etherpad/etherpad
+aliases:
+  - etherpad

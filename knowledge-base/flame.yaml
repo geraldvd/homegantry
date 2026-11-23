@@ -1,0 +1,10 @@
+name: Flame
+description: Self-hosted startpage for your server
+icon: flame
+category: Dashboard
+defaultPort: 5005
+patterns:
+  - pawelmalak/flame
+  - ghcr.io/fdarveau/flame
+aliases:
+  - flame

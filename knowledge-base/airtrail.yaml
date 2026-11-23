@@ -1,0 +1,9 @@
+name: AirTrail
+description: Personal flight tracking and history
+icon: air-trail
+category: Productivity
+defaultPort: 3000
+patterns:
+  - johly/airtrail
+aliases:
+  - airtrail

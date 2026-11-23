@@ -1,0 +1,9 @@
+name: Drone
+description: Container-native continuous integration
+icon: drone
+category: Development
+defaultPort: 80
+patterns:
+  - drone/drone
+aliases:
+  - drone

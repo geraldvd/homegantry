@@ -1,0 +1,10 @@
+name: Yacht
+description: Web-based container management interface
+icon: yacht
+category: Infrastructure
+defaultPort: 8000
+patterns:
+  - selfhostedpro/yacht
+  - ghcr.io/selfhostedpro/yacht
+aliases:
+  - yacht

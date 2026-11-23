@@ -1,0 +1,10 @@
+name: Dashy
+description: Feature-rich self-hosted dashboard for homelab
+icon: dashy
+category: Dashboard
+defaultPort: 8080
+patterns:
+  - lissy93/dashy
+  - ghcr.io/lissy93/dashy
+aliases:
+  - dashy

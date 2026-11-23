@@ -1,0 +1,10 @@
+name: Beszel Agent
+description: Metrics agent for Beszel
+icon: beszel
+category: Monitoring
+defaultPort: 45876
+patterns:
+  - henrygd/beszel-agent
+aliases:
+  - beszel-agent
+infrastructure: true

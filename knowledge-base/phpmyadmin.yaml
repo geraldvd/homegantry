@@ -1,0 +1,10 @@
+name: phpMyAdmin
+description: MySQL and MariaDB administration
+icon: phpmyadmin
+category: Databases
+defaultPort: 80
+patterns:
+  - phpmyadmin
+  - phpmyadmin/phpmyadmin
+aliases:
+  - phpmyadmin

@@ -1,0 +1,13 @@
+name: Trilium Notes
+description: Hierarchical note-taking application
+icon: trilium
+category: Productivity
+defaultPort: 8080
+patterns:
+  - zadam/trilium
+  - ghcr.io/zadam/trilium
+  - triliumnext/notes
+aliases:
+  - trilium
+  - trilium-notes
+  - triliumnotes

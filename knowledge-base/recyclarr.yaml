@@ -1,0 +1,9 @@
+name: Recyclarr
+description: Sync TRaSH guides to Sonarr and Radarr
+icon: recyclarr
+category: Media
+patterns:
+  - ghcr.io/recyclarr/recyclarr
+  - recyclarr/recyclarr
+aliases:
+  - recyclarr

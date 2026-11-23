@@ -14,7 +14,7 @@ hero:
 
 features:
   - title: Auto-Discovery
-    details: Detects running Docker containers and matches them against a built-in knowledge base of 60+ services. No manual setup needed.
+    details: Detects running Docker containers and matches them against a built-in knowledge base of 200+ services. No manual setup needed.
   - title: Real-Time Updates
     details: Server-Sent Events push changes to your browser instantly — no polling, no manual refresh.
   - title: Traefik & Homepage Compatible

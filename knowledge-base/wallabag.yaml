@@ -1,0 +1,9 @@
+name: Wallabag
+description: Save and read articles later
+icon: wallabag
+category: Productivity
+defaultPort: 80
+patterns:
+  - wallabag/wallabag
+aliases:
+  - wallabag

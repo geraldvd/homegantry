@@ -1,0 +1,10 @@
+name: Watchtower
+description: Automatic Docker container image updates
+icon: watchtower
+category: Infrastructure
+defaultPort: 8080
+patterns:
+  - containrrr/watchtower
+  - ghcr.io/containrrr/watchtower
+aliases:
+  - watchtower

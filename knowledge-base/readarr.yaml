@@ -1,0 +1,11 @@
+name: Readarr
+description: Book and audiobook collection manager
+icon: readarr
+category: Media
+defaultPort: 8787
+patterns:
+  - linuxserver/readarr
+  - ghcr.io/linuxserver/readarr
+  - hotio/readarr
+aliases:
+  - readarr

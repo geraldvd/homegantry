@@ -1,0 +1,10 @@
+name: Cloudflared
+description: Cloudflare Tunnel client for secure access
+icon: cloudflare
+category: Network
+patterns:
+  - cloudflare/cloudflared
+  - ghcr.io/cloudflare/cloudflared
+aliases:
+  - cloudflared
+  - cloudflare-tunnel

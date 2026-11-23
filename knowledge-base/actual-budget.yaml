@@ -1,0 +1,12 @@
+name: Actual Budget
+description: Local-first personal finance tool
+icon: actual-budget
+category: Productivity
+defaultPort: 5006
+patterns:
+  - actualbudget/actual-server
+  - ghcr.io/actualbudget/actual-server
+aliases:
+  - actual-budget
+  - actual
+  - actualbudget

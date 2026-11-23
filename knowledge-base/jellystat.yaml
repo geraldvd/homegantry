@@ -1,0 +1,9 @@
+name: Jellystat
+description: Statistics for Jellyfin
+icon: jellystat
+category: Media
+defaultPort: 3000
+patterns:
+  - cyfershepard/jellystat
+aliases:
+  - jellystat

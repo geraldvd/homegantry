@@ -1,0 +1,8 @@
+name: openmediavault
+description: Debian-based NAS solution
+icon: openmediavault
+category: Storage
+defaultPort: 80
+traefik:
+  - openmediavault
+  - omv

@@ -1,0 +1,10 @@
+name: RabbitMQ
+description: Message broker
+icon: rabbitmq
+category: Databases
+defaultPort: 15672
+patterns:
+  - rabbitmq
+aliases:
+  - rabbitmq
+infrastructure: true

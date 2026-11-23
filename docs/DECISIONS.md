@@ -62,3 +62,22 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-23 — The card keeps the green/grey dot for the container state next to the health badge for now, even when
   that reads as "running" next to "Down". — Both facts are true and useful; the redesign of how the two are shown
   belongs to the UX milestone (M4) rather than a quick patch.
+- 2026-11-23 — Knowledge base is one YAML file per service, validated with zod and converted to JSON at build time. `yaml`
+  is a dev dependency; M3 adds no runtime dependency. — Contributors edit one small file (mission principle 6) and the
+  runtime stays small (principle 3). Alternatives: one large JSON file (merge conflicts), a YAML parser at runtime.
+- 2026-11-23 — Icon label precedence (#13a): per field, `homegantry.*` beats `homepage.*`, also when no name label is set.
+  — The native label is the most explicit statement; previously `homepage.icon` overwrote `homegantry.icon`.
+- 2026-11-23 — Image matching (#13c): a pattern matches a whole repository (any registry, namespace or mirror prefix unless
+  the pattern names a registry); `*` is an explicit single-segment glob; the most specific pattern wins. — Substring
+  matching labelled `redis_exporter` as Redis and hid it as infrastructure. Real variants the old rule found by accident
+  (Komodo core/periphery, `nginx-unprivileged`, ...) got explicit patterns; the look-alikes that change are listed in
+  `test/server/kb-migration.test.ts`.
+- 2026-11-23 — Category precedence (#13d): `homegantry.category`, then `homepage.group`, beat the knowledge-base category,
+  even for the value "Other". — A label is a deliberate choice by the user; the knowledge base is only a default.
+- 2026-11-23 — `HOMEGANTRY_ICON_SOURCE`: `cdn` (default), a self-hosted base URL, or `off`. An invalid value means `off`,
+  and the client shows letter avatars until the server has answered. — No external request may happen by accident. With
+  `cdn` or a base URL the CSP keeps `img-src https: http:`, because explicit icon URLs in labels and overrides are an
+  existing feature and can point anywhere; `off` allows only HomeGantry itself.
+- 2026-11-23 — Icon slugs are checked against a pinned copy of the dashboard-icons file list (`npm run kb:refresh-icons`).
+  — CI stays deterministic and unit tests make no network calls. Entries without an upstream icon omit `icon` and show a
+  letter avatar.

@@ -1,0 +1,11 @@
+name: Prowlarr
+description: Indexer manager for Sonarr, Radarr, and Lidarr
+icon: prowlarr
+category: Media
+defaultPort: 9696
+patterns:
+  - linuxserver/prowlarr
+  - ghcr.io/linuxserver/prowlarr
+  - hotio/prowlarr
+aliases:
+  - prowlarr

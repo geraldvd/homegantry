@@ -1,0 +1,10 @@
+name: WeKan
+description: Open-source kanban board
+icon: wekan
+category: Productivity
+defaultPort: 8080
+patterns:
+  - wekanteam/wekan
+  - ghcr.io/wekan/wekan
+aliases:
+  - wekan

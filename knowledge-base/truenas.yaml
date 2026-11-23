@@ -1,0 +1,9 @@
+name: TrueNAS
+description: Open-source storage operating system
+icon: truenas
+category: Storage
+defaultPort: 443
+traefik:
+  - truenas
+  - truenas-scale
+  - truenas-core

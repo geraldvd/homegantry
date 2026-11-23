@@ -1,0 +1,10 @@
+name: Prometheus
+description: Systems monitoring and alerting toolkit
+icon: prometheus
+category: Monitoring
+defaultPort: 9090
+patterns:
+  - prom/prometheus
+  - ghcr.io/prometheus/prometheus
+aliases:
+  - prometheus

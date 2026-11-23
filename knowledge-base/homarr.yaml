@@ -1,0 +1,10 @@
+name: Homarr
+description: Customizable homelab dashboard and app launcher
+icon: homarr
+category: Dashboard
+defaultPort: 7575
+patterns:
+  - ghcr.io/homarr-labs/homarr
+  - ghcr.io/ajnart/homarr
+aliases:
+  - homarr

@@ -1,0 +1,10 @@
+name: Tdarr
+description: Distributed media transcoding system
+icon: tdarr
+category: Media
+defaultPort: 8265
+patterns:
+  - ghcr.io/haveagitgat/tdarr
+  - haveagitgat/tdarr
+aliases:
+  - tdarr
