@@ -6,14 +6,14 @@
 # Everything else (POST, exec, images, volumes, ...) is refused by the proxy.
 #
 # Usage:
-#   cp examples/compose.socket-proxy.yaml compose.yaml
+#   cp examples/compose.socket-proxy.yaml compose.yaml   # in your own deployment directory
 #   echo "HOMEGANTRY_ADMIN_TOKEN=$(openssl rand -hex 32)" > .env   # optional: enables editing
 #   docker compose up -d
 #
 # See docs/guide/security.md for the full security model.
 services:
   socket-proxy:
-    image: tecnativa/docker-socket-proxy:latest
+    image: tecnativa/docker-socket-proxy:v0.5.0 # pinned (newest tag published on Docker Hub); bump deliberately
     restart: unless-stopped
     environment:
       CONTAINERS: 1 # list containers (read-only)
