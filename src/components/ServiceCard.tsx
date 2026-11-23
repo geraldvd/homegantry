@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Service } from '../types';
+import ServiceBadges from './ServiceBadges';
 import ServiceIcon from './ServiceIcon';
 import { updateOverride } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -56,11 +57,16 @@ export default function ServiceCard({ service, showStatus, onEdit }: Props) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-medium text-gray-100 truncate">{service.name}</span>
-          {showStatus && <span className={`status-dot ${statusClass(service.status)}`} />}
+          {showStatus && service.source !== 'traefik' && (
+            <span className={`status-dot ${statusClass(service.status)}`} />
+          )}
         </div>
         {service.description && (
           <p className="text-xs text-gray-400 mt-1 line-clamp-2">{service.description}</p>
         )}
+        <div className="mt-1.5 empty:hidden">
+          <ServiceBadges service={service} showStatus={showStatus} />
+        </div>
       </div>
 
       {canEdit && hovering && (

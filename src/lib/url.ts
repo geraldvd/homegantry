@@ -15,7 +15,8 @@ export function safeHref(url: string): string | undefined {
   return isHttp(value) ? value : undefined;
 }
 
-export type UrlInputResult = { url: string; error?: undefined } | { url?: undefined; error: string };
+export type UrlInputResult =
+  { url: string; error?: undefined } | { url?: undefined; error: string };
 
 /**
  * Check what the user typed into a URL field. A bare host (`192.168.1.100:8096`) gets `http://`;

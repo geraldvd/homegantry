@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Service } from '../types';
+import ServiceBadges from './ServiceBadges';
 import ServiceIcon from './ServiceIcon';
 import { updateOverride } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -55,7 +56,11 @@ export default function ServiceListItem({ service, showStatus, onEdit }: Props) 
 
       <span className="font-medium text-gray-100 truncate">{service.name}</span>
 
-      {showStatus && <span className={`status-dot ${statusClass(service.status)}`} />}
+      {showStatus && service.source !== 'traefik' && (
+        <span className={`status-dot ${statusClass(service.status)}`} />
+      )}
+
+      <ServiceBadges service={service} showStatus={showStatus} />
 
       <span className="text-xs text-gray-500 bg-surface-700 px-2 py-0.5 rounded-full ml-auto shrink-0">
         {service.category}

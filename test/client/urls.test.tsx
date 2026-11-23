@@ -126,11 +126,7 @@ describe('service links (#16)', () => {
       wrap(
         <>
           <ServiceCard service={{ ...service, url }} showStatus onEdit={() => {}} />
-          <ServiceListItem
-            service={{ ...service, id: 'id-2', url }}
-            showStatus
-            onEdit={() => {}}
-          />
+          <ServiceListItem service={{ ...service, id: 'id-2', url }} showStatus onEdit={() => {}} />
         </>,
       );
       await act(async () => {});

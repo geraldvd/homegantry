@@ -12,9 +12,18 @@ export interface ContainerInfo {
   ports: PortMapping[];
 }
 
+export type ExposureLevel = 'public' | 'sso' | 'vpn-only' | 'unknown';
+
+export interface ServiceHealth {
+  status: 'up' | 'down' | 'unknown';
+  checkedAt: string;
+  reason?: 'timeout' | 'tls' | 'unreachable' | 'http';
+  httpStatus?: number;
+}
+
 export interface Service {
   id: string;
-  source: 'docker' | 'manual';
+  source: 'docker' | 'manual' | 'traefik';
   name: string;
   description: string;
   url: string;
@@ -25,6 +34,9 @@ export interface Service {
   container?: ContainerInfo;
   hidden: boolean;
   sortOrder: number;
+  exposure?: ExposureLevel;
+  exposureSource?: string;
+  health?: ServiceHealth;
 }
 
 export interface ServiceOverride {
