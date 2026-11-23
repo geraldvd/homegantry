@@ -7,6 +7,13 @@ import {
   updateManualService,
   deleteManualService,
 } from '../api/client';
+import { normaliseUrlInput } from '../lib/url';
+
+const SOURCE_LABEL: Record<Service['source'], string> = {
+  docker: 'Docker',
+  traefik: 'Traefik',
+  manual: 'Manual',
+};
 
 interface Props {
   service: Service | null;
@@ -38,17 +45,27 @@ export default function EditServiceModal({ service, onClose }: Props) {
 
   if (!service) return null;
 
-  const isDocker = service.source === 'docker';
+  // Discovered services (Docker, Traefik) are edited through overrides.
+  const isDiscovered = service.source !== 'manual';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Discovered services may clear the URL (back to auto-detected) or use "#" for no link.
+    const checked =
+      isDiscovered && !url.trim()
+        ? { url: undefined, error: undefined }
+        : normaliseUrlInput(url, { allowNone: isDiscovered });
+    if (checked.error !== undefined) {
+      setError(checked.error);
+      return;
+    }
     setSaving(true);
     setError('');
     try {
-      if (isDocker) {
+      if (isDiscovered) {
         await updateOverride(service.id, {
           displayName: name.trim() || undefined,
-          url: url.trim() || undefined,
+          url: checked.url,
           icon: icon.trim() || undefined,
           category: category.trim() || undefined,
           description: description.trim() || undefined,
@@ -57,7 +74,7 @@ export default function EditServiceModal({ service, onClose }: Props) {
       } else {
         await updateManualService(service.id, {
           displayName: name.trim(),
-          url: url.trim(),
+          url: checked.url,
           icon: icon.trim(),
           category: category.trim() || 'Uncategorized',
           description: description.trim(),
@@ -106,7 +123,7 @@ export default function EditServiceModal({ service, onClose }: Props) {
     >
       <div className="bg-surface-800 border border-surface-600/60 rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
         <h2 className="text-lg font-semibold text-gray-100 mb-4">
-          Edit {isDocker ? 'Docker' : 'Manual'} Service
+          Edit {SOURCE_LABEL[service.source]} Service
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -129,7 +146,7 @@ export default function EditServiceModal({ service, onClose }: Props) {
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <div className="flex items-center gap-2 pt-2">
-            {isDocker && (
+            {isDiscovered && (
               <button
                 type="button"
                 onClick={handleRevert}
@@ -139,7 +156,7 @@ export default function EditServiceModal({ service, onClose }: Props) {
                 Revert to auto-detected
               </button>
             )}
-            {!isDocker && (
+            {!isDiscovered && (
               <button
                 type="button"
                 onClick={handleDelete}

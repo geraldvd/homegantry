@@ -46,11 +46,19 @@ async function errorMessage(res: Response): Promise<string> {
   return `HTTP ${res.status}`;
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+/** Default headers, then the caller's, then auth (a caller cannot replace the stored token). */
+function mergeHeaders(token: string | null, extra?: HeadersInit): Headers {
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  new Headers(extra).forEach((value, name) => headers.set(name, value));
+  for (const [name, value] of Object.entries(authHeader(token))) headers.set(name, value);
+  return headers;
+}
+
+export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getStoredToken();
   const res = await fetch(`${BASE}${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...authHeader(token) },
+    headers: mergeHeaders(token, init?.headers),
   });
   if (!res.ok) {
     if (res.status === 401 && token) {

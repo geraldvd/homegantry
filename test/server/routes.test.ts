@@ -264,13 +264,13 @@ describe('GET /api/events (SSE)', () => {
     });
 
     s.dockerEvents.emit('service_updated', { id: 'x' });
-    s.dockerEvents.emit('service_removed', { id: 'y' });
+    s.dockerEvents.emit('service_removed', { id: 'x' });
     s.dockerEvents.emit('settings_updated', { columns: 2 });
     s.dockerEvents.emit('stacks_updated', { media: { visible: true } });
     await stream.waitFor(5);
     expect(stream.events.slice(1)).toEqual([
       { type: 'service_updated', data: { id: 'x' } },
-      { type: 'service_removed', data: { id: 'y' } },
+      { type: 'service_removed', data: { id: 'x' } },
       { type: 'settings_updated', data: { columns: 2 } },
       { type: 'stacks_updated', data: { media: { visible: true } } },
     ]);

@@ -4,6 +4,7 @@ import { config } from './config.js';
 import { createApp } from './app.js';
 import { securitySummary } from './auth.js';
 import { startWatching } from './docker.js';
+import { startServiceHealthChecks } from './routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,5 +18,5 @@ for (const line of info) console.log(`[homegantry] ${line}`);
 
 app.listen(config.port, () => {
   console.log(`[homegantry] listening on http://localhost:${config.port}`);
-  void startWatching();
+  void startWatching().then(startServiceHealthChecks);
 });

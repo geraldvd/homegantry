@@ -37,3 +37,14 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-23 — Editing stays token-unlock by default (`HOMEGANTRY_ADMIN_TOKEN`); `HOMEGANTRY_READONLY=true` gives a
   labels-only, read-only instance. — Keeps the M1 design: simple for one editor, and a status wall needs no auth.
   Docs now tell token users behind a reverse proxy to set `HOMEGANTRY_TRUSTED_PROXIES` to the proxy's single IP.
+- 2026-11-23 — Multi-host Traefik rules (#13b): the first literal host in the rule is the service URL, for both
+  ``Host(`a`, `b`)`` and ``Host(`a`) || Host(`b`)``; `homegantry.url` picks another. — Predictable, and one card keeps
+  one link. Alternatives: one card per host (duplicates), a list of URLs per service (UI and API change for a rare case).
+  The other three quirks in #13 are not decided here.
+- 2026-11-23 — M2 adds no runtime dependency: the Traefik client uses Node's `fetch`, health checks use `node:http(s)`.
+  — Mission principle 3. Health checks need per-request TLS options, which `fetch` lacks without `undici` as a direct
+  dependency. Alternatives: `undici`, `got`, `axios` (not needed for GET/HEAD).
+- 2026-11-23 — Exposure badge: the strictest middleware decides a router, the loosest router decides a service. — A
+  service with one public route is public, so the badge must not suggest more protection than exists.
+- 2026-11-23 — Health: any HTTP status below 500 is "up", redirects are not followed, TLS errors are "unknown". — A login
+  page or 404 proves the service answers; a certificate problem says nothing about whether it is running.

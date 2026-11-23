@@ -33,7 +33,8 @@ export default defineConfig({
         items: [
           { text: 'Environment Variables', link: '/guide/configuration' },
           { text: 'Docker Labels', link: '/guide/docker-labels' },
-          { text: 'Traefik Integration', link: '/guide/traefik' },
+          { text: 'Traefik Discovery', link: '/guide/traefik' },
+          { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Stack Management', link: '/guide/stacks' },
         ],
       },

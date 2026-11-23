@@ -13,7 +13,12 @@ import {
   dockerEvents,
   rematchService,
   getDiscoveredStacks,
+  getServiceLabels,
+  usesLocalhostFallback,
 } from './docker.js';
+import { config } from './config.js';
+import { getHealth, runHealthChecks, startHealthChecks, type HealthTarget } from './health.js';
+import { safeHttpUrl } from './urls.js';
 import type {
   Service,
   ServiceOverride,
@@ -22,7 +27,13 @@ import type {
   StackConfig,
   SSEEvent,
 } from './types.js';
-import { publicService, publicSettings, publicStack, publicStacks } from './sanitize.js';
+import {
+  publicManualService,
+  publicService,
+  publicSettings,
+  publicStack,
+  publicStacks,
+} from './sanitize.js';
 import {
   idParams,
   manualCreateBody,
@@ -54,24 +65,55 @@ function manualToService(m: ManualService): Service {
   };
 }
 
+function stackVisible(s: Service): boolean {
+  return !s.stack || getStackConfig(s.stack).visible;
+}
+
+/** What a read-only client may see; the same rule for REST and every SSE event. */
+function isVisible(s: Service): boolean {
+  return !s.hidden && stackVisible(s);
+}
+
+function withHealth(s: Service): Service {
+  const health = getHealth(s.id);
+  return health ? { ...s, health } : s;
+}
+
 function mergeServices(includeHidden: boolean): Service[] {
   const docker = getServices();
   const manual = manualServicesStore.get().map(manualToService);
-  let all = [...docker, ...manual];
+  return [...docker, ...manual].filter(includeHidden ? stackVisible : isVisible).map(withHealth);
+}
 
-  // Filter out services whose stack has visible: false
-  all = all.filter((s) => {
-    if (s.stack) {
-      const cfg = getStackConfig(s.stack);
-      if (!cfg.visible) return false;
-    }
-    return true;
-  });
+// ---- health checks ----
 
-  if (!includeHidden) {
-    return all.filter((s) => !s.hidden);
+function healthTargets(): HealthTarget[] {
+  const targets: HealthTarget[] = [];
+  for (const s of mergeServices(false)) {
+    if (s.source === 'docker' && s.status !== 'running') continue;
+    const labels = getServiceLabels(s.id);
+    if (labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false') continue;
+    const labelUrl = safeHttpUrl(labels['homegantry.healthcheck.url']);
+    if (!labelUrl && usesLocalhostFallback(s)) continue;
+    const url = labelUrl ?? safeHttpUrl(s.url);
+    if (url) targets.push({ id: s.id, url });
   }
-  return all;
+  return targets;
+}
+
+function announceHealth(id: string): void {
+  const svc = mergeServices(true).find((s) => s.id === id);
+  if (svc) dockerEvents.emit('service_updated', svc);
+}
+
+/** Run one round of health checks now. */
+export async function checkServicesNow(): Promise<void> {
+  if (config.healthcheck) await runHealthChecks(healthTargets(), announceHealth);
+}
+
+/** Start the periodic health checks (unless HOMEGANTRY_HEALTHCHECK=false). */
+export function startServiceHealthChecks(): void {
+  if (config.healthcheck) startHealthChecks(healthTargets, announceHealth);
 }
 
 // ---- Service routes ----
@@ -133,7 +175,7 @@ router.post(
     // Emit SSE for new manual service
     dockerEvents.emit('service_updated', manualToService(entry));
 
-    res.status(201).json(entry);
+    res.status(201).json(publicManualService(entry));
   },
 );
 
@@ -155,7 +197,7 @@ router.put(
     // Emit SSE for updated manual service
     dockerEvents.emit('service_updated', manualToService(manual[idx]!));
 
-    res.json(manual[idx]);
+    res.json(publicManualService(manual[idx]!));
   },
 );
 
@@ -228,20 +270,35 @@ router.get('/api/events', (_req: Request, res: Response) => {
   };
 
   // Every event goes through the same allow-lists as the REST API.
-  send({ type: 'initial_state', data: mergeServices(false).map(publicService) });
+  const initial = mergeServices(false);
+  send({ type: 'initial_state', data: initial.map(publicService) });
+
+  // Services this client currently knows about: one that stops being visible is removed from
+  // its dashboard without sending the new data.
+  const shown = new Set(initial.map((s) => s.id));
 
   // Forward docker events
   const onUpdated = (svc: Service) => {
-    send({ type: 'service_updated', data: publicService(svc) });
+    if (isVisible(svc)) {
+      shown.add(svc.id);
+      send({ type: 'service_updated', data: publicService(withHealth(svc)) });
+    } else if (shown.delete(svc.id)) {
+      send({ type: 'service_removed', data: { id: svc.id } });
+    }
   };
   const onRemoved = (data: { id: string }) => {
-    send({ type: 'service_removed', data: { id: data.id } });
+    // Only for services this client was shown: the id of a hidden service stays private.
+    if (shown.delete(data.id)) send({ type: 'service_removed', data: { id: data.id } });
   };
   const onSettings = (data: DashboardSettings) => {
     send({ type: 'settings_updated', data: publicSettings(data) });
   };
   const onStacksUpdated = (data: Record<string, StackConfig>) => {
     send({ type: 'stacks_updated', data: publicStacks(data) });
+    // A toggled stack changes which services are visible.
+    for (const svc of getServices()) {
+      if (isVisible(svc) !== shown.has(svc.id)) onUpdated(svc);
+    }
   };
 
   dockerEvents.on('service_updated', onUpdated);

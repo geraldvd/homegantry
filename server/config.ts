@@ -35,4 +35,17 @@ export const config = {
   corsOrigins: envString('HOMEGANTRY_CORS_ORIGINS', '')
     .split(/[\s,]+/)
     .filter(Boolean),
+  // ---- Traefik discovery (see docs/guide/traefik.md); credentials are never logged or returned ----
+  traefikApiUrl: envString('HOMEGANTRY_TRAEFIK_API_URL', ''),
+  traefikApiUsername: envString('HOMEGANTRY_TRAEFIK_API_USERNAME', ''),
+  traefikApiPassword: envString('HOMEGANTRY_TRAEFIK_API_PASSWORD', ''),
+  traefikApiToken: envString('HOMEGANTRY_TRAEFIK_API_TOKEN', '').trim(),
+  traefikTimeout: envNumber('HOMEGANTRY_TRAEFIK_TIMEOUT', 5),
+  exposureMap: envString('HOMEGANTRY_EXPOSURE_MAP', ''),
+  // ---- HTTP health checks (see docs/guide/health-checks.md) ----
+  healthcheck: envBool('HOMEGANTRY_HEALTHCHECK', true),
+  healthcheckInterval: envNumber('HOMEGANTRY_HEALTHCHECK_INTERVAL', 60),
+  healthcheckTimeout: envNumber('HOMEGANTRY_HEALTHCHECK_TIMEOUT', 5),
+  healthcheckConcurrency: envNumber('HOMEGANTRY_HEALTHCHECK_CONCURRENCY', 8),
+  healthcheckInsecureTls: envBool('HOMEGANTRY_HEALTHCHECK_INSECURE_TLS', false),
 } as const;

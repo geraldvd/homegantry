@@ -15,6 +15,8 @@ labels:
   homegantry.description: 'Media server' # Short description
   homegantry.exclude: 'true' # Hide from dashboard
   homegantry.hidden: 'true' # Same as exclude
+  homegantry.healthcheck: 'false' # No health check for this service
+  homegantry.healthcheck.url: 'http://plex:32400/identity' # Check this URL instead
 ```
 
 All labels are optional. If not provided, HomeGantry uses its knowledge base to auto-detect names, icons, and categories based on the Docker image.

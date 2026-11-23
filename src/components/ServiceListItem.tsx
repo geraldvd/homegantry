@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import type { Service } from '../types';
+import ServiceBadges from './ServiceBadges';
 import ServiceIcon from './ServiceIcon';
 import { updateOverride } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { safeHref } from '../lib/url';
 
 function statusClass(status: string): string {
   switch (status) {
@@ -38,12 +40,15 @@ export default function ServiceListItem({ service, showStatus, onEdit }: Props) 
     onEdit(service);
   };
 
+  // Only http(s) URLs become links (defence in depth, the server filters them too).
+  const href = safeHref(service.url);
+  const Root: React.ElementType = href ? 'a' : 'div';
+  const linkProps = href ? { href, target: '_blank', rel: 'noopener noreferrer' } : {};
+
   return (
-    <a
-      href={service.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="glass-card px-4 py-2.5 flex items-center gap-3 relative group cursor-pointer"
+    <Root
+      {...linkProps}
+      className={`glass-card px-4 py-2.5 flex items-center gap-3 relative group ${href ? 'cursor-pointer' : ''}`}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
@@ -51,13 +56,17 @@ export default function ServiceListItem({ service, showStatus, onEdit }: Props) 
 
       <span className="font-medium text-gray-100 truncate">{service.name}</span>
 
-      {showStatus && <span className={`status-dot ${statusClass(service.status)}`} />}
+      {showStatus && service.source !== 'traefik' && (
+        <span className={`status-dot ${statusClass(service.status)}`} />
+      )}
+
+      <ServiceBadges service={service} showStatus={showStatus} />
 
       <span className="text-xs text-gray-500 bg-surface-700 px-2 py-0.5 rounded-full ml-auto shrink-0">
         {service.category}
       </span>
 
-      {service.url && service.url !== '#' && (
+      {href && (
         <svg
           className="w-3.5 h-3.5 text-gray-500 shrink-0"
           fill="none"
@@ -105,6 +114,6 @@ export default function ServiceListItem({ service, showStatus, onEdit }: Props) 
           </button>
         </div>
       )}
-    </a>
+    </Root>
   );
 }

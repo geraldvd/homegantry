@@ -34,6 +34,31 @@ See the [Security model](/guide/security) for how these fit together.
 With neither `HOMEGANTRY_ADMIN_TOKEN` nor `HOMEGANTRY_AUTH_HEADER` + `HOMEGANTRY_TRUSTED_PROXIES` set, HomeGantry is
 read-only.
 
+## Traefik discovery
+
+Optional. See [Traefik Discovery](/guide/traefik) for how to enable the API safely.
+
+| Variable                          | Default   | Description                                                                                                    |
+| --------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| `HOMEGANTRY_TRAEFIK_API_URL`      | _(empty)_ | Traefik API base URL, e.g. `http://traefik:8080`. Discovery through the API is off when empty.                 |
+| `HOMEGANTRY_TRAEFIK_API_USERNAME` | _(empty)_ | Basic-auth user for the API. Never logged or returned.                                                         |
+| `HOMEGANTRY_TRAEFIK_API_PASSWORD` | _(empty)_ | Basic-auth password for the API. Never logged or returned.                                                     |
+| `HOMEGANTRY_TRAEFIK_API_TOKEN`    | _(empty)_ | Bearer token for the API; takes precedence over basic auth. Never logged or returned.                          |
+| `HOMEGANTRY_TRAEFIK_TIMEOUT`      | `5`       | Seconds before an API request is abandoned                                                                     |
+| `HOMEGANTRY_EXPOSURE_MAP`         | _(empty)_ | Middleware-to-exposure mapping, e.g. `my-sso=sso,office-*=vpn-only` ([details](/guide/traefik#custom-mapping)) |
+
+## Health checks
+
+See [Health Checks](/guide/health-checks).
+
+| Variable                              | Default | Description                                  |
+| ------------------------------------- | ------- | -------------------------------------------- |
+| `HOMEGANTRY_HEALTHCHECK`              | `true`  | Enable HTTP health checks                    |
+| `HOMEGANTRY_HEALTHCHECK_INTERVAL`     | `60`    | Seconds between check rounds (minimum 5)     |
+| `HOMEGANTRY_HEALTHCHECK_TIMEOUT`      | `5`     | Seconds before a request counts as timed out |
+| `HOMEGANTRY_HEALTHCHECK_CONCURRENCY`  | `8`     | Maximum simultaneous checks                  |
+| `HOMEGANTRY_HEALTHCHECK_INSECURE_TLS` | `false` | Accept self-signed certificates              |
+
 ## Example `.env` File
 
 ```bash
@@ -58,7 +83,8 @@ This is the most important variable for most setups. It tells HomeGantry what IP
 
 1. `homegantry.url` label on the container (explicit)
 2. `homepage.href` label (if `HOMEGANTRY_HOMEPAGE_COMPAT` is enabled)
-3. Traefik `Host()` router rule (auto-extracted)
-4. `http://{HOMEGANTRY_HOST}:{container_port}` (fallback)
+3. Traefik API router (if `HOMEGANTRY_TRAEFIK_API_URL` is set)
+4. Traefik `Host()` rule in the container's labels
+5. `http://{HOMEGANTRY_HOST}:{container_port}` (fallback, `localhost` when `HOMEGANTRY_HOST` is empty)
 
-If `HOMEGANTRY_HOST` is empty and none of the above apply, the service will have no URL.
+If none of the above apply, the service has no link. Only `http(s)` URLs are used, and `user:pass@` is removed.

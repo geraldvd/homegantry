@@ -219,9 +219,9 @@ describe('matchContainer: URL resolution', () => {
     expect(svc.url).toBe('https://app.example.com');
   });
 
-  it('does not parse multi-argument Host(`a`, `b`) (current behaviour)', async () => {
+  it('uses the first host of a multi-argument Host(`a`, `b`) (#13)', async () => {
     const svc = await match({ labels: traefik('Host(`a.example.com`, `b.example.com`)') });
-    expect(svc.url).toBe('#');
+    expect(svc.url).toBe('https://a.example.com');
   });
 
   it('matches the router label key case-insensitively', async () => {
