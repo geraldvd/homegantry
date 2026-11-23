@@ -48,3 +48,6 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
   service with one public route is public, so the badge must not suggest more protection than exists.
 - 2026-11-23 — Health: any HTTP status below 500 is "up", redirects are not followed, TLS errors are "unknown". — A login
   page or 404 proves the service answers; a certificate problem says nothing about whether it is running.
+- 2026-11-23 — Exposure level `vpn-only` renamed to `private` (badge "Private"). — An IP allow-list means "only from your own
+  networks" (LAN or VPN), not necessarily a VPN; the old name described one lab. `vpn-only` is still accepted in
+  `HOMEGANTRY_EXPOSURE_MAP`. Badges for other proxies (Caddy, Nginx Proxy Manager) are #26.

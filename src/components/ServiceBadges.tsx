@@ -13,10 +13,10 @@ const EXPOSURE: Record<ExposureLevel, { label: string; className: string; meanin
     className: 'bg-sky-500/15 text-sky-300',
     meaning: 'behind a login',
   },
-  'vpn-only': {
-    label: 'VPN only',
+  private: {
+    label: 'Private',
     className: 'bg-emerald-500/15 text-emerald-300',
-    meaning: 'limited to allowed networks',
+    meaning: 'only reachable from allowed networks (e.g. LAN or VPN)',
   },
   unknown: {
     label: 'Unknown',

@@ -12,7 +12,7 @@ export interface ContainerInfo {
   ports: PortMapping[];
 }
 
-export type ExposureLevel = 'public' | 'sso' | 'vpn-only' | 'unknown';
+export type ExposureLevel = 'public' | 'sso' | 'private' | 'unknown';
 
 export interface ServiceHealth {
   status: 'up' | 'down' | 'unknown';

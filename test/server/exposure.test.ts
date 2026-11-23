@@ -22,9 +22,9 @@ const noRules = parseExposureMap('');
 
 describe('parseExposureMap', () => {
   it('parses pattern=level pairs', () => {
-    expect(parseExposureMap('authentik=sso, office-*=vpn-only,open=public')).toEqual([
+    expect(parseExposureMap('authentik=sso, office-*=private,open=public')).toEqual([
       { pattern: 'authentik', level: 'sso' },
-      { pattern: 'office-*', level: 'vpn-only' },
+      { pattern: 'office-*', level: 'private' },
       { pattern: 'open', level: 'public' },
     ]);
   });
@@ -47,8 +47,8 @@ describe('resolveExposure: defaults', () => {
     ['my-forwardauth@file', 'sso'],
     ['authentik@docker', 'sso'],
     ['AUTHELIA@file', 'sso'],
-    ['lan-ipallowlist@file', 'vpn-only'],
-    ['old-ipwhitelist@docker', 'vpn-only'],
+    ['lan-ipallowlist@file', 'private'],
+    ['old-ipwhitelist@docker', 'private'],
   ])('maps %s to %s by name', (name, level) => {
     expect(resolveExposure([name], index(mw(name, 'plugin')), noRules).level).toBe(level);
   });
@@ -57,8 +57,8 @@ describe('resolveExposure: defaults', () => {
     ['login', 'forwardauth', 'sso'],
     ['login', 'basicauth', 'sso'],
     ['login', 'digestauth', 'sso'],
-    ['office', 'ipallowlist', 'vpn-only'],
-    ['office', 'ipwhitelist', 'vpn-only'],
+    ['office', 'ipallowlist', 'private'],
+    ['office', 'ipwhitelist', 'private'],
   ])('falls back to the type of %s (%s)', (name, type, level) => {
     const result = resolveExposure([`${name}@file`], index(mw(`${name}@file`, type)), noRules);
     expect(result.level).toBe(level);
@@ -87,7 +87,7 @@ describe('resolveExposure: defaults', () => {
       mw('mystery@file', 'plugin-x'),
     );
     const names = ['gzip@file', 'mystery@file', 'login@file', 'lan@file'];
-    expect(resolveExposure(names, items, noRules).level).toBe('vpn-only');
+    expect(resolveExposure(names, items, noRules).level).toBe('private');
     expect(resolveExposure(names.slice(0, 3), items, noRules).level).toBe('sso');
     expect(resolveExposure(names.slice(0, 2), items, noRules).level).toBe('unknown');
   });
@@ -105,18 +105,18 @@ describe('resolveExposure: defaults', () => {
 
 describe('resolveExposure: custom map', () => {
   it('maps exact names and globs, ignoring case and the provider', () => {
-    const rules = parseExposureMap('corp-login=sso,office-*=vpn-only');
+    const rules = parseExposureMap('corp-login=sso,office-*=private');
     const items = index(mw('Corp-Login@file', 'plugin'), mw('office-gate@docker', 'plugin'));
     expect(resolveExposure(['Corp-Login@file'], items, rules).level).toBe('sso');
-    expect(resolveExposure(['office-gate@docker'], items, rules).level).toBe('vpn-only');
+    expect(resolveExposure(['office-gate@docker'], items, rules).level).toBe('private');
   });
 
   it('supports the ? wildcard and treats regex characters literally', () => {
-    const rules = parseExposureMap('gate?=sso,a.b=vpn-only');
+    const rules = parseExposureMap('gate?=sso,a.b=private');
     expect(resolveExposure(['gate1@file'], new Map(), rules).level).toBe('sso');
     expect(resolveExposure(['gate12@file'], new Map(), rules).level).toBe('unknown');
     expect(resolveExposure(['axb@file'], new Map(), rules).level).toBe('unknown');
-    expect(resolveExposure(['a.b@file'], new Map(), rules).level).toBe('vpn-only');
+    expect(resolveExposure(['a.b@file'], new Map(), rules).level).toBe('private');
   });
 
   it('takes precedence over the defaults and the type', () => {
@@ -144,7 +144,7 @@ describe('resolveExposure: chains', () => {
       mw('inner@docker', 'chain', ['lan@file']),
       mw('lan@file', 'ipallowlist'),
     );
-    expect(resolveExposure(['outer@file'], items, noRules).level).toBe('vpn-only');
+    expect(resolveExposure(['outer@file'], items, noRules).level).toBe('private');
   });
 
   it('resolves a router middleware without provider against the router provider', () => {
@@ -173,5 +173,13 @@ describe('source files', () => {
   it('exposure defaults stay generic', () => {
     const source = fs.readFileSync(path.resolve('server/exposure.ts'), 'utf-8');
     expect(source).not.toMatch(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);
+  });
+});
+
+describe('legacy level name', () => {
+  it("accepts 'vpn-only' in HOMEGANTRY_EXPOSURE_MAP as 'private'", () => {
+    expect(parseExposureMap('office-*=vpn-only')).toEqual([
+      { pattern: 'office-*', level: 'private' },
+    ]);
   });
 });
