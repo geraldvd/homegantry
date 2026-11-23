@@ -24,30 +24,30 @@ export interface ExposureResult {
   source: string;
 }
 
-const LEVELS: readonly ExposureLevel[] = ['public', 'sso', 'vpn-only', 'unknown'];
+const LEVELS: readonly ExposureLevel[] = ['public', 'sso', 'private', 'unknown'];
 
 /** Higher wins when a router has several middlewares. */
 export const EXPOSURE_STRICTNESS: Record<ExposureLevel, number> = {
   public: 0,
   unknown: 1,
   sso: 2,
-  'vpn-only': 3,
+  private: 3,
 };
 
 export const DEFAULT_EXPOSURE_RULES: readonly ExposureRule[] = [
   { pattern: '*forwardauth*', level: 'sso' },
   { pattern: '*authentik*', level: 'sso' },
   { pattern: '*authelia*', level: 'sso' },
-  { pattern: '*ipallowlist*', level: 'vpn-only' },
-  { pattern: '*ipwhitelist*', level: 'vpn-only' },
+  { pattern: '*ipallowlist*', level: 'private' },
+  { pattern: '*ipwhitelist*', level: 'private' },
 ];
 
 const TYPE_LEVELS: Record<string, ExposureLevel> = {
   forwardauth: 'sso',
   basicauth: 'sso',
   digestauth: 'sso',
-  ipallowlist: 'vpn-only',
-  ipwhitelist: 'vpn-only',
+  ipallowlist: 'private',
+  ipwhitelist: 'private',
 };
 
 /** Built-in Traefik middlewares that change traffic but do not restrict who gets in. */
@@ -84,7 +84,9 @@ export function parseExposureMap(raw: string): ExposureRule[] {
     const idx = trimmed.lastIndexOf('=');
     const pattern = idx > 0 ? trimmed.slice(0, idx).trim() : '';
     const level = trimmed.slice(idx + 1).trim() as ExposureLevel;
-    if (pattern && LEVELS.includes(level)) rules.push({ pattern, level });
+    // 'vpn-only' was the level's name before 2026-11-23; keep accepting it.
+    const lvl = (level as string) === 'vpn-only' ? 'private' : level;
+    if (pattern && LEVELS.includes(lvl)) rules.push({ pattern, level: lvl });
     else invalid++;
   }
   if (invalid > 0) {

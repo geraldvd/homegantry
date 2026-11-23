@@ -19,7 +19,7 @@ HomeGantry watches your Docker daemon for running containers, matches them again
 - **Auto-discovery** — Detects running Docker containers and identifies them from a knowledge base of 60+ services
 - **Real-time updates** — Server-Sent Events push changes instantly, no polling or page refresh
 - **Traefik discovery** — Reads router labels, or the optional Traefik API to also find non-Docker services (Proxmox, a NAS, ...)
-- **Exposure badges** — Shows whether a service is public, behind SSO or VPN-only, derived from its Traefik middlewares
+- **Exposure badges** — Shows whether a service is public, behind SSO or private (LAN/VPN only), derived from its Traefik middlewares
 - **Health checks** — HTTP up/down status per service, with per-service opt-out
 - **Homepage compatibility** — Reads `homepage.*` Docker labels for easy migration from [Homepage](https://gethomepage.dev/)
 - **Stack management** — Group services by Docker Compose project, toggle visibility per-stack
@@ -74,22 +74,22 @@ Details: [Security model](https://homegantry.com/guide/security). To report a vu
 
 ## Configuration
 
-| Variable                     | Default      | Description                                                     |
-| ---------------------------- | ------------ | --------------------------------------------------------------- |
-| `HOMEGANTRY_HOST`            | _(empty)_    | Host/IP for building service URLs (e.g. `192.168.1.100`)        |
-| `HOMEGANTRY_TITLE`           | `HomeGantry` | Dashboard title                                                 |
-| `HOMEGANTRY_POLL_INTERVAL`   | `60`         | Seconds between full Docker rescans                             |
-| `HOMEGANTRY_SHOW_STOPPED`    | `false`      | Show stopped containers                                         |
-| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                                 |
-| `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                                   |
-| `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects                      |
-| `HOMEGANTRY_ADMIN_TOKEN`     | _(empty)_    | Token that unlocks editing (≥ 24 characters)                    |
-| `HOMEGANTRY_AUTH_HEADER`     | _(empty)_    | Forward-auth header that allows editing (e.g. `Remote-User`)    |
-| `HOMEGANTRY_TRUSTED_PROXIES` | _(empty)_    | IPs/CIDRs of the proxy allowed to set that header               |
-| `HOMEGANTRY_READONLY`        | `false`      | Disable editing completely                                      |
-| `HOMEGANTRY_TRAEFIK_API_URL` | _(empty)_    | Traefik API for discovery (e.g. `http://traefik:8080`)          |
-| `HOMEGANTRY_EXPOSURE_MAP`    | _(empty)_    | Middleware-to-exposure mapping (`my-sso=sso,office-*=vpn-only`) |
-| `HOMEGANTRY_HEALTHCHECK`     | `true`       | HTTP health checks                                              |
+| Variable                     | Default      | Description                                                    |
+| ---------------------------- | ------------ | -------------------------------------------------------------- |
+| `HOMEGANTRY_HOST`            | _(empty)_    | Host/IP for building service URLs (e.g. `192.168.1.100`)       |
+| `HOMEGANTRY_TITLE`           | `HomeGantry` | Dashboard title                                                |
+| `HOMEGANTRY_POLL_INTERVAL`   | `60`         | Seconds between full Docker rescans                            |
+| `HOMEGANTRY_SHOW_STOPPED`    | `false`      | Show stopped containers                                        |
+| `HOMEGANTRY_HOMEPAGE_COMPAT` | `true`       | Read `homepage.*` Docker labels                                |
+| `HOMEGANTRY_EXCLUDE_SELF`    | `true`       | Hide the HomeGantry container                                  |
+| `HOMEGANTRY_COMPOSE_ONLY`    | `true`       | Only show containers from Compose projects                     |
+| `HOMEGANTRY_ADMIN_TOKEN`     | _(empty)_    | Token that unlocks editing (≥ 24 characters)                   |
+| `HOMEGANTRY_AUTH_HEADER`     | _(empty)_    | Forward-auth header that allows editing (e.g. `Remote-User`)   |
+| `HOMEGANTRY_TRUSTED_PROXIES` | _(empty)_    | IPs/CIDRs of the proxy allowed to set that header              |
+| `HOMEGANTRY_READONLY`        | `false`      | Disable editing completely                                     |
+| `HOMEGANTRY_TRAEFIK_API_URL` | _(empty)_    | Traefik API for discovery (e.g. `http://traefik:8080`)         |
+| `HOMEGANTRY_EXPOSURE_MAP`    | _(empty)_    | Middleware-to-exposure mapping (`my-sso=sso,office-*=private`) |
+| `HOMEGANTRY_HEALTHCHECK`     | `true`       | HTTP health checks                                             |
 
 See the [full configuration reference](https://homegantry.com/guide/configuration) for all options.
 

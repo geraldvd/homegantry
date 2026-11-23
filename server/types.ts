@@ -13,7 +13,7 @@ export interface ContainerInfo {
 }
 
 /** How a service is reachable, derived from its reverse-proxy middlewares. */
-export type ExposureLevel = 'public' | 'sso' | 'vpn-only' | 'unknown';
+export type ExposureLevel = 'public' | 'sso' | 'private' | 'unknown';
 
 export interface Service {
   id: string;

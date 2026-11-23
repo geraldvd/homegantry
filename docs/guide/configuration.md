@@ -38,14 +38,14 @@ read-only.
 
 Optional. See [Traefik Discovery](/guide/traefik) for how to enable the API safely.
 
-| Variable                          | Default   | Description                                                                                                    |
-| --------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
-| `HOMEGANTRY_TRAEFIK_API_URL`      | _(empty)_ | Traefik API base URL, e.g. `http://traefik:8080`. Discovery through the API is off when empty.                 |
-| `HOMEGANTRY_TRAEFIK_API_USERNAME` | _(empty)_ | Basic-auth user for the API. Never logged or returned.                                                         |
-| `HOMEGANTRY_TRAEFIK_API_PASSWORD` | _(empty)_ | Basic-auth password for the API. Never logged or returned.                                                     |
-| `HOMEGANTRY_TRAEFIK_API_TOKEN`    | _(empty)_ | Bearer token for the API; takes precedence over basic auth. Never logged or returned.                          |
-| `HOMEGANTRY_TRAEFIK_TIMEOUT`      | `5`       | Seconds before an API request is abandoned                                                                     |
-| `HOMEGANTRY_EXPOSURE_MAP`         | _(empty)_ | Middleware-to-exposure mapping, e.g. `my-sso=sso,office-*=vpn-only` ([details](/guide/traefik#custom-mapping)) |
+| Variable                          | Default   | Description                                                                                                   |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------- |
+| `HOMEGANTRY_TRAEFIK_API_URL`      | _(empty)_ | Traefik API base URL, e.g. `http://traefik:8080`. Discovery through the API is off when empty.                |
+| `HOMEGANTRY_TRAEFIK_API_USERNAME` | _(empty)_ | Basic-auth user for the API. Never logged or returned.                                                        |
+| `HOMEGANTRY_TRAEFIK_API_PASSWORD` | _(empty)_ | Basic-auth password for the API. Never logged or returned.                                                    |
+| `HOMEGANTRY_TRAEFIK_API_TOKEN`    | _(empty)_ | Bearer token for the API; takes precedence over basic auth. Never logged or returned.                         |
+| `HOMEGANTRY_TRAEFIK_TIMEOUT`      | `5`       | Seconds before an API request is abandoned                                                                    |
+| `HOMEGANTRY_EXPOSURE_MAP`         | _(empty)_ | Middleware-to-exposure mapping, e.g. `my-sso=sso,office-*=private` ([details](/guide/traefik#custom-mapping)) |
 
 ## Health checks
 

@@ -70,7 +70,7 @@ describe('exposure badge', () => {
   it.each([
     ['public', 'Public'],
     ['sso', 'SSO'],
-    ['vpn-only', 'VPN only'],
+    ['private', 'Private'],
     ['unknown', 'Unknown'],
   ] as const)('shows %s as "%s" with its source in the tooltip', async (exposure, label) => {
     await renderCard({ ...base, exposure, exposureSource: 'Middleware: login (forwardauth)' });
@@ -80,7 +80,7 @@ describe('exposure badge', () => {
 
   it('is absent without Traefik data', async () => {
     await renderCard(base);
-    for (const label of ['Public', 'SSO', 'VPN only']) {
+    for (const label of ['Public', 'SSO', 'Private']) {
       expect(screen.queryByText(label)).toBeNull();
     }
   });

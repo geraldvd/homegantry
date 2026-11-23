@@ -181,7 +181,7 @@ describe('Traefik discovery', () => {
       source: 'traefik',
       name: 'proxmox',
       url: 'https://proxmox.example.com',
-      exposure: 'vpn-only',
+      exposure: 'private',
       hidden: false,
     });
     expect(proxmox?.container).toBeUndefined();
@@ -602,10 +602,10 @@ describe('Traefik discovery', () => {
       exampleTraefik,
       {},
       {
-        HOMEGANTRY_EXPOSURE_MAP: 'custom-*=vpn-only',
+        HOMEGANTRY_EXPOSURE_MAP: 'custom-*=private',
       },
     );
-    expect(byId(s.getServices(), 'id-nextcloud')?.exposure).toBe('vpn-only');
+    expect(byId(s.getServices(), 'id-nextcloud')?.exposure).toBe('private');
   });
 
   it('follows middleware chains', async () => {

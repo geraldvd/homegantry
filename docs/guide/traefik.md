@@ -86,18 +86,18 @@ An explicit `homegantry.url` or `homepage.href` label always wins. Without the A
 
 With the Traefik API enabled, each routed service gets a badge. Its tooltip names the middleware it is based on.
 
-| Badge        | Meaning                                                                    |
-| ------------ | -------------------------------------------------------------------------- |
-| **Public**   | No middleware that restricts access                                        |
-| **SSO**      | Behind a login (forward auth, basic auth, ...)                             |
-| **VPN only** | Limited to allowed networks (IP allow-list)                                |
-| **Unknown**  | A middleware HomeGantry cannot classify, and nothing that restricts access |
+| Badge       | Meaning                                                                    |
+| ----------- | -------------------------------------------------------------------------- |
+| **Public**  | No middleware that restricts access                                        |
+| **SSO**     | Behind a login (forward auth, basic auth, ...)                             |
+| **Private** | Only reachable from allowed networks, e.g. LAN or VPN (IP allow-list)      |
+| **Unknown** | A middleware HomeGantry cannot classify, and nothing that restricts access |
 
 Services without a Traefik router have no badge.
 
 ::: warning A badge is a hint, not a security audit
 It reflects the Traefik configuration, not what is reachable from the internet. A published container port bypasses
-Traefik entirely, and an IP allow-list only means "VPN only" if its ranges are private.
+Traefik entirely, and an IP allow-list only means "private" if its ranges are private networks.
 :::
 
 How the level is decided:
@@ -105,32 +105,32 @@ How the level is decided:
 1. Chains are expanded, including nested chains.
 2. Each middleware is classified by `HOMEGANTRY_EXPOSURE_MAP`, then by the default name patterns, then by its Traefik
    type.
-3. The strictest result wins for a router: `vpn-only`, then `sso`, then `unknown`, then `public`.
+3. The strictest result wins for a router: `private`, then `sso`, then `unknown`, then `public`.
 4. If a service has several routers, the **loosest** router sets the badge, including routers that cannot produce a link
    (`PathPrefix` only, `HostRegexp`, wildcards) and routers from another provider that target the same Traefik service
    (`service: app@docker` in a file-provider router). One public route makes the service public.
 
 Default name patterns (case-insensitive):
 
-| Pattern                          | Level      |
-| -------------------------------- | ---------- |
-| `*forwardauth*`                  | `sso`      |
-| `*authentik*`, `*authelia*`      | `sso`      |
-| `*ipallowlist*`, `*ipwhitelist*` | `vpn-only` |
+| Pattern                          | Level     |
+| -------------------------------- | --------- |
+| `*forwardauth*`                  | `sso`     |
+| `*authentik*`, `*authelia*`      | `sso`     |
+| `*ipallowlist*`, `*ipwhitelist*` | `private` |
 
 Type fallback: `forwardAuth`, `basicAuth` and `digestAuth` count as `sso`; `ipAllowList` and `ipWhiteList` as
-`vpn-only`. Traefik's built-in middlewares that do not restrict access (`headers`, `compress`, `rateLimit`, ...) are
+`private`. Traefik's built-in middlewares that do not restrict access (`headers`, `compress`, `rateLimit`, ...) are
 neutral. Anything else, such as a plugin, gives `unknown`.
 
 ### Custom mapping
 
-`HOMEGANTRY_EXPOSURE_MAP` is a comma-separated list of `pattern=level`. Levels are `public`, `sso`, `vpn-only` and
+`HOMEGANTRY_EXPOSURE_MAP` is a comma-separated list of `pattern=level`. Levels are `public`, `sso`, `private` and
 `unknown`. Patterns may use `*` and `?`, ignore case, and match with or without the `@provider` suffix. The first
 matching entry wins, and the map is checked before the defaults.
 
 ```bash
 # A plugin that does SSO, and a group of office-only allow-lists
-HOMEGANTRY_EXPOSURE_MAP=my-sso-plugin=sso,office-*=vpn-only
+HOMEGANTRY_EXPOSURE_MAP=my-sso-plugin=sso,office-*=private
 
 # Only this provider's instance counts
 HOMEGANTRY_EXPOSURE_MAP=gate@file=sso
