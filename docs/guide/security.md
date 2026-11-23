@@ -53,8 +53,16 @@ curl -X PATCH https://homegantry.example.com/api/settings \
   -d '{"columns": 5}'
 ```
 
-The token is compared in constant time. After 10 failed attempts from one IP within 15 minutes, further attempts are
-refused (HTTP 429) until the window ends.
+The token is compared in constant time. After 10 failed attempts from one client IP within 15 minutes, further
+attempts from that IP are refused (HTTP 429) until the window ends.
+
+::: warning Behind a reverse proxy, also set `HOMEGANTRY_TRUSTED_PROXIES`
+Behind Traefik, nginx, Caddy, ... every request reaches HomeGantry from the proxy's IP. Unless that IP is listed in
+`HOMEGANTRY_TRUSTED_PROXIES`, all visitors share one rate-limit key: anyone can send 10 wrong tokens and lock **every**
+editor out for 15 minutes, and all clients share the 120 writes/minute budget. Set `HOMEGANTRY_TRUSTED_PROXIES` to the
+proxy's IP even if you only use the token; HomeGantry then keys the limits on the real client address from
+`X-Forwarded-For`. This does not enable header login unless `HOMEGANTRY_AUTH_HEADER` is also set.
+:::
 
 ![Unlocked dashboard](/security-unlocked.png)
 
@@ -65,13 +73,15 @@ If your reverse proxy already authenticates users, let it tell HomeGantry who is
 ```yaml
 environment:
   - HOMEGANTRY_AUTH_HEADER=Remote-User # Authelia; Authentik: X-authentik-username
-  - HOMEGANTRY_TRUSTED_PROXIES=172.18.0.0/16 # the proxy's IP or network
+  - HOMEGANTRY_TRUSTED_PROXIES=172.20.0.2/32 # the reverse proxy's fixed IP, nothing broader
 ```
 
 Any request that carries a non-empty `Remote-User` header **from a trusted proxy IP** may edit. The header is ignored
 from every other IP, so a client cannot simply send it itself. Make sure:
 
-- `HOMEGANTRY_TRUSTED_PROXIES` lists only your reverse proxy (an IP or a small CIDR such as its Docker network);
+- `HOMEGANTRY_TRUSTED_PROXIES` lists only your reverse proxy's own IP (see
+  [Choosing `HOMEGANTRY_TRUSTED_PROXIES`](#choosing-homegantry-trusted-proxies)). Do **not** list a whole shared Docker
+  network such as `172.18.0.0/16`: every container on that network could then send `Remote-User` itself and edit;
 - HomeGantry's port is **not** published directly (otherwise clients bypass the proxy), and
 - the proxy strips or overwrites the header on incoming requests (Authelia, Authentik and oauth2-proxy do this for the
   headers they set).
@@ -96,7 +106,8 @@ are dropped as soon as containers are read, so they never enter HomeGantry's sta
   Requests without either header (scripts, `curl`) are allowed through to authentication.
 - **Validation:** every request body, route parameter and query string is checked with a schema; unknown fields,
   overlong strings and non-`http(s)` URLs are rejected with 400.
-- **Limits:** request bodies up to 16 kB; 120 writes per minute per client IP.
+- **Limits:** request bodies up to 16 kB; 120 writes per minute per client IP (behind a reverse proxy, see the
+  warning under [Option 1](#option-1-admin-token)).
 - **Headers:** `Content-Security-Policy` (scripts and connections only to HomeGantry itself, no framing),
   `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin`, `X-Frame-Options: DENY`.
 - **CORS** is off. Set `HOMEGANTRY_CORS_ORIGINS` only if another web app must call the API from the browser.
@@ -129,7 +140,7 @@ services:
     environment:
       - DOCKER_HOST=tcp://socket-proxy:2375
       - HOMEGANTRY_AUTH_HEADER=Remote-User
-      - HOMEGANTRY_TRUSTED_PROXIES=172.18.0.0/16 # the "proxy" network below
+      - HOMEGANTRY_TRUSTED_PROXIES=172.20.0.2/32 # Traefik's fixed IP on the "proxy" network
     networks: [proxy, docker-api]
     labels:
       - traefik.enable=true
@@ -155,7 +166,7 @@ Same as above, with Authentik's outpost middleware and its header name:
 ```yaml
 environment:
   - HOMEGANTRY_AUTH_HEADER=X-authentik-username
-  - HOMEGANTRY_TRUSTED_PROXIES=172.18.0.0/16
+  - HOMEGANTRY_TRUSTED_PROXIES=172.20.0.2/32 # Traefik's fixed IP
 labels:
   - traefik.http.routers.homegantry.middlewares=authentik@docker
 ```
@@ -174,12 +185,32 @@ No proxy login; everyone sees the dashboard, only token holders edit:
 ```yaml
 environment:
   - HOMEGANTRY_ADMIN_TOKEN=${HOMEGANTRY_ADMIN_TOKEN}
+  # Still trust the proxy, so rate limits use the real client IP (no shared lockout):
+  - HOMEGANTRY_TRUSTED_PROXIES=172.20.0.2/32
 ```
 
-::: tip Finding `HOMEGANTRY_TRUSTED_PROXIES`
-`docker network inspect proxy` shows the subnet (under `IPAM.Config`) of the network HomeGantry shares with Traefik.
-Prefer the proxy's fixed IP if you assign one.
-:::
+### Choosing `HOMEGANTRY_TRUSTED_PROXIES`
+
+List only the reverse proxy itself. A shared `proxy` network usually holds many containers; trusting its whole subnet
+(e.g. `172.18.0.0/16`) lets any of them send the auth header straight to HomeGantry and edit. Give the proxy a fixed
+IP instead and trust exactly that address:
+
+```yaml
+# Traefik's compose file
+services:
+  traefik:
+    networks:
+      proxy:
+        ipv4_address: 172.20.0.2
+
+networks:
+  proxy:
+    external: true # created once with: docker network create --subnet 172.20.0.0/24 proxy
+```
+
+`172.20.0.2` is only an example; `docker network inspect proxy` shows your network's subnet (under `IPAM.Config`) and
+each container's current address. If you cannot assign a fixed IP, put only HomeGantry and the proxy on a dedicated
+network and trust that small subnet.
 
 ## Reporting a vulnerability
 
