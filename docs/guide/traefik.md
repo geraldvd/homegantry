@@ -57,8 +57,12 @@ Traefik up again as soon as the API answers.
 | **Docker provider**, no matching container     | Ignored                                                               |
 | **File and other providers**                   | A service of its own, e.g. Proxmox or a NAS on another host           |
 | **Internal** (`api@internal`, ACME, ...)       | Ignored                                                               |
-| **Redirect-only** (`redirectScheme`)           | Ignored                                                               |
+| **Redirect-only** (see below)                  | Ignored                                                               |
 | **Without a literal host** (`HostRegexp`, ...) | No link or card of its own, but counts for the service's exposure     |
+
+A router is redirect-only when its `redirectScheme` middleware targets the scheme the router does not serve, such as
+`scheme: https` on a non-TLS router. Traefik does not redirect a request whose URL would stay the same, so a TLS router
+with `scheme: https` still serves the service and counts as a normal router.
 
 Standalone services take their name, icon and category from the knowledge base when the router or service name matches.
 Hide or edit them like any other service. Several routers on one Traefik service become one card.
@@ -103,7 +107,8 @@ How the level is decided:
    type.
 3. The strictest result wins for a router: `vpn-only`, then `sso`, then `unknown`, then `public`.
 4. If a service has several routers, the **loosest** router sets the badge, including routers that cannot produce a link
-   (`PathPrefix` only, `HostRegexp`, wildcards). One public route makes the service public.
+   (`PathPrefix` only, `HostRegexp`, wildcards) and routers from another provider that target the same Traefik service
+   (`service: app@docker` in a file-provider router). One public route makes the service public.
 
 Default name patterns (case-insensitive):
 

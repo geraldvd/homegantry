@@ -383,6 +383,219 @@ describe('Traefik discovery', () => {
     });
   });
 
+  describe('exposure across providers', () => {
+    const route = (
+      name: string,
+      rule: string,
+      service: string,
+      middlewares: string[] = [],
+    ): Record<string, unknown> => ({
+      name,
+      provider: name.split('@')[1],
+      rule,
+      service,
+      status: 'enabled',
+      tls: {},
+      middlewares,
+    });
+    const login = [{ name: 'login@file', provider: 'file', type: 'forwardauth' }];
+    const app = container({ id: 'c1', name: 'app', image: 'example/app:1', project: 'tools' });
+
+    it.each(['PathPrefix(`/app`)', 'Host(`open.example.com`)'])(
+      'an open file router %s on a Docker service makes the container public',
+      async (rule) => {
+        const s = await setup([app], {
+          routers: [
+            route('app-tools@docker', 'Host(`app.example.com`)', 'app-tools', ['login@file']),
+            route('app-open@file', rule, 'app-tools@docker'),
+          ],
+          services: [],
+          middlewares: login,
+        });
+        expect(byId(s.getServices(), 'c1')).toMatchObject({
+          url: 'https://app.example.com',
+          exposure: 'public',
+        });
+      },
+    );
+
+    it('an open Docker router on a file service makes the standalone service public', async () => {
+      const s = await setup([], {
+        routers: [
+          route('nas@file', 'Host(`nas.example.com`)', 'nas', ['login@file']),
+          route('nas-open@docker', 'PathPrefix(`/nas`)', 'nas@file'),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(byId(s.getServices(), 'traefik-nas-file')).toMatchObject({
+        url: 'https://nas.example.com',
+        exposure: 'public',
+      });
+    });
+
+    it('keeps SSO when the routers of every provider are protected', async () => {
+      const s = await setup([app], {
+        routers: [
+          route('app-tools@docker', 'Host(`app.example.com`)', 'app-tools', ['login@file']),
+          route('app-path@file', 'PathPrefix(`/app`)', 'app-tools@docker', ['login@file']),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(byId(s.getServices(), 'c1')?.exposure).toBe('sso');
+    });
+
+    it('does not mix up equally named services of different providers', async () => {
+      const s = await setup([], {
+        routers: [
+          route('nas@file', 'Host(`nas.example.com`)', 'nas', ['login@file']),
+          route('nas-open@docker', 'PathPrefix(`/nas`)', 'nas'),
+        ],
+        services: [],
+        middlewares: login,
+      });
+      expect(byId(s.getServices(), 'traefik-nas-file')?.exposure).toBe('sso');
+    });
+  });
+
+  describe('redirectScheme', () => {
+    const redirect = (scheme: string) => ({
+      name: 'force-https@file',
+      provider: 'file',
+      type: 'redirectscheme',
+      redirectScheme: { scheme, permanent: true },
+    });
+    const route = (
+      name: string,
+      rule: string,
+      opts: { tls: boolean; entryPoints: string[]; middlewares: string[] },
+    ) => ({
+      name: `${name}@file`,
+      provider: 'file',
+      rule,
+      service: 'app',
+      status: 'enabled',
+      entryPoints: opts.entryPoints,
+      middlewares: opts.middlewares,
+      ...(opts.tls ? { tls: {} } : {}),
+    });
+    const login = { name: 'login@file', provider: 'file', type: 'forwardauth' };
+
+    it('keeps ignoring an HTTP-only router that redirects to https', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-login', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['websecure'],
+            middlewares: ['login@file'],
+          }),
+          route('app-http', 'Host(`app.example.com`)', {
+            tls: false,
+            entryPoints: ['web'],
+            middlewares: ['force-https@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [login, redirect('https')],
+      });
+      expect(s.getServices()[0]?.exposure).toBe('sso');
+    });
+
+    it('gives no card to a service whose only router is HTTP with a redirect', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-http', 'Host(`app.example.com`)', {
+            tls: false,
+            entryPoints: ['web'],
+            middlewares: ['force-https@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [redirect('https')],
+      });
+      expect(s.getServices()).toEqual([]);
+    });
+
+    it('counts a TLS router with redirectScheme https (no false SSO)', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-login', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['websecure'],
+            middlewares: ['login@file'],
+          }),
+          route('app-forced', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['web', 'websecure'],
+            middlewares: ['force-https@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [login, redirect('https')],
+      });
+      expect(s.getServices()[0]?.exposure).toBe('public');
+    });
+
+    it('gives a card to a file service whose only router is such a TLS router', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-forced', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['web', 'websecure'],
+            middlewares: ['force-https@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [redirect('https')],
+      });
+      expect(s.getServices()).toHaveLength(1);
+      expect(s.getServices()[0]).toMatchObject({
+        id: 'traefik-app-file',
+        url: 'https://app.example.com',
+        exposure: 'public',
+      });
+    });
+
+    it('ignores a TLS router that redirects to http', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-down', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['websecure'],
+            middlewares: ['force-https@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [redirect('http')],
+      });
+      expect(s.getServices()).toEqual([]);
+    });
+
+    it('follows a redirect inside a chain', async () => {
+      const s = await setup([], {
+        routers: [
+          route('app-forced', 'Host(`app.example.com`)', {
+            tls: true,
+            entryPoints: ['websecure'],
+            middlewares: ['secure-chain@file'],
+          }),
+        ],
+        services: [],
+        middlewares: [
+          redirect('https'),
+          {
+            name: 'secure-chain@file',
+            provider: 'file',
+            type: 'chain',
+            chain: { middlewares: ['force-https'] },
+          },
+        ],
+      });
+      expect(s.getServices()).toHaveLength(1);
+    });
+  });
+
   it('applies a custom HOMEGANTRY_EXPOSURE_MAP', async () => {
     const s = await setup(
       exampleLab,

@@ -14,6 +14,8 @@ export interface MiddlewareInfo {
   name: string;
   type: string;
   chain?: string[];
+  /** Target scheme of a `redirectScheme` middleware. */
+  redirectScheme?: string;
 }
 
 export interface ExposureResult {

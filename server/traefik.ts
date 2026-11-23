@@ -105,7 +105,13 @@ function parseMiddleware(raw: unknown): MiddlewareInfo | undefined {
   if (!isRecord(raw) || typeof raw.name !== 'string') return undefined;
   const type = typeof raw.type === 'string' ? raw.type.toLowerCase() : '';
   const chain = isRecord(raw.chain) ? stringList(raw.chain.middlewares) : undefined;
-  return { name: raw.name, type, ...(chain ? { chain } : {}) };
+  const scheme = isRecord(raw.redirectScheme) ? raw.redirectScheme.scheme : undefined;
+  return {
+    name: raw.name,
+    type,
+    ...(chain ? { chain } : {}),
+    ...(typeof scheme === 'string' ? { redirectScheme: scheme.toLowerCase() } : {}),
+  };
 }
 
 function qualified(name: string, provider: string): string {
@@ -124,6 +130,21 @@ function serviceId(service: string, provider: string): string {
 
 const customRules = parseExposureMap(config.exposureMap);
 
+function servesHttps(router: RouterInfo): boolean {
+  return router.tls || router.entryPoints.some((ep) => HTTPS_ENTRYPOINT.test(ep));
+}
+
+/**
+ * Traefik only redirects when the URL would change, so a TLS router with `scheme: https` still
+ * serves traffic. A router is redirect-only when the target is the scheme it does not serve.
+ * Without a reported scheme, https is assumed (the usual setup).
+ */
+function isRedirectOnly(info: MiddlewareInfo | undefined, router: RouterInfo): boolean {
+  if (info?.type !== 'redirectscheme') return false;
+  const target = info.redirectScheme ?? 'https';
+  return target === (servesHttps(router) ? 'http' : 'https');
+}
+
 function isIgnored(
   router: RouterInfo,
   disabledServices: ReadonlySet<string>,
@@ -133,10 +154,10 @@ function isIgnored(
   if (router.service.endsWith('@internal')) return true;
   if (router.status === 'disabled') return true;
   if (disabledServices.has(qualified(router.service, router.provider))) return true;
-  // A scheme redirect sends everything elsewhere. redirectRegex is not treated as redirect-only:
-  // real apps use it for a few paths (e.g. .well-known).
-  return flattenMiddlewares(router.middlewares, middlewares, router.provider).some(
-    (m) => m.info?.type === 'redirectscheme',
+  // redirectRegex is not treated as redirect-only: real apps use it for a few paths
+  // (e.g. .well-known).
+  return flattenMiddlewares(router.middlewares, middlewares, router.provider).some((m) =>
+    isRedirectOnly(m.info, router),
   );
 }
 
@@ -145,7 +166,7 @@ function toRoute(
   middlewares: ReadonlyMap<string, MiddlewareInfo>,
 ): TraefikRoute {
   const { host, path } = parseRule(router.rule);
-  const https = router.tls || router.entryPoints.some((ep) => HTTPS_ENTRYPOINT.test(ep));
+  const https = servesHttps(router);
   const url = host ? safeHttpUrl(`${https ? 'https' : 'http'}://${host}${path ?? ''}`) : undefined;
   const { level, source } = resolveExposure(
     router.middlewares,
@@ -206,16 +227,29 @@ function buildRoutes(rawRouters: unknown[], rawServices: unknown[], rawMw: unkno
     }
   }
 
-  const container: TraefikRoute[] = [];
-  const byBackend = new Map<string, TraefikRoute[]>();
+  const active: Array<{ router: RouterInfo; route: TraefikRoute }> = [];
+  // The loosest router per backend, whichever provider defines the router.
+  const loosest = new Map<string, TraefikRoute>();
   for (const raw of rawRouters) {
     const router = parseRouter(raw);
     if (!router || isIgnored(router, disabledServices, middlewares)) continue;
     const route = toRoute(router, middlewares);
+    active.push({ router, route });
+    const best = loosest.get(route.id);
+    if (!best || EXPOSURE_STRICTNESS[route.exposure] < EXPOSURE_STRICTNESS[best.exposure]) {
+      loosest.set(route.id, route);
+    }
+  }
+
+  const container: TraefikRoute[] = [];
+  const byBackend = new Map<string, TraefikRoute[]>();
+  for (const { router, route } of active) {
+    const { exposure, exposureSource } = loosest.get(route.id)!;
+    const shared = { ...route, exposure, exposureSource };
     if (CONTAINER_PROVIDERS.has(router.provider)) {
-      container.push(route);
+      container.push(shared);
     } else {
-      byBackend.set(route.id, [...(byBackend.get(route.id) ?? []), route]);
+      byBackend.set(route.id, [...(byBackend.get(route.id) ?? []), shared]);
     }
   }
 
