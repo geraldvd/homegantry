@@ -41,6 +41,15 @@ ring, dialogs and the settings drawer keep focus inside until you close them, an
 
 ![A card focused with the keyboard](/m4-keyboard-focus.png)
 
+When you hide a service (the eye button on its card, or **Hidden** in the edit dialog), focus moves to the next card,
+or to the previous one if it was the last.
+
+## Editing a service
+
+With editing unlocked, the pencil on a card (or <kbd>e</kbd>) opens the edit dialog. Only the fields you change are
+stored as an override; the rest keep following what HomeGantry detects, so a later label or Knowledge Base change still
+shows up. Clear a field to go back to its auto-detected value. **Revert to auto-detected** removes the whole override.
+
 ## Grouping
 
 Choose **Group by** in the settings drawer (editing must be unlocked; the choice is stored with the other dashboard
@@ -78,7 +87,8 @@ settings hides the status.
 ## Phones and tablets
 
 The dashboard works from 360 px wide: one column on phones, the search box on its own row, buttons and controls at
-least 44 px tall, and the settings and dialogs full-screen. On touch screens the edit buttons of a card are always
+least 44 px tall, and the settings and dialogs full-screen. Text fields use 16 px text on phones and tablets, so iOS
+does not zoom in when you tap one. On touch screens the edit buttons of a card are always
 visible (there is no hover).
 
 <p>

@@ -177,7 +177,8 @@ export default function Dashboard({ view, onEdit }: Props) {
   return (
     <main
       id="main"
-      className="flex-1 max-w-screen-2xl mx-auto w-full px-4 py-4 sm:py-6 space-y-6 sm:space-y-8"
+      tabIndex={-1}
+      className="flex-1 focus:outline-none max-w-screen-2xl mx-auto w-full px-4 py-4 sm:py-6 space-y-6 sm:space-y-8"
     >
       {content}
     </main>

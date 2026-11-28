@@ -14,6 +14,7 @@ import ShortcutsDialog from './components/ShortcutsDialog';
 import { readQueryParam, writeQueryParam } from './lib/search';
 import { cardElements, cardOf, isTypingTarget, openLink, targetCard } from './lib/keyboard';
 import { safeHref } from './lib/url';
+import { restoreFocusAfterRemoval } from './lib/focus';
 
 export default function App() {
   return (
@@ -83,6 +84,11 @@ function Shell() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [dialogOpen, canEdit, services]);
+
+  // A hidden service's card is gone after the update: move focus to its neighbour (lib/focus.ts).
+  useEffect(() => {
+    if (!dialogOpen) restoreFocusAfterRemoval();
+  }, [view, dialogOpen]);
 
   const openFirstResult = () => {
     const first = view.results[0];

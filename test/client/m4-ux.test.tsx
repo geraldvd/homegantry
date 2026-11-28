@@ -612,6 +612,146 @@ describe('edit dialog', () => {
   });
 });
 
+describe('M4 gate follow-ups', () => {
+  async function openEdit(name: string) {
+    card(name).focus();
+    press('e', document.activeElement!);
+    return screen.getByRole('dialog');
+  }
+  async function save(dialog: HTMLElement) {
+    await act(async () => {
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+    });
+  }
+  const puts = () => writes().filter((w) => w.method === 'PUT');
+
+  it('clearing the name, icon, category or description resets each to auto-detected (null)', async () => {
+    FakeEventSource.initial = SERVICES.map((s) =>
+      s.id === 'id-plex' ? { ...s, icon: 'plex' } : s,
+    );
+    await renderApp({ unlocked: true });
+    const dialog = await openEdit('Plex');
+    for (const label of ['Name', 'Icon slug', 'Category', 'Description']) {
+      fireEvent.change(within(dialog).getByLabelText(label), { target: { value: '  ' } });
+    }
+    await save(dialog);
+    expect(puts()).toHaveLength(1);
+    expect(puts()[0]!.body).toEqual({
+      displayName: null,
+      icon: null,
+      category: null,
+      description: null,
+    });
+  });
+
+  it('only sends the fields that changed', async () => {
+    await renderApp({ unlocked: true });
+    const dialog = await openEdit('Plex');
+    fireEvent.change(within(dialog).getByLabelText('Category'), { target: { value: 'Movies' } });
+    await save(dialog);
+    expect(puts()[0]!.body).toEqual({ category: 'Movies' });
+  });
+
+  it('saving an unchanged dialog stores nothing', async () => {
+    await renderApp({ unlocked: true });
+    const dialog = await openEdit('Plex');
+    // Same value with extra spaces is still unchanged.
+    fireEvent.change(within(dialog).getByLabelText('Name'), { target: { value: ' Plex ' } });
+    await save(dialog);
+    expect(puts()).toEqual([]);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('text fields in the dialogs are touch-sized with 16 px text (no iOS zoom)', async () => {
+    await renderApp({ unlocked: true });
+    const check = (root: HTMLElement) => {
+      const inputs = root.querySelectorAll('input:not([type="checkbox"])');
+      expect(inputs.length).toBeGreaterThan(0);
+      for (const input of inputs) {
+        expect(input.className).toMatch(/(^|\s)min-h-11(\s|$)/);
+        expect(input.className).toMatch(/(^|\s)text-base(\s|$)/);
+        expect(input.className).toMatch(/(^|\s)w-full(\s|$)/);
+      }
+    };
+    let dialog = await openEdit('Plex');
+    check(dialog);
+    fireEvent.change(within(dialog).getByLabelText('Category'), { target: { value: '' } });
+    const suggestions = within(dialog).getAllByRole('button', {
+      name: /^(Media|Monitoring|Network)$/,
+    });
+    expect(suggestions.length).toBe(3);
+    for (const b of suggestions) expect(b.className).toMatch(/(^|\s)min-h-11(\s|$)/);
+    press('Escape', document.activeElement!);
+    fireEvent.click(screen.getByText('+ Add Service'));
+    dialog = screen.getByRole('dialog', { name: 'Add Service' });
+    check(dialog);
+  });
+
+  it('the unlock dialog input has 16 px text on touch screens', async () => {
+    await renderApp();
+    fireEvent.click(screen.getByRole('button', { name: /unlock/i }));
+    const input = within(screen.getByRole('dialog')).getByLabelText('Admin token');
+    expect(input.className).toMatch(/(^|\s)text-base(\s|$)/);
+  });
+
+  it('hiding a card moves focus to the next card', async () => {
+    await renderApp({ unlocked: true });
+    const hide = screen.getByRole('button', { name: 'Hide Plex' });
+    hide.focus();
+    await act(async () => {
+      fireEvent.click(hide);
+    });
+    expect(puts()[0]!.body).toEqual({ hidden: true });
+    const plex = SERVICES.find((s) => s.id === 'id-plex')!;
+    FakeEventSource.push({ type: 'service_updated', data: { ...plex, hidden: true } });
+    await act(async () => {});
+    expect(cardNames()).not.toContain('Plex');
+    expect(document.activeElement).toBe(card('Grafana'));
+  });
+
+  it('hiding the last card moves focus to the previous one', async () => {
+    await renderApp({ unlocked: true });
+    const hide = screen.getByRole('button', { name: 'Hide Router' });
+    hide.focus();
+    await act(async () => {
+      fireEvent.click(hide);
+    });
+    const router = SERVICES.find((s) => s.id === 'm-router')!;
+    FakeEventSource.push({ type: 'service_updated', data: { ...router, hidden: true } });
+    await act(async () => {});
+    expect(document.activeElement).toBe(card('Grafana'));
+  });
+
+  it('hiding from the edit dialog moves focus to the next card once the dialog closes', async () => {
+    await renderApp({ unlocked: true });
+    const dialog = await openEdit('Jellyfin');
+    fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Hidden' }));
+    await save(dialog);
+    expect(puts()[0]!.body).toEqual({ hidden: true });
+    const jellyfin = SERVICES.find((s) => s.id === 'id-jellyfin')!;
+    FakeEventSource.push({ type: 'service_updated', data: { ...jellyfin, hidden: true } });
+    await act(async () => {});
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(card('Plex'));
+  });
+
+  it('hiding the only card left focuses the main landmark', async () => {
+    FakeEventSource.initial = SERVICES.filter((s) => s.id === 'id-plex');
+    await renderApp({ unlocked: true });
+    const hide = screen.getByRole('button', { name: 'Hide Plex' });
+    hide.focus();
+    await act(async () => {
+      fireEvent.click(hide);
+    });
+    FakeEventSource.push({
+      type: 'service_updated',
+      data: { ...FakeEventSource.initial[0]!, hidden: true },
+    });
+    await act(async () => {});
+    expect(document.activeElement).toBe(screen.getByRole('main'));
+  });
+});
+
 describe('card status', () => {
   it('#33 shows one status, no container dot next to a health badge', async () => {
     await renderApp();

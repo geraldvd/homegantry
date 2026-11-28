@@ -203,6 +203,44 @@ describe('#32 health-check opt-out without labels', () => {
     expect(srv.seen).toHaveLength(1);
   });
 
+  it('turning checks back on removes the override field instead of storing true', async () => {
+    const s = await setup();
+    await s.api
+      .put('/api/services/id-jellyfin/override')
+      .send({ healthcheck: false, displayName: 'Movies' })
+      .expect(200);
+    await s.api.put('/api/services/id-jellyfin/override').send({ healthcheck: true }).expect(200);
+    expect(s.overridesStore.get()['id-jellyfin']).toEqual({ displayName: 'Movies' });
+
+    await s.api.put('/api/services/id-jellyfin/override').send({ healthcheck: false }).expect(200);
+    await s.api.put('/api/services/id-jellyfin/override').send({ displayName: null }).expect(200);
+    await s.api.put('/api/services/id-jellyfin/override').send({ healthcheck: true }).expect(200);
+    expect(s.overridesStore.get()).toEqual({});
+    expect((await serviceById(s.api, 'id-jellyfin'))?.healthcheckDisabled).toBeUndefined();
+  });
+
+  it('keeps healthcheck: true when it is needed to beat a label', async () => {
+    const s = await setup([
+      labelled('c1', 'http://192.168.1.100:8080', { 'homegantry.healthcheck': 'false' }),
+    ]);
+    await s.api.put('/api/services/c1/override').send({ healthcheck: true }).expect(200);
+    expect(s.overridesStore.get()['c1']).toEqual({ healthcheck: true });
+  });
+
+  it('does not store healthcheck: true on a manual service', async () => {
+    const s = await setup([]);
+    const created = await s.api
+      .post('/api/services/manual')
+      .send({ displayName: 'Router', url: 'http://192.168.1.1', healthcheck: false })
+      .expect(201);
+    const updated = await s.api
+      .put(`/api/services/manual/${created.body.id}`)
+      .send({ healthcheck: true })
+      .expect(200);
+    expect(updated.body).not.toHaveProperty('healthcheck');
+    expect(s.manualServicesStore.get()[0]).not.toHaveProperty('healthcheck');
+  });
+
   it('rejects a non-boolean value', async () => {
     const s = await setup();
     await s.api
