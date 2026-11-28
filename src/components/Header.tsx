@@ -17,7 +17,7 @@ interface Props {
 
 /** 44 px touch targets on phones, the usual compact size from `sm` up. */
 const BUTTON =
-  'min-h-11 sm:min-h-0 px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap flex items-center justify-center';
+  'min-h-11 px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap flex items-center justify-center';
 
 export default function Header({
   search,
@@ -88,7 +88,7 @@ export default function Header({
             onKeyDown={onKeyDown}
             autoComplete="off"
             spellCheck={false}
-            className="w-full min-h-11 sm:min-h-0 pl-10 pr-10 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-base sm:text-sm"
+            className="w-full min-h-11 pl-10 pr-10 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-base sm:text-sm"
           />
           <kbd
             aria-hidden="true"
@@ -158,7 +158,7 @@ export default function Header({
               <button
                 type="button"
                 onClick={onSettingsClick}
-                className="min-w-11 min-h-11 sm:min-w-0 sm:min-h-0 p-2 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-surface-700 transition-colors flex items-center justify-center"
+                className="min-w-11 min-h-11 p-2 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-surface-700 transition-colors flex items-center justify-center"
                 aria-label="Settings"
               >
                 <svg

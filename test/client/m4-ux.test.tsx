@@ -23,6 +23,12 @@ if (!window.localStorage) {
   });
 }
 
+// axe probes icon fonts with a canvas, which jsdom does not implement (it would only log noise).
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  configurable: true,
+  value: () => null,
+});
+
 const TOKEN = 'change-me-0123456789abcdefghij';
 const checkedAt = '2026-01-01T12:00:00.000Z';
 
@@ -278,7 +284,8 @@ describe('search', () => {
     fireEvent.change(searchBox(), { target: { value: 'media' } });
     // Name match (accent-insensitive) first, then category and description matches.
     expect(cardNames()).toEqual(['Médiathèque', 'Jellyfin', 'Plex']);
-    expect(screen.getByRole('heading', { name: /3 results/ })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Results for “media” 3' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe('3 results');
     expect(screen.queryByRole('heading', { name: /^Media/ })).toBeNull();
   });
 

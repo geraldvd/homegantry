@@ -16,6 +16,8 @@ interface Props {
   /** Collapsible groups only; search results are always open. */
   collapsed?: boolean;
   onToggle?: () => void;
+  /** Show the label as written (host names, search queries) instead of upper case. */
+  plainLabel?: boolean;
 }
 
 const GRID_COLS: Record<number, string> = {
@@ -38,6 +40,7 @@ export default function CategorySection({
   onEdit,
   collapsed = false,
   onToggle,
+  plainLabel = false,
 }: Props) {
   const headingId = useId();
   const listId = useId();
@@ -45,7 +48,9 @@ export default function CategorySection({
   const title = (
     <>
       {icon && <ServiceIcon slug={icon} name={label} size={20} decorative />}
-      <span className="text-sm font-semibold text-gray-300 uppercase tracking-wider truncate">
+      <span
+        className={`text-sm font-semibold text-gray-300 truncate ${plainLabel ? '' : 'uppercase tracking-wider'}`}
+      >
         {label}
       </span>{' '}
       <span

@@ -127,14 +127,15 @@ export default function Dashboard({ view, onEdit }: Props) {
     const n = view.results.length;
     content = (
       <>
+        <CategorySection
+          {...common}
+          label={`Results for “${view.query.trim()}”`}
+          plainLabel
+          services={view.results}
+        />
         <p role="status" className="sr-only">
           {n} result{n === 1 ? '' : 's'}
         </p>
-        <CategorySection
-          {...common}
-          label={`${n} result${n === 1 ? '' : 's'} for “${view.query.trim()}”`}
-          services={view.results}
-        />
       </>
     );
   } else if (view.shownCount === 0) {
@@ -165,6 +166,7 @@ export default function Dashboard({ view, onEdit }: Props) {
           label={group.label}
           services={group.services}
           icon={icon}
+          plainLabel={settings.groupBy === 'host'}
           collapsed={collapsed.has(key)}
           onToggle={() => toggle(key)}
         />

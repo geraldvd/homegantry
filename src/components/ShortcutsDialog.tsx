@@ -19,7 +19,7 @@ export default function ShortcutsDialog({ onClose }: { onClose: () => void }) {
       <dl className="space-y-2.5 text-sm">
         {SHORTCUTS.map(({ keys, action }) => (
           <div key={action} className="flex items-start gap-3">
-            <dt className="flex gap-1 shrink-0 w-28 flex-wrap">
+            <dt className="flex gap-1 shrink-0 w-24 sm:w-36 flex-wrap">
               {keys.map((k) => (
                 <kbd key={k} className={KBD}>
                   {k}

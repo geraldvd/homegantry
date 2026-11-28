@@ -111,7 +111,7 @@ function DrawerPanel({ onClose }: { onClose: () => void }) {
                     void save({ dashboardTitle: local.dashboardTitle });
                   }
                 }}
-                className="w-full min-h-11 sm:min-h-0 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-base sm:text-sm"
+                className="w-full min-h-11 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-base sm:text-sm"
               />
             </label>
 
@@ -209,7 +209,7 @@ function Choice<T extends string>({
             type="button"
             aria-pressed={value === o.value}
             onClick={() => onChange(o.value)}
-            className={`flex-1 min-h-11 sm:min-h-0 px-3 py-2 text-sm rounded-lg border transition-colors ${
+            className={`flex-1 min-h-11 px-3 py-2 text-sm rounded-lg border transition-colors ${
               value === o.value
                 ? 'bg-accent/10 border-accent text-accent'
                 : 'bg-surface-700 border-surface-600/60 text-gray-400 hover:text-gray-200'
@@ -260,7 +260,7 @@ function StackRow({
           }
         }}
         placeholder="Display name"
-        className="w-full min-h-11 sm:min-h-0 px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-base sm:text-xs focus:outline-none focus:border-accent/50"
+        className="w-full min-h-11 px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-base sm:text-xs focus:outline-none focus:border-accent/50"
       />
       <input
         type="text"
@@ -273,7 +273,7 @@ function StackRow({
           }
         }}
         placeholder="Icon slug"
-        className="w-full min-h-11 sm:min-h-0 px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-base sm:text-xs focus:outline-none focus:border-accent/50"
+        className="w-full min-h-11 px-2 py-1 rounded bg-surface-700 border border-surface-600/60 text-gray-200 placeholder-gray-500 text-base sm:text-xs focus:outline-none focus:border-accent/50"
       />
     </div>
   );
@@ -291,7 +291,7 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-3 min-h-11 sm:min-h-0 cursor-pointer">
+    <label className="flex items-center justify-between gap-3 min-h-11 cursor-pointer">
       <span className={hideLabel ? 'sr-only' : 'text-sm text-gray-400'}>{label}</span>
       <button
         type="button"
