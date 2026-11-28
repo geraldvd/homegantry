@@ -1,6 +1,6 @@
 {
   "name": "homegantry",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Auto-discovering Docker homelab dashboard",
   "type": "module",
   "scripts": {

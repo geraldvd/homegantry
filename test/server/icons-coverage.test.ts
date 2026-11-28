@@ -58,7 +58,10 @@ describe('HOMEGANTRY_ICON_SOURCE over HTTP', () => {
   it('defaults to the CDN', async () => {
     const { app } = await loadApp(lab);
     const res = await request(app).get('/api/ui-config').expect(200);
-    expect(res.body).toEqual({ icons: { mode: 'cdn', baseUrl: ICON_CDN } });
+    expect(res.body).toEqual({
+      icons: { mode: 'cdn', baseUrl: ICON_CDN },
+      version: expect.any(String),
+    });
     expect(res.headers['content-security-policy']).toContain("img-src 'self' data: https: http:");
   });
 
@@ -69,6 +72,7 @@ describe('HOMEGANTRY_ICON_SOURCE over HTTP', () => {
     const res = await request(app).get('/api/ui-config').expect(200);
     expect(res.body).toEqual({
       icons: { mode: 'custom', baseUrl: 'https://icons.example.com/set' },
+      version: expect.any(String),
     });
     expect(JSON.stringify(res.body)).not.toContain('change-me');
   });
@@ -89,7 +93,7 @@ describe('HOMEGANTRY_ICON_SOURCE over HTTP', () => {
     it('sends no base URL to the client', async () => {
       const { app } = await loadApp(lab, off);
       const res = await request(app).get('/api/ui-config').expect(200);
-      expect(res.body).toEqual({ icons: { mode: 'off' } });
+      expect(res.body).toEqual({ icons: { mode: 'off' }, version: expect.any(String) });
     });
 
     it('drops explicit icon URLs from REST, keeps slugs', async () => {

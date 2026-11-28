@@ -15,6 +15,7 @@ import type {
 } from './types.js';
 import { iconSource, type IconSource } from './icons.js';
 import { safeIcon, safeServiceUrl } from './urls.js';
+import { version } from './version.js';
 
 const SECRET_LABEL = /password|passwd|secret|token|key|credential/i;
 
@@ -57,10 +58,14 @@ function publicIcon(value: unknown): string {
   return iconSource.mode === 'off' && /^https?:/i.test(icon) ? '' : icon;
 }
 
-/** What the client needs to build icon URLs (`GET /api/ui-config`). */
-export function publicUiConfig(source: IconSource = iconSource): { icons: IconSource } {
+/** What the client needs to build icon URLs and show the version (`GET /api/ui-config`). */
+export function publicUiConfig(source: IconSource = iconSource): {
+  icons: IconSource;
+  version: string;
+} {
   return {
     icons: source.mode === 'off' ? { mode: 'off' } : { mode: source.mode, baseUrl: source.baseUrl },
+    version,
   };
 }
 

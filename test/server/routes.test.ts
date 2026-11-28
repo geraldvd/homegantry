@@ -235,7 +235,8 @@ describe('settings', () => {
 describe('GET /api/health', () => {
   it('reports Docker connected after a successful scan', async () => {
     const { api } = await setup();
-    await api.get('/api/health').expect(200, { status: 'ok', docker: 'connected' });
+    const res = await api.get('/api/health').expect(200);
+    expect(res.body).toEqual({ status: 'ok', docker: 'connected', version: expect.any(String) });
   });
 
   it('reports Docker disconnected when the socket fails', async () => {
@@ -243,7 +244,8 @@ describe('GET /api/health', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     s.fake.listContainers.mockRejectedValueOnce(new Error('ENOENT'));
     await s.fullScan();
-    await s.api.get('/api/health').expect(200, { status: 'ok', docker: 'disconnected' });
+    const res = await s.api.get('/api/health').expect(200);
+    expect(res.body).toEqual({ status: 'ok', docker: 'disconnected', version: expect.any(String) });
   });
 });
 
