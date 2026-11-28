@@ -1,6 +1,6 @@
 {
   "name": "homegantry",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Auto-discovering Docker homelab dashboard",
   "type": "module",
   "scripts": {
@@ -30,7 +30,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dockerode": "^4.0.4",
-    "express": "^4.21.2",
+    "express": "^4.22.3",
     "uuid": "^11.1.0",
     "zod": "^4.6.7"
   },
@@ -69,5 +69,10 @@
     "vitepress": "^1.6.4",
     "vitest": "^3.2.7",
     "yaml": "^2.8.1"
+  },
+  "overrides": {
+    "dockerode": {
+      "uuid": "^11.1.1"
+    }
   }
 }

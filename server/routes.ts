@@ -26,6 +26,7 @@ import {
   type HealthTarget,
 } from './health.js';
 import { safeHttpUrl } from './urls.js';
+import { version } from './version.js';
 import { labelDisablesHealthcheck } from './matcher.js';
 import type {
   Service,
@@ -381,5 +382,6 @@ router.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
     docker: isConnected() ? 'connected' : 'disconnected',
+    version,
   });
 });

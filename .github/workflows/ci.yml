@@ -1,9 +1,14 @@
 name: CI
 
+# One workflow for checks, releases and images. Releases are cut by release-please with the
+# default GITHUB_TOKEN, and events created with that token (the release PR, the vX.Y.Z tag, the
+# GitHub release) start no other workflow. So the image for a release is built, smoke-tested,
+# scanned and pushed by the `image` job of the same run that created the release, gated on
+# release-please's `release_created` output. See docs/DECISIONS.md and CONTRIBUTING.md.
+
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -12,7 +17,11 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a run on main: it may be the one that creates a release and pushes its image.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
   # ── Typecheck, lint, test & build ─────────────────────────────
@@ -24,8 +33,10 @@ jobs:
       matrix:
         node: [20, 22]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -37,6 +48,7 @@ jobs:
       - name: Coverage summary
         if: always() && hashFiles('coverage/coverage-summary.json') != ''
         run: |
+          # shellcheck disable=SC2016 # JavaScript template literals, not shell
           node -e '
             const t = require("./coverage/coverage-summary.json").total;
             const row = (k) => `| ${k} | ${t[k].pct}% (${t[k].covered}/${t[k].total}) |`;
@@ -45,56 +57,248 @@ jobs:
           ' >> "$GITHUB_STEP_SUMMARY"
       - run: npm run build
 
-  # ── Build & push Docker image ─────────────────────────────────
-  docker:
-    needs: check
+  # ── Runtime dependency audit (#11) ────────────────────────────
+  # Only what ships in the image. Dev-tooling advisories are handled by Dependabot PRs.
+  audit:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - id: meta
-        uses: docker/metadata-action@v5
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          node-version: 22
+      - run: npm audit --omit=dev
 
   # ── Documentation build check (no deploy; see docs/DECISIONS.md) ──
   docs:
     needs: check
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 20
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run docs:build
+
+  # ── release-please: keeps the release PR up to date; creates tag + release when it merges ──
+  release:
+    name: release-please
+    if: github.event_name == 'push'
+    needs: [check, audit, docs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+      major: ${{ steps.release.outputs.major }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # ── Image: build, smoke-test and scan both platforms, then push (main and releases) ──
+  image:
+    name: image (build, smoke test, scan, push)
+    needs: [check, audit, release]
+    # `release` is skipped on pull requests; run unless something failed or was cancelled.
+    if: ${{ !cancelled() && !failure() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Read the version from package.json
+        id: pkg
+        run: echo "version=$(node -p 'require("./package.json").version')" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      # main pushes: main, sha-<short>. Releases add X.Y.Z, X.Y, X (from 1.0) and latest.
+      - id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+        with:
+          images: ${{ env.IMAGE }}
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=main,enable={{is_default_branch}}
+            type=sha,enable={{is_default_branch}}
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.version }},enable=${{ needs.release.outputs.release_created == 'true' }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.release.outputs.version }},enable=${{ needs.release.outputs.release_created == 'true' }}
+            type=semver,pattern={{major}},value=${{ needs.release.outputs.version }},enable=${{ needs.release.outputs.release_created == 'true' && needs.release.outputs.major != '0' }}
+            type=raw,value=latest,enable=${{ needs.release.outputs.release_created == 'true' }}
+            type=ref,event=pr
+
+      # ── linux/amd64 ──
+      - name: Build linux/amd64 for testing
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          tags: homegantry:ci-amd64
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=image-amd64
+          cache-to: type=gha,scope=image-amd64,mode=max
+      - name: Smoke test linux/amd64
+        env:
+          VERSION: ${{ steps.pkg.outputs.version }}
+          LABEL: ${{ steps.meta.outputs.version }}
+        run: |
+          docker run -d --name smoke-amd64 -p 127.0.0.1:3000:3000 homegantry:ci-amd64
+          node --experimental-strip-types scripts/smoke-test.ts http://127.0.0.1:3000 "$VERSION"
+          actual=$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' homegantry:ci-amd64)
+          echo "org.opencontainers.image.version=$actual"
+          test "$actual" = "$LABEL"
+      - name: Scan linux/amd64
+        id: scan-amd64
+        uses: anchore/scan-action@11983a512817154c80a9db660c1a184be7513ed6 # v7.4.3
+        with:
+          image: homegantry:ci-amd64
+          fail-build: true
+          severity-cutoff: high
+          only-fixed: true
+          config: .grype.yaml
+          output-format: table
+          output-file: grype-amd64.txt
+
+      # ── linux/arm64 (QEMU; only the runtime stage is emulated) ──
+      - name: Build linux/arm64 for testing
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/arm64
+          load: true
+          tags: homegantry:ci-arm64
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=image-arm64
+          cache-to: type=gha,scope=image-arm64,mode=max
+      - name: Smoke test linux/arm64
+        env:
+          VERSION: ${{ steps.pkg.outputs.version }}
+        run: |
+          docker run -d --platform linux/arm64 --name smoke-arm64 -p 127.0.0.1:3001:3000 homegantry:ci-arm64
+          docker exec smoke-arm64 uname -m
+          node --experimental-strip-types scripts/smoke-test.ts http://127.0.0.1:3001 "$VERSION"
+      - name: Scan linux/arm64
+        id: scan-arm64
+        uses: anchore/scan-action@11983a512817154c80a9db660c1a184be7513ed6 # v7.4.3
+        with:
+          image: homegantry:ci-arm64
+          fail-build: true
+          severity-cutoff: high
+          only-fixed: true
+          config: .grype.yaml
+          output-format: table
+          output-file: grype-arm64.txt
+
+      - name: Container logs and scan results
+        if: always()
+        run: |
+          for c in smoke-amd64 smoke-arm64; do
+            if docker inspect "$c" > /dev/null 2>&1; then
+              echo "::group::docker logs $c"; docker logs "$c" 2>&1 || true; echo "::endgroup::"
+            fi
+          done
+          for f in grype-amd64.txt grype-arm64.txt; do
+            if [ -f "$f" ]; then
+              { echo "### Image scan: ${f%.txt}"; echo '```'; cat "$f"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+
+      # ── Push both platforms (pushes to main only; the layers come from the cache above) ──
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        if: github.event_name == 'push'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push linux/amd64 + linux/arm64
+        id: push
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          provenance: mode=max
+          sbom: true
+          cache-from: |
+            type=gha,scope=image-amd64
+            type=gha,scope=image-arm64
+      - name: Summary
+        if: github.event_name == 'push'
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          # shellcheck disable=SC2016 # literal backticks for Markdown
+          {
+            echo "### Pushed image"
+            echo "Digest: \`$DIGEST\`"
+            echo
+            echo "$TAGS" | sed 's/^/- `/; s/$/`/'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Release assets: the SBOMs of the pushed image, attached to the GitHub release ──
+  release-assets:
+    name: release assets (SBOM)
+    needs: [release, image]
+    if: needs.release.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+    steps:
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract the SPDX SBOMs from the image attestations
+        env:
+          REF: ${{ env.IMAGE }}@${{ needs.image.outputs.digest }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          for platform in linux/amd64 linux/arm64; do
+            file="homegantry-${VERSION}-${platform//\//-}.spdx.json"
+            docker buildx imagetools inspect "$REF" \
+              --format "{{ json (index .SBOM \"$platform\").SPDX }}" > "$file"
+            jq -e '.spdxVersion and (.packages | length > 0)' "$file" > /dev/null
+            echo "$file: $(jq '.packages | length' "$file") packages"
+          done
+      - name: Attach them to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release.outputs.tag_name }}
+        run: gh release upload "$TAG" homegantry-*.spdx.json --clobber --repo "$GITHUB_REPOSITORY"

@@ -1,4 +1,25 @@
 import { useServices } from '../context/ServiceContext';
+import { useServerVersion } from '../context/IconSourceContext';
+
+const RELEASES_URL = 'https://github.com/geraldvd/homegantry/releases/tag/v';
+const RELEASE_VERSION = /^\d+\.\d+\.\d+$/;
+
+/** "HomeGantry v0.2.0", linking to that release's notes; just the name until the version is known. */
+function VersionLabel() {
+  const version = useServerVersion();
+  if (!version || !RELEASE_VERSION.test(version)) return <span>HomeGantry</span>;
+  return (
+    <a
+      href={`${RELEASES_URL}${version}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Release notes"
+      className="min-h-11 px-1 flex items-center hover:text-gray-200 transition-colors"
+    >
+      HomeGantry v{version}
+    </a>
+  );
+}
 
 export default function Footer({ onShortcutsClick }: { onShortcutsClick: () => void }) {
   const { services, connected } = useServices();
@@ -34,7 +55,7 @@ export default function Footer({ onShortcutsClick }: { onShortcutsClick: () => v
               ?
             </kbd>
           </button>
-          <span className="hidden sm:inline">Powered by HomeGantry</span>
+          <VersionLabel />
         </div>
       </div>
     </footer>

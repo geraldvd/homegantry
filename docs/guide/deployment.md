@@ -33,16 +33,24 @@ Access at `http://your-server-ip:3000`.
 
 See the [Reverse Proxy](/guide/reverse-proxy) guide for Traefik-specific configuration.
 
+## Which image tag
+
+Images are multi-arch (`linux/amd64` and `linux/arm64`). Pin a minor version, e.g.
+`ghcr.io/geraldvd/homegantry:0.2`: it gets fixes but no breaking changes. `latest` follows releases (not every merge
+to `main`), so before 1.0 it can jump to a version with breaking changes. `main` is the development build. All tags:
+[Releases and upgrading](/guide/releases#image-tags).
+
 ## Updating
 
-Pull the latest image and recreate the container:
+Read the [changelog](https://github.com/geraldvd/homegantry/blob/main/CHANGELOG.md) for the new version, set the tag
+if you pin one, then pull the image and recreate the container:
 
 ```bash
 docker compose pull
 docker compose up -d
 ```
 
-Your data is preserved in the named volume.
+Your data is preserved in the named volume. More in [Releases and upgrading](/guide/releases#upgrading).
 
 ## Volumes
 

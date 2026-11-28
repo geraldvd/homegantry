@@ -94,6 +94,8 @@ export type IconSource = { mode: 'cdn' | 'custom'; baseUrl: string } | { mode: '
 /** `GET /api/ui-config`. */
 export interface UiConfig {
   icons: IconSource;
+  /** The running HomeGantry version, e.g. `0.2.0`, or `unknown`. */
+  version: string;
 }
 
 /** `GET /api/kb/coverage` (edit rights). */

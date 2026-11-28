@@ -49,19 +49,73 @@ npm run build       # production build
 - New behaviour ships with tests. Bug fixes ship with a test that fails without the fix.
 - Use only example data: `example.com` domains and `192.168.1.100`-style LAN addresses. Never real hostnames or IPs.
 
-## Commit style
+## Pull request titles and commits
 
-We use [Conventional Commits](https://www.conventionalcommits.org/):
+Pull requests are **squash-merged**: the PR title becomes the one commit on `main`, and release-please turns it into
+the line in [CHANGELOG.md](CHANGELOG.md). So the **PR title** must be a
+[Conventional Commit](https://www.conventionalcommits.org/); the **PR title** check in CI enforces it
+(`scripts/pr-title.ts`, rerun by editing the title):
 
 ```
 feat(matcher): match images from quay.io
 fix(routes): return 404 for unknown stacks
 docs: explain HOMEGANTRY_HOST
 test(docker): cover reconnect backoff
+feat(api)!: rename the exposure field
 ```
 
-Common types: `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `ci`, `chore`. Keep commits small and
-focused, and update the README/docs in the same pull request as the behaviour change.
+`type(optional-scope): description`, with one of `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `build`, `ci`,
+`chore`, `style`, `revert`; the scope is lower case. What the type does to the next release:
+
+| Title                                       | Changelog section      | Next version (before 1.0) |
+| ------------------------------------------- | ---------------------- | ------------------------- |
+| `feat: ...`                                 | Features               | minor (`0.2.0` → `0.3.0`) |
+| `fix: ...`, `perf: ...`                     | Bug Fixes, Performance | patch (`0.2.0` → `0.2.1`) |
+| `feat!: ...` or a `BREAKING CHANGE:` footer | Breaking changes       | minor before 1.0          |
+| `docs`, `test`, `refactor`, `ci`, `chore`…  | not listed             | no release on its own     |
+
+Dependabot titles follow the same rules: runtime dependencies and base images are `fix(deps): ...` (they change the
+image), dev tooling is `chore(deps-dev): ...`, actions are `ci(deps): ...`. Commits inside a PR should use the same
+style, but only the title ends up on `main`. Keep pull requests focused, and update the README/docs in the same pull
+request as the behaviour change.
+
+## Releases
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please) in the `release-please`
+job of the CI workflow; only the default `GITHUB_TOKEN` is used.
+
+1. **Release PR.** After every push to `main`, release-please opens or updates a pull request
+   `chore(main): release X.Y.Z`. It contains the new `CHANGELOG.md` section and the version in `package.json`,
+   `package-lock.json`, the `Dockerfile` label default and `.release-please-manifest.json`. Nothing else goes in it.
+2. **CI on the release PR.** GitHub starts no workflow for a pull request that `GITHUB_TOKEN` created or pushed to,
+   so the release PR shows no checks at first. Before merging, **close and reopen it** (a reopen by a person starts
+   CI and the PR-title check). Do this right before merging: every later push to `main` makes release-please update
+   the PR again, without checks. The checks are not strictly needed (the PR only changes versions and the
+   changelog, and the merge run tests everything again before pushing an image), but required status checks in a
+   branch protection rule would otherwise block the merge.
+3. **Merge it** (squash). The CI run for that merge does it all in one run, because a tag or release created with
+   `GITHUB_TOKEN` would not start another workflow:
+   - `release-please` creates the `vX.Y.Z` tag and the GitHub release with the changelog section as notes;
+   - `image` builds `linux/amd64` and `linux/arm64`, smoke-tests (`/api/health` answers with the new version) and
+     scans both, then pushes `X.Y.Z`, `X.Y`, `latest` (and `X` from 1.0) plus `main` and `sha-…`, with SBOM and
+     provenance attestations;
+   - `release assets (SBOM)` attaches `homegantry-X.Y.Z-linux-amd64.spdx.json` and `…-linux-arm64.spdx.json` to the
+     release.
+4. **Check** the release:
+
+   ```bash
+   gh release view vX.Y.Z -R geraldvd/homegantry           # notes + two .spdx.json assets
+   docker manifest inspect ghcr.io/geraldvd/homegantry:X.Y.Z   # linux/amd64 + linux/arm64
+   docker buildx imagetools inspect ghcr.io/geraldvd/homegantry:latest   # same digest as X.Y.Z
+   ```
+
+`docker manifest inspect` also lists two `unknown/unknown` entries: those are the attestation manifests, not images.
+
+If `image` or `release assets` fails after the release was created for a passing reason (registry or network
+trouble), use **Re-run failed jobs** on that run: the release outputs are kept, so the same tags are pushed. If the
+scan blocks the image, fix the finding (or record an accepted one in `.grype.yaml`, with a reason) in a pull request
+and release a patch version; the blocked version keeps its tag but gets no image. To force a version, put
+`Release-As: X.Y.Z` in the body of a commit on `main`. Pushes to `main` never move `latest`.
 
 ## Adding a service to the knowledge base
 

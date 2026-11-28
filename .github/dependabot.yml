@@ -1,0 +1,53 @@
+# Dependency updates: weekly, grouped, with Conventional Commit titles (the PR-title check and
+# release-please read them). Why Dependabot and not Renovate: docs/DECISIONS.md.
+#
+# Minor and patch updates arrive as one PR per group; a major update gets its own PR so it can be
+# reviewed (and its changelog read) on its own, e.g. ESLint 10 (#12).
+version: 2
+updates:
+  # Runtime dependencies are released as fixes ("fix(deps): ..."): they change the image.
+  # Dev tooling is "chore(deps-dev): ..." and does not trigger a release.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
+    groups:
+      runtime:
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  # Base images (pinned by digest in the Dockerfiles). A new digest brings OS and Node fixes into
+  # the image, so these are released as fixes too.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: fix
+      include: scope
+    groups:
+      base-images:
+        patterns: ['*']
+
+  # Actions are pinned to full commit SHAs with the version in a comment; Dependabot updates both.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      github-actions:
+        patterns: ['*']
