@@ -1,6 +1,8 @@
-import type { ExposureLevel, Service, ServiceHealth } from '../types';
+import type { ExposureLevel, Service } from '../types';
+import { serviceStatus, type StatusTone } from '../lib/status';
 
-const BADGE = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium leading-none';
+const BADGE =
+  'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium leading-none whitespace-nowrap';
 
 const EXPOSURE: Record<ExposureLevel, { label: string; className: string; meaning: string }> = {
   public: {
@@ -25,35 +27,15 @@ const EXPOSURE: Record<ExposureLevel, { label: string; className: string; meanin
   },
 };
 
-function lastChecked(checkedAt: string): string {
-  const date = new Date(checkedAt);
-  return Number.isNaN(date.getTime()) ? 'unknown' : date.toLocaleString();
-}
+const TONE: Record<StatusTone, { badge: string; dot: string }> = {
+  up: { badge: 'bg-emerald-500/15 text-emerald-300', dot: 'bg-emerald-400' },
+  running: { badge: 'bg-surface-600/60 text-gray-300', dot: 'bg-emerald-400' },
+  down: { badge: 'bg-red-500/15 text-red-300', dot: 'bg-red-400' },
+  warning: { badge: 'bg-amber-500/15 text-amber-300', dot: 'bg-amber-400' },
+  neutral: { badge: 'bg-gray-500/20 text-gray-300', dot: 'bg-gray-400' },
+};
 
-function healthView(health: ServiceHealth): { label: string; className: string; detail: string } {
-  const code = health.httpStatus ? `HTTP ${health.httpStatus}` : '';
-  if (health.status === 'up') {
-    return { label: 'Up', className: 'bg-emerald-500/15 text-emerald-300', detail: code || 'ok' };
-  }
-  if (health.status === 'down') {
-    const detail =
-      health.reason === 'timeout'
-        ? 'timed out'
-        : health.reason === 'unreachable'
-          ? 'not reachable'
-          : code || 'failed';
-    return { label: 'Down', className: 'bg-red-500/15 text-red-300', detail };
-  }
-  if (health.reason === 'tls') {
-    return {
-      label: 'TLS error',
-      className: 'bg-amber-500/15 text-amber-300',
-      detail: 'the certificate could not be verified',
-    };
-  }
-  return { label: 'Not checked', className: 'bg-gray-500/20 text-gray-300', detail: 'no result' };
-}
-
+/** The card's one status (#33) and the exposure badge. */
 export default function ServiceBadges({
   service,
   showStatus,
@@ -62,25 +44,26 @@ export default function ServiceBadges({
   showStatus: boolean;
 }) {
   const exposure = service.exposure ? EXPOSURE[service.exposure] : undefined;
-  const health = showStatus && service.health ? healthView(service.health) : undefined;
-  if (!exposure && !health) return null;
+  const status = showStatus ? serviceStatus(service) : undefined;
+  if (!exposure && !status) return null;
 
   return (
-    <span className="inline-flex items-center gap-1 shrink-0">
+    <span className="inline-flex flex-wrap items-center gap-1 min-w-0">
+      {status && (
+        <span className={`${BADGE} ${TONE[status.tone].badge}`} title={status.detail}>
+          <span
+            aria-hidden="true"
+            className={`w-1.5 h-1.5 rounded-full ${TONE[status.tone].dot}`}
+          />
+          {status.label}
+        </span>
+      )}
       {exposure && (
         <span
           className={`${BADGE} ${exposure.className}`}
           title={`Exposure: ${exposure.meaning}. ${service.exposureSource ?? ''}`.trim()}
         >
           {exposure.label}
-        </span>
-      )}
-      {health && (
-        <span
-          className={`${BADGE} ${health.className}`}
-          title={`Health check: ${health.detail}. Last checked: ${lastChecked(service.health!.checkedAt)}`}
-        >
-          {health.label}
         </span>
       )}
     </span>

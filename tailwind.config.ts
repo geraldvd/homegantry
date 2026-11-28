@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -19,5 +20,9 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // `touch:` styles for screens without hover (phones, tablets): edit buttons always visible,
+    // 44 px targets.
+    plugin(({ addVariant }) => addVariant('touch', '@media (hover: none)')),
+  ],
 } satisfies Config;
