@@ -1,6 +1,6 @@
 import { config } from './config.js';
 import { findByAlias, findByImage, findByRouteName } from './knowledge-base.js';
-import type { ContainerInfo, KnownService, Service } from './types.js';
+import type { ContainerInfo, KnownService, Service, ServiceOverride } from './types.js';
 import { overridesStore, resolveOverride } from './storage.js';
 import { parseRule } from './traefik-rule.js';
 import type { TraefikRoute } from './traefik.js';
@@ -124,7 +124,15 @@ export function matchRoute(route: TraefikRoute): Service {
     sortOrder: override?.sortOrder ?? 0,
     exposure: route.exposure,
     exposureSource: route.exposureSource,
+    // #32: Traefik-only services have no labels, so the override is the only opt-out.
+    ...(override?.healthcheck === false ? { healthcheckDisabled: true } : {}),
   };
+}
+
+/** Health checks are off by label (`homegantry.healthcheck=false`) unless an override says otherwise. */
+function healthcheckDisabled(labels: Record<string, string>, override?: ServiceOverride): boolean {
+  if (override?.healthcheck !== undefined) return !override.healthcheck;
+  return labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false';
 }
 
 export function matchContainer(input: MatchInput, route?: TraefikRoute): Service {
@@ -235,5 +243,6 @@ export function matchContainer(input: MatchInput, route?: TraefikRoute): Service
     hidden,
     sortOrder: override?.sortOrder ?? 0,
     ...(route ? { exposure: route.exposure, exposureSource: route.exposureSource } : {}),
+    ...(healthcheckDisabled(input.labels, override) ? { healthcheckDisabled: true } : {}),
   };
 }

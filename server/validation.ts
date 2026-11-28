@@ -46,14 +46,16 @@ export const servicesQuery = z.object({
   includeHidden: z.enum(['true', 'false']).optional(),
 });
 
+/** Every override field is optional; `null` removes it from the override (back to auto-detected). */
 export const overrideBody = z.strictObject({
-  displayName: name.optional(),
-  url: serviceUrl.optional(),
-  icon: icon.optional(),
-  category: category.optional(),
-  description: description.optional(),
-  hidden: z.boolean().optional(),
-  sortOrder: sortOrder.optional(),
+  displayName: name.nullable().optional(),
+  url: serviceUrl.nullable().optional(),
+  icon: icon.nullable().optional(),
+  category: category.nullable().optional(),
+  description: description.nullable().optional(),
+  hidden: z.boolean().nullable().optional(),
+  sortOrder: sortOrder.nullable().optional(),
+  healthcheck: z.boolean().nullable().optional(),
 });
 
 const manualFields = {
@@ -65,15 +67,18 @@ const manualFields = {
   sortOrder,
 };
 
+const manualHealthcheck = { healthcheck: z.boolean().optional() };
+
 export const manualCreateBody = z.strictObject({
   ...manualFields,
   icon: icon.default(''),
   category: category.default(''),
   description: description.default(''),
   sortOrder: sortOrder.default(0),
+  ...manualHealthcheck,
 });
 
-export const manualUpdateBody = z.strictObject(manualFields).partial();
+export const manualUpdateBody = z.strictObject({ ...manualFields, ...manualHealthcheck }).partial();
 
 export const stackBody = z.strictObject({
   visible: z.boolean().optional(),
@@ -87,7 +92,7 @@ export const settingsBody = z.strictObject({
   showStatus: z.boolean().optional(),
   layout: z.enum(['grid', 'list']).optional(),
   showStopped: z.boolean().optional(),
-  groupBy: z.enum(['category', 'stack']).optional(),
+  groupBy: z.enum(['category', 'stack', 'host']).optional(),
 });
 
 interface Schemas {

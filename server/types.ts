@@ -32,6 +32,8 @@ export interface Service {
   /** Why the service has this exposure (badge tooltip); middleware names only. */
   exposureSource?: string;
   health?: ServiceHealth;
+  /** Health checks are off for this service (label, override or manual setting). */
+  healthcheckDisabled?: boolean;
 }
 
 export interface ServiceHealth {
@@ -50,7 +52,12 @@ export interface ServiceOverride {
   description?: string;
   hidden?: boolean;
   sortOrder?: number;
+  /** `false` turns health checks off; `true` turns them back on despite a label. */
+  healthcheck?: boolean;
 }
+
+/** `PUT /api/services/:id/override`: `null` resets a field to the auto-detected value. */
+export type ServiceOverridePatch = { [K in keyof ServiceOverride]?: ServiceOverride[K] | null };
 
 export interface ManualService {
   id: string;
@@ -60,6 +67,8 @@ export interface ManualService {
   category: string;
   description: string;
   sortOrder: number;
+  /** `false` turns health checks off. */
+  healthcheck?: boolean;
 }
 
 export interface StackConfig {
@@ -74,7 +83,7 @@ export interface DashboardSettings {
   showStatus: boolean;
   layout: 'grid' | 'list';
   showStopped: boolean;
-  groupBy: 'category' | 'stack';
+  groupBy: 'category' | 'stack' | 'host';
 }
 
 export interface KnownService {

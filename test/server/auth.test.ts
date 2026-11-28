@@ -36,6 +36,19 @@ const MUTATING_ROUTES: Route[] = [
     body: { displayName: 'Movies' },
     ok: 200,
   },
+  // M4: reset a field to auto-detected (#31) and the health-check opt-out (#32).
+  {
+    method: 'put',
+    path: () => '/api/services/id-jellyfin/override',
+    body: { url: null },
+    ok: 200,
+  },
+  {
+    method: 'put',
+    path: () => '/api/services/id-jellyfin/override',
+    body: { healthcheck: false },
+    ok: 200,
+  },
   { method: 'delete', path: () => '/api/services/id-jellyfin/override', ok: 200 },
   { method: 'post', path: () => '/api/services/manual', body: manualBody, ok: 201 },
   {
@@ -44,9 +57,16 @@ const MUTATING_ROUTES: Route[] = [
     body: { displayName: 'Gateway' },
     ok: 200,
   },
+  {
+    method: 'put',
+    path: (id) => `/api/services/manual/${id}`,
+    body: { healthcheck: false },
+    ok: 200,
+  },
   { method: 'delete', path: (id) => `/api/services/manual/${id}`, ok: 200 },
   { method: 'patch', path: () => '/api/stacks/media', body: { visible: false }, ok: 200 },
   { method: 'patch', path: () => '/api/settings', body: { columns: 3 }, ok: 200 },
+  { method: 'patch', path: () => '/api/settings', body: { groupBy: 'host' }, ok: 200 },
 ];
 
 async function setup(env: Env) {

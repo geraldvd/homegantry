@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   isSecretLabel,
+  publicManualService,
   publicService,
   publicSettings,
   publicStacks,
@@ -111,6 +112,54 @@ describe('publicService', () => {
     });
     expect(out).not.toHaveProperty('container');
     expect(out).not.toHaveProperty('stack');
+  });
+
+  it('passes the health-check opt-out (#32) only as the boolean true', () => {
+    const base = {
+      id: 'm1',
+      source: 'manual',
+      name: 'Router',
+      description: '',
+      url: 'http://192.168.1.1',
+      icon: '',
+      category: 'Network',
+      status: 'running',
+      hidden: false,
+      sortOrder: 0,
+    } as const;
+    expect(publicService({ ...base, healthcheckDisabled: true }).healthcheckDisabled).toBe(true);
+    expect(publicService({ ...base, healthcheckDisabled: false })).not.toHaveProperty(
+      'healthcheckDisabled',
+    );
+    expect(
+      publicService({ ...base, healthcheckDisabled: 'http://192.168.1.1' as never }),
+    ).not.toHaveProperty('healthcheckDisabled');
+  });
+});
+
+describe('publicManualService', () => {
+  it('keeps the health-check opt-out and nothing unknown', () => {
+    const out = publicManualService({
+      id: 'm1',
+      displayName: 'Router',
+      url: 'http://192.168.1.1',
+      icon: '',
+      category: 'Network',
+      description: '',
+      sortOrder: 0,
+      healthcheck: false,
+      extra: 'x',
+    } as never);
+    expect(out).toEqual({
+      id: 'm1',
+      displayName: 'Router',
+      url: 'http://192.168.1.1',
+      icon: '',
+      category: 'Network',
+      description: '',
+      sortOrder: 0,
+      healthcheck: false,
+    });
   });
 });
 
