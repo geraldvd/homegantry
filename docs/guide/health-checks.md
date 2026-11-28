@@ -12,7 +12,10 @@ default. Set `HOMEGANTRY_HEALTHCHECK=false` to turn them off.
 | **TLS error**   | The certificate could not be verified, so the result is inconclusive  |
 | **Not checked** | No usable result                                                      |
 
-The tooltip shows the detail and the last-checked time. The **Show Status** setting hides these badges too.
+A card shows one status: a stopped container is **Stopped**, a running container without a result is **Running**,
+otherwise the health result decides (see [Using the Dashboard](/guide/using-the-dashboard#status-on-a-card)). The
+tooltip shows the detail and the last-checked time. An unchanged result is pushed to open dashboards at least every 30
+seconds, so that time stays current. The **Show Status** setting hides the status.
 
 ## How a check works
 
@@ -42,6 +45,22 @@ labels:
 ```
 
 Only `http(s)` URLs are used. An invalid `homegantry.healthcheck.url` is ignored and the service URL is checked instead.
+
+## Turning checks off without labels
+
+Services that only exist as Traefik routes (file provider) and manual services have no labels. Unlock editing, open
+the service's edit dialog (<kbd>e</kbd> on a focused card, or the pencil) and clear **Health check (HTTP)**. This works
+for every service and is stored as an override; it beats the `homegantry.healthcheck` label, so you can also turn checks
+back on for a labelled container. **Revert to auto-detected** removes the override.
+
+Via the API (edit rights required):
+
+```bash
+curl -X PUT -H "Authorization: Bearer $HOMEGANTRY_ADMIN_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"healthcheck": false}' https://dash.example.com/api/services/<id>/override
+# manual services: PUT /api/services/manual/<id> with the same body
+# back to the label (or the default): {"healthcheck": null}
+```
 
 ## Self-signed certificates
 

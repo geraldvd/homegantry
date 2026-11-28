@@ -72,6 +72,30 @@ See [Health Checks](/guide/health-checks).
 | `HOMEGANTRY_HEALTHCHECK_CONCURRENCY`  | `8`     | Maximum simultaneous checks                  |
 | `HOMEGANTRY_HEALTHCHECK_INSECURE_TLS` | `false` | Accept self-signed certificates              |
 
+## Dashboard settings
+
+Set in the UI (settings drawer, editing unlocked) and stored in `settings.json` in the data directory. API:
+`GET /api/settings`, `PATCH /api/settings` (edit rights).
+
+| Setting          | Default                   | Values                      | Description                                                               |
+| ---------------- | ------------------------- | --------------------------- | ------------------------------------------------------------------------- |
+| `dashboardTitle` | `HOMEGANTRY_TITLE`        | text                        | Title in the header                                                       |
+| `columns`        | `4`                       | `1`-`6`                     | Maximum grid columns on wide screens (phones always use one)              |
+| `showStatus`     | `true`                    | `true`, `false`             | Show the status on each card                                              |
+| `showStopped`    | `HOMEGANTRY_SHOW_STOPPED` | `true`, `false`             | Show (and search) stopped containers                                      |
+| `layout`         | `grid`                    | `grid`, `list`              | Cards or rows                                                             |
+| `groupBy`        | `category`                | `category`, `stack`, `host` | How services are grouped ([details](/guide/using-the-dashboard#grouping)) |
+
+Which groups are collapsed is not a setting: it is kept per browser in `localStorage`.
+
+## Per-service overrides
+
+Set in the edit dialog, or with `PUT /api/services/<id>/override` (edit rights). Fields: `displayName`, `url`, `icon`,
+`category`, `description`, `hidden`, `sortOrder` and `healthcheck` (`false` turns [health checks](/guide/health-checks)
+off). `null` for a field removes it from the override, so the service is back to its auto-detected value; for example
+`{"url": null}` returns to the URL from labels or Traefik. Manual services accept `healthcheck` in
+`PUT /api/services/manual/<id>`.
+
 ## Example `.env` File
 
 ```bash
