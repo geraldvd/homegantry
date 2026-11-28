@@ -25,9 +25,11 @@ interface Props {
   slug: string;
   name: string;
   size?: number;
+  /** Next to the visible name (cards, group headings): hidden from screen readers. */
+  decorative?: boolean;
 }
 
-export default function ServiceIcon({ slug, name, size = 48 }: Props) {
+export default function ServiceIcon({ slug, name, size = 48, decorative = false }: Props) {
   const source = useIconSource();
   const candidates = iconCandidates(slug, source);
   // Remember which URL failed rather than an index, so a changed icon or source starts over.
@@ -38,6 +40,7 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
     const letter = name.charAt(0).toUpperCase() || '?';
     return (
       <div
+        aria-hidden={decorative || undefined}
         className={`${colorFor(name)} rounded-lg flex items-center justify-center text-white font-bold shrink-0`}
         style={{ width: size, height: size, fontSize: size * 0.45 }}
       >
@@ -49,7 +52,7 @@ export default function ServiceIcon({ slug, name, size = 48 }: Props) {
   return (
     <img
       src={src}
-      alt={name}
+      alt={decorative ? '' : name}
       width={size}
       height={size}
       className="rounded-lg object-contain shrink-0"

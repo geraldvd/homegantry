@@ -100,3 +100,34 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
   service" form no longer requires an icon. — Entries without an upstream icon are valid and show a letter avatar.
 - 2026-11-28 — Next milestone is M4, UX: search, keyboard navigation, grouping and the mobile layout, with #30-#33. —
   The dashboard now recognises most services; finding and opening them quickly is the next most visible gap.
+- 2026-11-28 — M4 adds no runtime dependency and no UI library: focus trapping, shortcuts and grouping are small
+  hand-written hooks. `axe-core` is a dev dependency for accessibility checks in the component tests. — Mission
+  principle 3. Alternatives: a headless UI kit (focus-trap, dialog) adds runtime weight for three dialogs and a drawer.
+- 2026-11-28 — Search ranking: every word must match one of name, description, category, stack or URL host (case and
+  accents ignored); results are one flat list ordered name-starts-with-query, then name-contains-all-words, then other
+  fields, ties by sort order and name. — "Enter opens the first result" needs one obvious first result; keeping groups
+  while searching would put a category match above a name match. Hidden services are not searched; stopped ones only
+  when shown, and the empty state says when a stopped container would have matched.
+- 2026-11-28 — Grouping keys: category as stored (empty, `Other` and `Uncategorized` mean no category), the Compose
+  project (its display name as label) or the URL host name without port. The catch-all group is called **Other** in all
+  three modes and is always last; groups sort by name with numbers in numeric order. — One name for "no group" is easier
+  to explain than Uncategorized/Ungrouped/No host; manual services used to save `Uncategorized`, so it is folded in.
+  Host without port groups services on one machine together; subdomains stay separate (no public-suffix list needed).
+- 2026-11-28 — Collapsed groups are stored per browser (`localStorage`), the grouping itself in the server settings.
+  The client now loads `/api/settings` on start; before, stored settings only arrived with a later change. — Collapsing
+  is a personal view; the grouping is how the lab is organised and is the same for every viewer.
+- 2026-11-28 — One status per card (#33): a stopped container is "Stopped"; otherwise a health result decides (Up, Down,
+  TLS error, Not checked); a running container without a result is "Running"; Traefik and manual services without a
+  result show nothing. "Down" on a running container says so in the tooltip. — Replaces the green container dot next
+  to a red "Down" badge, which read as a contradiction (M2 gate Q3).
+- 2026-11-28 — `PUT /api/services/:id/override` accepts `null` per field to remove it from the override (#31); an
+  override left without fields is deleted. The edit dialog sends `url: null` for an empty URL and no `url` at all when
+  it is unchanged. — `undefined` was dropped from the JSON body, so clearing never reached the server; not sending an
+  unchanged URL stops saving the dialog from pinning the auto-detected URL as an override.
+- 2026-11-28 — Health-check opt-out without labels (#32): `healthcheck: false|true` in an override (or a manual
+  service), set with a checkbox in the edit dialog; an override beats the `homegantry.healthcheck` label. The API shows
+  `healthcheckDisabled: true` (allow-listed) so the dialog can show the state. — Traefik-only services have no labels;
+  hiding them was the only way to stop probing.
+- 2026-11-28 — "Last checked" (#30): an unchanged health result is announced again over SSE at most every 30 seconds
+  per service. — Keeps the tooltip current without an event per service on every short round; the time in the tooltip
+  stays an absolute time, which is honest about the refresh interval.

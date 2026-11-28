@@ -18,11 +18,18 @@ import {
   usesLocalhostFallback,
 } from './docker.js';
 import { config } from './config.js';
-import { getHealth, runHealthChecks, startHealthChecks, type HealthTarget } from './health.js';
+import {
+  forgetHealth,
+  getHealth,
+  runHealthChecks,
+  startHealthChecks,
+  type HealthTarget,
+} from './health.js';
 import { safeHttpUrl } from './urls.js';
 import type {
   Service,
   ServiceOverride,
+  ServiceOverridePatch,
   ManualService,
   DashboardSettings,
   StackConfig,
@@ -64,6 +71,7 @@ function manualToService(m: ManualService): Service {
     status: 'running',
     hidden: false,
     sortOrder: m.sortOrder,
+    ...(m.healthcheck === false ? { healthcheckDisabled: true } : {}),
   };
 }
 
@@ -93,8 +101,9 @@ function healthTargets(): HealthTarget[] {
   const targets: HealthTarget[] = [];
   for (const s of mergeServices(false)) {
     if (s.source === 'docker' && s.status !== 'running') continue;
+    // Label, override (#32) or manual setting; see matcher.ts.
+    if (s.healthcheckDisabled) continue;
     const labels = getServiceLabels(s.id);
-    if (labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false') continue;
     const labelUrl = safeHttpUrl(labels['homegantry.healthcheck.url']);
     if (!labelUrl && usesLocalhostFallback(s)) continue;
     const url = labelUrl ?? safeHttpUrl(s.url);
@@ -131,10 +140,19 @@ router.put(
   validate({ params: idParams, body: overrideBody }),
   (req: Request, res: Response) => {
     const id = req.params.id as string;
-    const body = req.body as ServiceOverride;
+    const body = req.body as ServiceOverridePatch;
     const overrides = overridesStore.get();
-    overrides[id] = { ...overrides[id], ...body };
+    const next: Record<string, unknown> = { ...overrides[id] };
+    // #31: `null` removes the field, so the service is back to its auto-detected value.
+    for (const [field, value] of Object.entries(body)) {
+      if (value === null) delete next[field];
+      else if (value !== undefined) next[field] = value;
+    }
+    if (Object.keys(next).length > 0) overrides[id] = next as ServiceOverride;
+    else delete overrides[id];
     overridesStore.set(overrides);
+    // #32: switching checks off removes the result now, not on the next round.
+    if (body.healthcheck === false) forgetHealth(id);
 
     // Re-match with new overrides and emit SSE
     const updated = rematchService(id);
@@ -196,6 +214,7 @@ router.put(
     }
     manual[idx] = { ...manual[idx]!, ...body, id };
     manualServicesStore.set(manual);
+    if (body.healthcheck === false) forgetHealth(id);
 
     // Emit SSE for updated manual service
     dockerEvents.emit('service_updated', manualToService(manual[idx]!));

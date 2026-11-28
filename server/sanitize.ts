@@ -83,6 +83,7 @@ export function publicService(s: Service): Service {
     exposure: s.exposure,
     exposureSource: s.exposureSource,
     health: s.health ? publicHealth(s.health) : undefined,
+    healthcheckDisabled: s.healthcheckDisabled === true ? true : undefined,
   });
 }
 
@@ -97,7 +98,7 @@ function publicHealth(h: ServiceHealth): ServiceHealth {
 
 /** The public shape of a stored manual service (write responses). */
 export function publicManualService(m: ManualService): ManualService {
-  return {
+  return compact({
     id: m.id,
     displayName: m.displayName,
     url: safeServiceUrl(m.url),
@@ -105,7 +106,8 @@ export function publicManualService(m: ManualService): ManualService {
     category: m.category,
     description: m.description,
     sortOrder: m.sortOrder,
-  };
+    healthcheck: typeof m.healthcheck === 'boolean' ? m.healthcheck : undefined,
+  });
 }
 
 export function publicStack(c: StackConfig): StackConfig {

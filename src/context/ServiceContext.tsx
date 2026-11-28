@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import type { Service, DashboardSettings, StackConfig, SSEEvent } from '../types';
-import { getStacks } from '../api/client';
+import { getSettings, getStacks } from '../api/client';
 
 interface State {
   services: Service[];
@@ -78,12 +78,17 @@ export function ServiceProvider({ children }: { children: React.ReactNode }) {
   const [connected, setConnected] = useState(false);
   const retryDelay = useRef(1000);
 
-  // Fetch stacks on mount
+  // Fetch stacks and the stored settings (grouping, layout, ...) on mount; SSE sends changes.
   useEffect(() => {
     getStacks()
       .then((data) => dispatch({ type: 'SET_STACKS', payload: data }))
       .catch(() => {
         /* ignore */
+      });
+    getSettings()
+      .then((data) => dispatch({ type: 'SET_SETTINGS', payload: { ...defaultSettings, ...data } }))
+      .catch(() => {
+        /* keep the defaults */
       });
   }, []);
 

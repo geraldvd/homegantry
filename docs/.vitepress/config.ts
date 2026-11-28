@@ -26,6 +26,7 @@ export default defineConfig({
         items: [
           { text: 'What is HomeGantry?', link: '/guide/what-is-homegantry' },
           { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Using the Dashboard', link: '/guide/using-the-dashboard' },
         ],
       },
       {

@@ -93,20 +93,20 @@ describe('read-only UI', () => {
     fakeBackend({ token: false, header: false });
     await renderApp();
     const badge = await screen.findByText('Read-only');
-    expect(badge.getAttribute('title')).toMatch(/HOMEGANTRY_ADMIN_TOKEN/);
+    expect(badge.closest('[title]')!.getAttribute('title')).toMatch(/HOMEGANTRY_ADMIN_TOKEN/);
     expect(screen.queryByText('+ Add Service')).toBeNull();
     expect(screen.queryByLabelText('Settings')).toBeNull();
     expect(screen.queryByText('Unlock editing')).toBeNull();
     hoverCard();
-    expect(screen.queryByLabelText('Edit service')).toBeNull();
-    expect(screen.queryByLabelText('Hide service')).toBeNull();
+    expect(screen.queryByLabelText('Edit Jellyfin')).toBeNull();
+    expect(screen.queryByLabelText('Hide Jellyfin')).toBeNull();
   });
 
   it('explains READONLY mode', async () => {
     fakeBackend({ token: false, header: false }, true);
     await renderApp();
     const badge = await screen.findByText('Read-only');
-    expect(badge.getAttribute('title')).toMatch(/HOMEGANTRY_READONLY/);
+    expect(badge.closest('[title]')!.getAttribute('title')).toMatch(/HOMEGANTRY_READONLY/);
   });
 
   it('shows "Unlock editing" when a token is configured', async () => {
@@ -138,7 +138,7 @@ describe('unlock editing', () => {
 
     hoverCard();
     await act(async () => {
-      fireEvent.click(screen.getByLabelText('Hide service'));
+      fireEvent.click(screen.getByLabelText('Hide Jellyfin'));
     });
     const write = fetchMock.mock.calls.find(([, init]) => init?.method === 'PUT');
     expect(write?.[0]).toBe('/api/services/id-jellyfin/override');

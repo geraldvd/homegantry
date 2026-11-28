@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useServices } from '../context/ServiceContext';
 import { addManualService } from '../api/client';
 import { normaliseUrlInput } from '../lib/url';
+import Dialog from './Dialog';
 
 interface Props {
   open: boolean;
@@ -59,62 +60,49 @@ export default function AddServiceModal({ open, onClose }: Props) {
     }
   };
 
-  const handleBackdrop = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      reset();
-      onClose();
-    }
+  const close = () => {
+    reset();
+    onClose();
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={handleBackdrop}
-    >
-      <div className="bg-surface-800 border border-surface-600/60 rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4">Add Service</h2>
+    <Dialog title="Add Service" onClose={close}>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Field label="Name" value={name} onChange={setName} placeholder="My Service" required />
+        <Field label="URL" value={url} onChange={setUrl} placeholder="https://..." required />
+        <Field label="Icon slug" value={icon} onChange={setIcon} placeholder="e.g. plex, grafana" />
+        <CategoryCombobox value={category} onChange={setCategory} />
+        <Field
+          label="Description"
+          value={description}
+          onChange={setDescription}
+          placeholder="Optional description"
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <Field label="Name" value={name} onChange={setName} placeholder="My Service" required />
-          <Field label="URL" value={url} onChange={setUrl} placeholder="https://..." required />
-          <Field
-            label="Icon slug"
-            value={icon}
-            onChange={setIcon}
-            placeholder="e.g. plex, grafana"
-          />
-          <CategoryCombobox value={category} onChange={setCategory} />
-          <Field
-            label="Description"
-            value={description}
-            onChange={setDescription}
-            placeholder="Optional description"
-          />
+        {error && (
+          <p role="alert" className="text-red-400 text-sm">
+            {error}
+          </p>
+        )}
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                reset();
-                onClose();
-              }}
-              className="px-4 py-2 text-sm rounded-lg text-gray-400 hover:text-gray-200 hover:bg-surface-700 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-4 py-2 text-sm rounded-lg bg-accent text-surface-900 font-semibold hover:bg-accent/90 disabled:opacity-50 transition-colors"
-            >
-              {saving ? 'Adding...' : 'Add Service'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={close}
+            className="min-h-11 px-4 py-2 text-sm rounded-lg text-gray-400 hover:text-gray-200 hover:bg-surface-700 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="min-h-11 px-4 py-2 text-sm rounded-lg bg-accent text-surface-900 font-semibold hover:bg-accent/90 disabled:opacity-50 transition-colors"
+          >
+            {saving ? 'Adding...' : 'Add Service'}
+          </button>
+        </div>
+      </form>
+    </Dialog>
   );
 }
 
@@ -140,7 +128,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-sm"
+        className="w-full min-h-11 px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-base sm:text-sm"
       />
     </label>
   );
@@ -178,6 +166,7 @@ function CategoryCombobox({ value, onChange }: { value: string; onChange: (v: st
         }}
         onFocus={() => setOpen(true)}
         placeholder="Type or select category"
+        aria-label="Category"
         className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-sm"
       />
       {open && filtered.length > 0 && (

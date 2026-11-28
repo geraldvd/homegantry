@@ -22,12 +22,21 @@ HomeGantry watches your Docker daemon for running containers, matches them again
 - **Real-time updates** — Server-Sent Events push changes instantly, no polling or page refresh
 - **Traefik discovery** — Reads router labels, or the optional Traefik API to also find non-Docker services (Proxmox, a NAS, ...)
 - **Exposure badges** — Shows whether a service is public, behind SSO or private (LAN/VPN only), derived from its Traefik middlewares
-- **Health checks** — HTTP up/down status per service, with per-service opt-out
+- **Health checks** — One clear status per card (up, down, running, stopped), with a per-service opt-out in the UI or a label
+- **Fast search** — Press `/`, type, press Enter: matches names, descriptions, categories, stacks and hosts; bookmarkable (`?q=`)
+- **Keyboard friendly** — Arrow keys between cards, Enter to open, `e` to edit, `?` for all shortcuts
+- **Grouping** — By category, Compose stack or URL host, with collapsible groups
+- **Phones and tablets** — Usable from 360 px wide, with 44 px touch targets and full-screen dialogs
 - **Homepage compatibility** — Reads `homepage.*` Docker labels for easy migration from [Homepage](https://gethomepage.dev/)
 - **Stack management** — Group services by Docker Compose project, toggle visibility per-stack
 - **Manual services** — Add non-Docker services to the dashboard through the UI
 - **Customizable** — Override names, icons, categories, and URLs per-service
 - **Dark mode glass-morphism UI** — Responsive grid and list layouts
+
+<p>
+  <img src="docs/public/m4-search.png" alt="Search results" width="49%" />
+  <img src="docs/public/m4-phone.png" alt="Dashboard on a phone" width="22%" />
+</p>
 
 ## Quick Start
 
@@ -115,6 +124,7 @@ Homepage labels (`homepage.name`, `homepage.href`, etc.) are also supported. See
 Full documentation is available at [homegantry.com](https://homegantry.com).
 
 - [Getting Started](https://homegantry.com/guide/getting-started) — Requirements and quick start
+- [Using the Dashboard](https://homegantry.com/guide/using-the-dashboard) — Search, shortcuts, grouping, mobile
 - [Configuration](https://homegantry.com/guide/configuration) — Environment variables reference
 - [Docker Labels](https://homegantry.com/guide/docker-labels) — Controlling service display
 - [Knowledge Base](https://homegantry.com/guide/knowledge-base) — Matching rules and adding a service

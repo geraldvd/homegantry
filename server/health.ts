@@ -22,7 +22,15 @@ const MIN_INTERVAL_SECONDS = 5;
 const TLS_ERROR =
   /^(CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|ERR_TLS|ERR_SSL|HOSTNAME_MISMATCH|EPROTO)/;
 
+/**
+ * #30: an unchanged result is announced again after this long, so an open dashboard sees a fresh
+ * "last checked" time without an SSE event per service on every round.
+ */
+export const HEALTH_REFRESH_MS = 30_000;
+
 const results = new Map<string, ServiceHealth>();
+/** When each service's result was last announced (`onChange`). */
+const announced = new Map<string, number>();
 let timer: ReturnType<typeof setInterval> | null = null;
 let running = false;
 
@@ -98,6 +106,12 @@ export function getHealth(id: string): ServiceHealth | undefined {
   return results.get(id);
 }
 
+/** Drop a service's result now (its checks were switched off). */
+export function forgetHealth(id: string): void {
+  results.delete(id);
+  announced.delete(id);
+}
+
 function sameResult(a: ServiceHealth | undefined, b: ServiceHealth): boolean {
   return a?.status === b.status && a.reason === b.reason && a.httpStatus === b.httpStatus;
 }
@@ -106,11 +120,15 @@ async function checkTarget(target: HealthTarget, onChange?: OnChange): Promise<v
   const health = await checkUrl(target.url);
   const previous = results.get(target.id);
   results.set(target.id, health);
-  if (sameResult(previous, health)) return;
-  if (health.status !== 'up') {
+  const now = Date.now();
+  if (sameResult(previous, health)) {
+    const last = announced.get(target.id);
+    if (last !== undefined && now - last < HEALTH_REFRESH_MS) return;
+  } else if (health.status !== 'up') {
     const detail = health.httpStatus ? `${health.reason} ${health.httpStatus}` : health.reason;
     console.warn(`[health] ${redactUrl(target.url)} is ${health.status} (${detail})`);
   }
+  announced.set(target.id, now);
   onChange?.(target.id);
 }
 
@@ -122,7 +140,7 @@ export async function runHealthChecks(
   const wanted = new Set(targets.map((t) => t.id));
   for (const id of [...results.keys()]) {
     if (!wanted.has(id)) {
-      results.delete(id);
+      forgetHealth(id);
       onChange?.(id);
     }
   }
