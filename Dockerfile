@@ -3,7 +3,7 @@
 # ── Build stage ──────────────────────────────────────────────────────────────
 # Runs on the build machine's own platform, also for the arm64 image: dist/ is plain JavaScript,
 # so there is no need to emulate the slow client and server builds under QEMU.
-FROM --platform=$BUILDPLATFORM node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a AS builder
+FROM --platform=$BUILDPLATFORM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build
 
 # ── Runtime stage (one per target platform: linux/amd64, linux/arm64) ───────
-FROM node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
 # apk upgrade: OS security fixes between base-image updates (Dependabot bumps the digest weekly).
 RUN apk upgrade --no-cache && apk add --no-cache tini
 WORKDIR /app
