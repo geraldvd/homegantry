@@ -131,3 +131,17 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-28 — "Last checked" (#30): an unchanged health result is announced again over SSE at most every 30 seconds
   per service. — Keeps the tooltip current without an event per service on every short round; the time in the tooltip
   stays an absolute time, which is honest about the refresh interval.
+- 2026-11-28 — The edit dialog sends only changed fields (M4 gate): a text field equal to the shown value (ignoring
+  spaces) is left out, a cleared one is sent as `null` (back to auto-detected, as #31 did for the URL), and a save with
+  no change sends no request. — Saving used to pin every shown value as an override, so later label or Knowledge Base
+  changes no longer showed. Trade-off: an empty description cannot override a detected one; nobody asked for that.
+- 2026-11-28 — `healthcheck: true` in an override is only kept when a `homegantry.healthcheck=false` label needs
+  beating; otherwise the server removes the field (and manual services do not store `true`). — Checks are on by
+  default, so turning them back on should leave no override behind. Deciding on the server avoids exposing where the
+  opt-out came from in the API.
+- 2026-11-28 — After hiding a service, focus moves to the next card in reading order, else the previous card, else the
+  main landmark (`src/lib/focus.ts`), and only when focus was lost with the card. — Focus used to drop to `<body>`;
+  the next card is where a keyboard user continues, the same order as the arrow keys.
+- 2026-11-28 — All text fields in dialogs share one size: at least 44 px tall, full width, `text-base` (16 px) below
+  the `sm` breakpoint; the category combobox and its suggestions are one shared component. — iOS Safari zooms into
+  inputs with text under 16 px (seen on an iPad at the M4 gate).

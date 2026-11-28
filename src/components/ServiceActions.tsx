@@ -1,6 +1,7 @@
 import type { Service } from '../types';
 import { updateOverride } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { cancelCardRemoval, expectCardRemoval } from '../lib/focus';
 
 const BUTTON =
   'flex items-center justify-center w-7 h-7 touch:w-11 touch:h-11 rounded-md bg-surface-700/80 text-gray-400 hover:text-gray-200 transition-colors';
@@ -49,7 +50,11 @@ export default function ServiceActions({
       </button>
       <button
         type="button"
-        onClick={() => void updateOverride(service.id, { hidden: true })}
+        onClick={() => {
+          // The card goes away: focus moves to the next card instead of <body>.
+          expectCardRemoval(service.id);
+          updateOverride(service.id, { hidden: true }).catch(() => cancelCardRemoval(service.id));
+        }}
         className={BUTTON}
         aria-label={`Hide ${service.name}`}
         title="Hide service"

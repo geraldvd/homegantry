@@ -26,6 +26,7 @@ import {
   type HealthTarget,
 } from './health.js';
 import { safeHttpUrl } from './urls.js';
+import { labelDisablesHealthcheck } from './matcher.js';
 import type {
   Service,
   ServiceOverride,
@@ -148,6 +149,11 @@ router.put(
       if (value === null) delete next[field];
       else if (value !== undefined) next[field] = value;
     }
+    // Checks are on by default: `healthcheck: true` only needs storing to beat a
+    // `homegantry.healthcheck=false` label. Otherwise turning checks back on removes the field.
+    if (next.healthcheck === true && !labelDisablesHealthcheck(getServiceLabels(id))) {
+      delete next.healthcheck;
+    }
     if (Object.keys(next).length > 0) overrides[id] = next as ServiceOverride;
     else delete overrides[id];
     overridesStore.set(overrides);
@@ -213,6 +219,8 @@ router.put(
       return;
     }
     manual[idx] = { ...manual[idx]!, ...body, id };
+    // On is the default for manual services, so `true` is not stored.
+    if (manual[idx].healthcheck === true) delete manual[idx].healthcheck;
     manualServicesStore.set(manual);
     if (body.healthcheck === false) forgetHealth(id);
 

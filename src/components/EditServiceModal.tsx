@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useId } from 'react';
+import { useState, useId } from 'react';
 import Dialog from './Dialog';
+import CategoryCombobox from './CategoryCombobox';
 import type { Service } from '../types';
-import { useServices } from '../context/ServiceContext';
 import {
   updateOverride,
   deleteOverride,
@@ -9,6 +9,7 @@ import {
   deleteManualService,
 } from '../api/client';
 import { normaliseUrlInput } from '../lib/url';
+import { cancelCardRemoval, expectCardRemoval } from '../lib/focus';
 
 const SOURCE_LABEL: Record<Service['source'], string> = {
   docker: 'Docker',
@@ -19,6 +20,16 @@ const SOURCE_LABEL: Record<Service['source'], string> = {
 interface Props {
   service: Service | null;
   onClose: () => void;
+}
+
+/**
+ * The override value for a text field: `undefined` when unchanged (nothing is stored), `null` when
+ * cleared (back to the auto-detected value, #31), otherwise the new value.
+ */
+export function overrideField(input: string, current: string): string | null | undefined {
+  const value = input.trim();
+  if (value === current.trim()) return undefined;
+  return value === '' ? null : value;
 }
 
 export default function EditServiceModal({ service, onClose }: Props) {
@@ -74,15 +85,26 @@ export default function EditServiceModal({ service, onClose }: Props) {
     setError('');
     try {
       if (isDiscovered) {
-        await updateOverride(service.id, {
-          displayName: name.trim() || undefined,
+        // Only what changed is sent, so unchanged fields do not become overrides.
+        const patch = {
+          displayName: overrideField(name, service.name),
           url: urlField,
-          icon: icon.trim() || undefined,
-          category: category.trim() || undefined,
-          description: description.trim() || undefined,
-          hidden,
+          icon: overrideField(icon, service.icon),
+          category: overrideField(category, service.category),
+          description: overrideField(description, service.description),
+          hidden: hidden === service.hidden ? undefined : hidden,
           healthcheck: healthcheckChange,
-        });
+        };
+        if (Object.values(patch).some((v) => v !== undefined)) {
+          // Hiding removes the card: keep keyboard focus on the page.
+          if (patch.hidden === true) expectCardRemoval(service.id);
+          try {
+            await updateOverride(service.id, patch);
+          } catch (err) {
+            cancelCardRemoval(service.id);
+            throw err;
+          }
+        }
       } else {
         await updateManualService(service.id, {
           displayName: name.trim(),
@@ -247,62 +269,6 @@ function Field({
         <p id={hintId} className="text-xs text-gray-500 mt-1">
           {hint}
         </p>
-      )}
-    </div>
-  );
-}
-
-function CategoryCombobox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const { services } = useServices();
-  const [open, setOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const categories = [...new Set(services.map((s) => s.category).filter(Boolean))].sort();
-  const filtered = value.trim()
-    ? categories.filter((c) => c.toLowerCase().includes(value.toLowerCase()))
-    : categories;
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  return (
-    <div className="relative" ref={wrapperRef}>
-      <span className="text-xs text-gray-400 mb-1 block">Category</span>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        placeholder="Type or select category"
-        aria-label="Category"
-        className="w-full px-3 py-2 rounded-lg bg-surface-700 border border-surface-600/60 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/30 transition-colors text-sm"
-      />
-      {open && filtered.length > 0 && (
-        <div className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto rounded-lg bg-surface-700 border border-surface-600/60 shadow-lg">
-          {filtered.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => {
-                onChange(cat);
-                setOpen(false);
-              }}
-              className="w-full text-left px-3 py-1.5 text-sm text-gray-200 hover:bg-surface-600 transition-colors"
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
       )}
     </div>
   );

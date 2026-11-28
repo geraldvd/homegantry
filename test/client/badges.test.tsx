@@ -156,10 +156,13 @@ describe('Traefik services in the UI', () => {
     expect(screen.getByText('Edit Traefik Service')).toBeTruthy();
     expect(screen.getByText('Revert to auto-detected')).toBeTruthy();
     expect(screen.queryByText('Delete')).toBeNull();
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'My App' } });
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: 'Save' }).closest('form')!);
     });
     const write = fetchMock.mock.calls.find(([, init]) => init?.method === 'PUT');
     expect(write?.[0]).toBe('/api/services/id-app/override');
+    // Only the changed field becomes an override.
+    expect(JSON.parse(String(write?.[1]?.body))).toEqual({ displayName: 'My App' });
   });
 });

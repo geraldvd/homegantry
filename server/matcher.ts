@@ -129,10 +129,15 @@ export function matchRoute(route: TraefikRoute): Service {
   };
 }
 
+/** True when the `homegantry.healthcheck=false` label turns the health check off. */
+export function labelDisablesHealthcheck(labels: Readonly<Record<string, string>>): boolean {
+  return labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false';
+}
+
 /** Health checks are off by label (`homegantry.healthcheck=false`) unless an override says otherwise. */
 function healthcheckDisabled(labels: Record<string, string>, override?: ServiceOverride): boolean {
   if (override?.healthcheck !== undefined) return !override.healthcheck;
-  return labels['homegantry.healthcheck']?.trim().toLowerCase() === 'false';
+  return labelDisablesHealthcheck(labels);
 }
 
 export function matchContainer(input: MatchInput, route?: TraefikRoute): Service {

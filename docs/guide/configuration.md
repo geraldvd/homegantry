@@ -93,8 +93,12 @@ Which groups are collapsed is not a setting: it is kept per browser in `localSto
 Set in the edit dialog, or with `PUT /api/services/<id>/override` (edit rights). Fields: `displayName`, `url`, `icon`,
 `category`, `description`, `hidden`, `sortOrder` and `healthcheck` (`false` turns [health checks](/guide/health-checks)
 off). `null` for a field removes it from the override, so the service is back to its auto-detected value; for example
-`{"url": null}` returns to the URL from labels or Traefik. Manual services accept `healthcheck` in
-`PUT /api/services/manual/<id>`.
+`{"url": null}` returns to the URL from labels or Traefik. `healthcheck: true` is only stored when it is needed to
+beat a `homegantry.healthcheck=false` label; otherwise it removes the field, as checks are on by default. Manual
+services accept `healthcheck` in `PUT /api/services/manual/<id>`.
+
+The edit dialog only sends the fields you changed, so saving it never pins the other auto-detected values. Clearing the
+name, URL, icon, category or description sends `null` for that field: the service is back to its auto-detected value.
 
 ## Example `.env` File
 
