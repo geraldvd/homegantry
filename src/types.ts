@@ -37,16 +37,21 @@ export interface Service {
   exposure?: ExposureLevel;
   exposureSource?: string;
   health?: ServiceHealth;
+  /** Health checks are off for this service (label, override or manual setting). */
+  healthcheckDisabled?: boolean;
 }
 
+/** Override fields; `null` resets one to the auto-detected value. */
 export interface ServiceOverride {
-  displayName?: string;
-  url?: string;
-  icon?: string;
-  category?: string;
-  description?: string;
-  hidden?: boolean;
-  sortOrder?: number;
+  displayName?: string | null;
+  url?: string | null;
+  icon?: string | null;
+  category?: string | null;
+  description?: string | null;
+  hidden?: boolean | null;
+  sortOrder?: number | null;
+  /** `false` turns health checks off for this service. */
+  healthcheck?: boolean | null;
 }
 
 export interface ManualService {
@@ -57,6 +62,7 @@ export interface ManualService {
   category: string;
   description: string;
   sortOrder: number;
+  healthcheck?: boolean;
 }
 
 export interface StackConfig {
@@ -71,7 +77,7 @@ export interface DashboardSettings {
   showStatus: boolean;
   layout: 'grid' | 'list';
   showStopped: boolean;
-  groupBy: 'category' | 'stack';
+  groupBy: 'category' | 'stack' | 'host';
 }
 
 export type SSEEvent =
