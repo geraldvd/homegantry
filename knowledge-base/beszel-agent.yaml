@@ -5,6 +5,7 @@ category: Monitoring
 defaultPort: 45876
 patterns:
   - henrygd/beszel-agent
+  - ghcr.io/henrygd/beszel/beszel-agent
 aliases:
   - beszel-agent
 infrastructure: true

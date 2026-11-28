@@ -149,14 +149,21 @@ describe('contribution template', () => {
 });
 
 describe('Missing service issue template', () => {
-  it('asks for image name, homepage and icon', () => {
-    const form = parse(
-      fs.readFileSync(path.resolve('.github/ISSUE_TEMPLATE/missing_service.yml'), 'utf-8'),
-    ) as { name: string; body: Array<{ id?: string; validations?: { required?: boolean } }> };
+  const form = parse(
+    fs.readFileSync(path.resolve('.github/ISSUE_TEMPLATE/missing_service.yml'), 'utf-8'),
+  ) as { name: string; body: Array<{ id?: string; validations?: { required?: boolean } }> };
+
+  it('requires the image name and homepage', () => {
     expect(form.name).toBe('Missing service');
-    for (const id of ['images', 'homepage', 'icon']) {
+    for (const id of ['images', 'homepage']) {
       expect(form.body.find((field) => field.id === id)?.validations?.required, id).toBe(true);
     }
+  });
+
+  it('asks for an icon but does not require one (not every service has one)', () => {
+    const icon = form.body.find((field) => field.id === 'icon');
+    expect(icon).toBeDefined();
+    expect(icon?.validations?.required ?? false).toBe(false);
   });
 });
 

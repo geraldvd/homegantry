@@ -8,5 +8,7 @@ patterns:
   - library/nginx
   - linuxserver/nginx
   - nginxinc/nginx-unprivileged
+  - nginxproxy/nginx-proxy
+  - jwilder/nginx-proxy
 aliases:
   - nginx

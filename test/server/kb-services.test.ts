@@ -33,6 +33,36 @@ describe('new knowledge-base services', () => {
     expect(svc).toMatchObject({ name, icon });
   });
 
+  it.each([
+    ['ghcr.io/henrygd/beszel/beszel:latest', 'Beszel'],
+    ['ghcr.io/henrygd/beszel/beszel-agent:latest', 'Beszel Agent'],
+    ['paperlessngx/paperless-ngx:latest', 'Paperless-ngx'],
+    ['ghcr.io/paperless-ngx/paperless-ngx:2', 'Paperless-ngx'],
+    ['stirlingtools/stirling-pdf:latest', 'Stirling-PDF'],
+    ['ghcr.io/stirling-tools/stirling-pdf:latest', 'Stirling-PDF'],
+    ['qbittorrentofficial/qbittorrent-nox:latest', 'qBittorrent'],
+    ['ghcr.io/qbittorrent/docker-qbittorrent-nox:latest', 'qBittorrent'],
+    ['jlesage/nginx-proxy-manager:latest', 'Nginx Proxy Manager'],
+  ])('recognises the published image %s (M3 gate)', async (image, name) => {
+    const { matchContainer } = await loadServer();
+    const base = { id: 'abc', name: 'container', state: 'running', labels: {}, ports: [] };
+    expect(matchContainer({ ...base, image }).name).toBe(name);
+  });
+
+  it('hides the Beszel agent on the GitHub registry path too', async () => {
+    const { matchContainer } = await loadServer();
+    const base = { id: 'abc', name: 'container', state: 'running', labels: {}, ports: [] };
+    const image = 'ghcr.io/henrygd/beszel/beszel-agent:latest';
+    expect(matchContainer({ ...base, image }).hidden).toBe(true);
+    expect(matchContainer({ ...base, image: 'ghcr.io/henrygd/beszel/beszel' }).hidden).toBe(false);
+  });
+
+  it('hides Redis Stack as infrastructure, like Redis', async () => {
+    const { matchContainer } = await loadServer();
+    const base = { id: 'abc', name: 'container', state: 'running', labels: {}, ports: [] };
+    expect(matchContainer({ ...base, image: 'redis/redis-stack-server:latest' }).hidden).toBe(true);
+  });
+
   it('hides the Beszel agent but not the hub', async () => {
     const { matchContainer } = await loadServer();
     const base = { id: 'abc', name: 'container', state: 'running', labels: {}, ports: [] };

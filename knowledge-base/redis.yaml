@@ -7,6 +7,8 @@ patterns:
   - redis
   - library/redis
   - bitnami/redis
+  - redis/redis-stack
+  - redis/redis-stack-server
 aliases:
   - redis
 infrastructure: true

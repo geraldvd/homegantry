@@ -81,3 +81,22 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-23 — Icon slugs are checked against a pinned copy of the dashboard-icons file list (`npm run kb:refresh-icons`).
   — CI stays deterministic and unit tests make no network calls. Entries without an upstream icon omit `icon` and show a
   letter avatar.
+- 2026-11-28 — M3 gate: five of the eight non-blocking findings from the M3 review (#43) are fixed in one lead PR; the
+  other three (Traefik router suffixes, tags in one-segment patterns, `kb:check` across kinds) are filed as `[M5]`
+  issues. — The five are small data, docs and template fixes; the three change matching or validation rules and belong
+  with the discovery hardening work.
+- 2026-11-28 — Real image variants that lost their match in M3 get explicit patterns: `redis/redis-stack` and
+  `redis/redis-stack-server` are Redis (hidden as infrastructure), `nginxproxy/nginx-proxy` and `jwilder/nginx-proxy`
+  are Nginx, and `jlesage/nginx-proxy-manager` is now Nginx Proxy Manager instead of Nginx. Published images that were
+  never recognised are added too: `ghcr.io/henrygd/beszel/beszel(-agent)`, `paperlessngx/paperless-ngx`,
+  `stirlingtools/stirling-pdf`, `ghcr.io/stirling-tools/stirling-pdf`, `qbittorrentofficial/qbittorrent-nox` and
+  `ghcr.io/qbittorrent/docker-qbittorrent-nox` (each checked on its registry). — They are the official or widely used
+  images of services already in the knowledge base; the changes are listed in `test/server/kb-migration.test.ts`.
+- 2026-11-28 — Label precedence stays as implemented; the knowledge-base guide now documents it exactly: a name label
+  skips the knowledge base, `homegantry.name` also ignores the `homepage.*` display labels, and a description label on
+  its own is ignored. — The docs promised a per-field rule the code never had; changing the behaviour would move cards
+  in existing dashboards without a request for it. Tests pin each rule.
+- 2026-11-28 — `.env.example` lists every `HOMEGANTRY_*` option the server reads (enforced by a test), and the "Missing
+  service" form no longer requires an icon. — Entries without an upstream icon are valid and show a letter avatar.
+- 2026-11-28 — Next milestone is M4, UX: search, keyboard navigation, grouping and the mobile layout, with #30-#33. —
+  The dashboard now recognises most services; finding and opening them quickly is the next most visible gap.

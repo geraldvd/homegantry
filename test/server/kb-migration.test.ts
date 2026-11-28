@@ -21,6 +21,8 @@ function legacyMatch(image: string): string | undefined {
 const INTENDED_CHANGES: Record<string, { before: string; after: string }> = {
   'fbonalair/traefik-crowdsec-bouncer': { before: 'Traefik', after: 'CrowdSec Bouncer' },
   'ghcr.io/crowdsecurity/traefik-bouncer': { before: 'Traefik', after: 'CrowdSec Bouncer' },
+  // M3 gate: the Nginx Proxy Manager image by jlesage was Nginx by substring; it is NPM now.
+  'jlesage/nginx-proxy-manager': { before: 'Nginx', after: 'Nginx Proxy Manager' },
 };
 
 /** Real images the old rule matched by accident and that are now unrecognised (#13 c). */
@@ -46,6 +48,11 @@ const KEPT_VARIANTS: Array<[image: string, name: string]> = [
   ['nginxinc/nginx-unprivileged:stable', 'Nginx'],
   ['haproxytech/haproxy-debian:3', 'HAProxy'],
   ['nextcloud/all-in-one:latest', 'Nextcloud'],
+  // M3 gate follow-ups (review of #43): real variants that had lost their match.
+  ['redis/redis-stack:latest', 'Redis'],
+  ['redis/redis-stack-server:7.4.0-v0', 'Redis'],
+  ['nginxproxy/nginx-proxy:1.6', 'Nginx'],
+  ['jwilder/nginx-proxy:latest', 'Nginx'],
 ];
 
 function variants(pattern: string): string[] {
