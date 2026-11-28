@@ -145,3 +145,59 @@ Short records of choices that shape the project. Newest at the bottom. Format: d
 - 2026-11-28 — All text fields in dialogs share one size: at least 44 px tall, full width, `text-base` (16 px) below
   the `sm` breakpoint; the category combobox and its suggestions are one shared component. — iOS Safari zooms into
   inputs with text under 16 px (seen on an iPad at the M4 gate).
+- 2026-11-28 — Releases (M5): semantic versioning from 0.2.0, cut with release-please (manifest config, `node` release
+  type, plain `vX.Y.Z` tags, `bump-minor-pre-major`). It keeps a release PR with the changelog and version bumps;
+  merging it creates the tag and GitHub release. The first release is exactly 0.2.0: the manifest says `0.0.0`
+  ("never released"), so `initial-version: 0.2.0` applies whatever the commit types, and `bootstrap-sha` (the last
+  M4 commit) keeps the pre-release history out of the generated notes; the M0–M4 summary in `CHANGELOG.md` is
+  written by hand. — A release PR gives the lead one review-and-merge step per release and needs nothing but
+  `GITHUB_TOKEN`. Alternatives: semantic-release (releases on every merge, no review step), Changesets (a file per
+  PR; meant for npm packages).
+- 2026-11-28 — Release, image and SBOM run in one workflow run (`ci.yml`): `image` and `release assets` are gated on
+  release-please's `release_created` output, and runs on `main` are never cancelled. — Only `GITHUB_TOKEN` is
+  available, and events it creates (the release PR, tag and release) start no other workflow, so an
+  `on: push: tags` or `on: release` workflow would never run. CI on the release PR is started by the lead closing
+  and reopening it (CONTRIBUTING.md). Alternative: a PAT or GitHub App token (an extra secret to manage).
+- 2026-11-28 — Image tags: `main` and `sha-<commit>` on every push to `main`; `X.Y.Z`, `X.Y` and `latest` only on a
+  release, `X` from 1.0. Docs recommend pinning `X.Y`. The OCI `version` label is the release version on releases
+  and `main` on main builds; the app always reports the `package.json` version. — `latest` used to move on every
+  merge, so "latest" users ran unreleased code; before 1.0 a minor version may break, so `X.Y` is the safe pin.
+- 2026-11-28 — Multi-arch with Buildx + QEMU on `ubuntu-latest`; the build stage runs on `$BUILDPLATFORM` (its output
+  is plain JavaScript), so only the runtime stage (`apk`, `npm ci --omit=dev`) is emulated. Both platforms are built,
+  smoke-tested (`/api/health` with the expected version) and scanned before the push; the push reuses their cache.
+  — Keeps the arm64 build to minutes in one job. Alternative: native `ubuntu-24.04-arm` runners (faster, but a
+  second job plus a manifest-merge step).
+- 2026-11-28 — Image scan with Grype (`anchore/scan-action`): fail on CRITICAL/HIGH findings that have a fix
+  (`only-fixed`), accepted findings in `.grype.yaml` with a mandatory `reason` (checked by a test). The SBOM is the
+  BuildKit SPDX attestation (`sbom: true`, plus `provenance: mode=max`); the release asset is extracted from it with
+  `docker buildx imagetools`, so the attached file and the attestation are the same document. — Findings without a
+  fix cannot be acted on and would block every build. Grype's ignore rules carry a `reason` field, so the reason
+  lives next to the rule. Alternatives: Trivy (an equivalent scanner), a separate Syft step for the SBOM (a second
+  tool producing a second, possibly different SBOM).
+- 2026-11-28 — Image base `node:22-alpine` (was `node:20-alpine`), pinned by digest, with `apk upgrade` in the
+  runtime stage; npm, corepack and yarn are removed from the final image. — Node 20 is end-of-life and its image had
+  fixable critical findings; 22 is already in the CI matrix. The digest makes base updates reviewed Dependabot PRs;
+  `apk upgrade` picks up OS fixes in between. The app never runs npm, and its bundled packages only add findings.
+- 2026-11-28 — npm audit triage (#11): runtime findings fixed (`npm audit fix`, express `^4.22.3` for qs 6.16, and an
+  `overrides` entry giving dockerode `uuid ^11.1.1`; dockerode only calls `uuid.v4`, which the advisory does not
+  affect). CI runs `npm audit --omit=dev` (0 findings). The remaining findings are dev tooling only and need major
+  upgrades: vitest 3 (tinypool, `@vitest/mocker`; `@vitest/coverage-v8` via glob/minimatch) and vitepress 1.6 (its
+  own vite 5 / esbuild, no fix released). They are left to Dependabot's major-update PRs. — None of them ships in the
+  image or runs outside a developer's machine and CI; majors deserve their own reviewed PR.
+- 2026-11-28 — Dependency updates with Dependabot (npm, Docker, GitHub Actions; weekly on Monday; minor/patch grouped
+  per runtime/dev deps, all base images and all actions in one PR each; majors as single PRs, e.g. ESLint 10 for #12).
+  Titles are Conventional Commits: runtime deps and base images `fix(deps)` (they change the image, so they lead to
+  a patch release), dev deps `chore(deps-dev)`, actions `ci(deps)`. Actions are pinned to full commit SHAs with the
+  version in a comment, which Dependabot updates. — Built into GitHub: no app to install and no third party with
+  write access; groups and schedules cover what we need. Alternative: Renovate (more options, dependency dashboard)
+  needs the Mend app installed with write access.
+- 2026-11-28 — PR titles are checked by `scripts/pr-title.ts` in a `PR title` workflow (title passed as an environment
+  variable). — About 50 tested lines instead of a marketplace action that runs third-party code on every PR; it runs
+  on plain Node 22 without `npm ci`.
+- 2026-11-28 — The version is public: `GET /api/health` and `GET /api/ui-config` return `version`, the footer shows
+  "HomeGantry vX.Y.Z" linking to the release notes. It is read at start-up from the nearest `package.json` named
+  `homegantry`. — Not sensitive (it is in the image tag too) and needed for bug reports and upgrades. Reading
+  `package.json` keeps one source of truth that release-please updates.
+- 2026-11-28 — M5 adds no npm dependency (runtime or dev). New CI tools, each pinned by SHA: release-please-action
+  (releases), `docker/setup-qemu-action` (arm64 emulation), `anchore/scan-action` (Grype scan). The existing actions
+  moved to their current majors (Node 24 runtimes). — Mission principle 3.

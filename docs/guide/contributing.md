@@ -84,4 +84,9 @@ npm run lint          # ESLint + Prettier check
 2. Create a feature branch from `main`
 3. Make your changes
 4. Run `npm run typecheck` to catch type errors
-5. Submit a pull request with a clear description of the change
+5. Submit a pull request with a clear description of the change and a
+   [Conventional Commit](https://www.conventionalcommits.org/) title such as `fix(routes): return 404 for unknown stacks`:
+   pull requests are squash-merged, and the title becomes the changelog line.
+
+How titles map to versions and how a release is cut:
+[CONTRIBUTING.md](https://github.com/geraldvd/homegantry/blob/main/CONTRIBUTING.md#pull-request-titles-and-commits).

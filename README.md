@@ -66,6 +66,24 @@ Open [http://localhost:3000](http://localhost:3000).
 
 > **Requirements:** Docker Engine 20.10+ and Docker Compose v2. No reverse proxy needed — Traefik integration is optional. See the [Getting Started](https://homegantry.com/guide/getting-started) guide for details.
 
+### Image tags and versions
+
+Images for `linux/amd64` and `linux/arm64` (Raspberry Pi and other 64-bit ARM boards) are on
+`ghcr.io/geraldvd/homegantry`:
+
+| Tag                    | What it is                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `0.2` (recommended)    | The newest `0.2.x` release: fixes, no breaking changes. Pin this one.          |
+| `0.2.0`                | Exactly that release.                                                          |
+| `latest`               | The newest release. Moves only on a release, never on a plain merge to `main`. |
+| `main`, `sha-<commit>` | Development builds of `main`. Not for production.                              |
+
+Before 1.0, a new minor version (`0.3.0`) may contain breaking changes: read the [CHANGELOG](CHANGELOG.md) before
+moving to it. Each [GitHub release](https://github.com/geraldvd/homegantry/releases) has its notes and the SBOM of
+its image; every image is scanned for known vulnerabilities and carries SBOM and provenance attestations. The
+running version is shown in the dashboard footer and in `GET /api/health`. Details:
+[Releases and upgrading](https://homegantry.com/guide/releases).
+
 ## Security
 
 HomeGantry is **read-only by default**: anyone who can open the dashboard can look, but every change (overrides,
@@ -131,6 +149,7 @@ Full documentation is available at [homegantry.com](https://homegantry.com).
 - [Traefik Discovery](https://homegantry.com/guide/traefik) — Traefik API, exposure badges and mapping
 - [Health Checks](https://homegantry.com/guide/health-checks) — HTTP status per service
 - [Deployment](https://homegantry.com/guide/deployment) — Production deployment guides
+- [Releases and Upgrading](https://homegantry.com/guide/releases) — Image tags, changelog, upgrading, SBOM
 - [Reverse Proxy](https://homegantry.com/guide/reverse-proxy) — Traefik, Nginx, and Caddy examples
 - [Security Model](https://homegantry.com/guide/security) — Read-only default, editing, socket proxy
 - [Contributing](https://homegantry.com/guide/contributing) — Development setup and project structure
