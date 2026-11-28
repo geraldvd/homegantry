@@ -1,0 +1,16 @@
+# Grype configuration for the image scan in CI (.github/workflows/ci.yml, job "image").
+#
+# CI fails on CRITICAL or HIGH findings that have a fix available (`only-fixed: true`,
+# `severity-cutoff: high` in the workflow). Findings without a fix are reported in the job summary
+# but do not fail the build: there is nothing to upgrade to yet.
+#
+# Accepted findings go under `ignore`, one entry per vulnerability (and package where it helps),
+# each with a `reason`: why it does not affect HomeGantry, or why it cannot be fixed yet, and when
+# to look again (an issue number or a date). test/release/image-scan.test.ts rejects entries
+# without a reason. Example:
+#
+#   - vulnerability: CVE-2026-00000
+#     package:
+#       name: libexample
+#     reason: Only reachable through the example CLI, which the image never runs. Revisit with #123.
+ignore: []

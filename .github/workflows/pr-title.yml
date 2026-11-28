@@ -1,0 +1,27 @@
+name: PR title
+
+# Pull requests are squash-merged: the title becomes the commit on main and, through
+# release-please, the changelog line. So it must be a Conventional Commit (CONTRIBUTING.md).
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  conventional-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Check the title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: node --experimental-strip-types scripts/pr-title.ts
