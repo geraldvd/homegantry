@@ -35,10 +35,10 @@ body:
     id: icon
     attributes:
       label: Icon
-      description: Slug from [dashboard-icons](https://github.com/homarr-labs/dashboard-icons), if there is one.
+      description: Slug from [dashboard-icons](https://github.com/homarr-labs/dashboard-icons), if there is one. Leave empty otherwise; HomeGantry then shows a letter avatar.
       placeholder: jellyfin
     validations:
-      required: true
+      required: false
   - type: input
     id: aliases
     attributes:

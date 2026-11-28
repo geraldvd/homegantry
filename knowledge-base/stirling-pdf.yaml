@@ -7,6 +7,8 @@ patterns:
   - frooodle/s-pdf
   - ghcr.io/stirling-tools/s-pdf
   - ghcr.io/frooodle/s-pdf
+  - stirlingtools/stirling-pdf
+  - ghcr.io/stirling-tools/stirling-pdf
 aliases:
   - stirling-pdf
   - stirlingpdf

@@ -6,6 +6,7 @@ defaultPort: 8000
 patterns:
   - ghcr.io/paperless-ngx/paperless-ngx
   - linuxserver/paperless-ngx
+  - paperlessngx/paperless-ngx
 aliases:
   - paperless-ngx
   - paperless

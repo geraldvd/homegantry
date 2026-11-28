@@ -23,7 +23,7 @@ converted to JSON at build time, so the running server needs no YAML parser.
 
 Not comfortable with a pull request? Open a
 [Missing service](https://github.com/geraldvd/homegantry/issues/new?template=missing_service.yml) issue with the image
-name, homepage and icon.
+name, the homepage and, if there is one, the icon.
 
 ## Format
 
@@ -77,19 +77,31 @@ A pattern names a whole repository. Registry, tag and digest are handled for you
 
 ### Order of precedence
 
-For each field, the first source that has a value wins.
+Each column is tried from left to right; the first source with a value wins. The rules below the table say when a
+source is skipped.
 
-| Field       | 1           | 2                        | 3                      | 4              | 5                      |
-| ----------- | ----------- | ------------------------ | ---------------------- | -------------- | ---------------------- |
-| Name        | UI override | `homegantry.name`        | `homepage.name`        | Knowledge base | Container name         |
-| Icon        | UI override | `homegantry.icon`        | `homepage.icon`        | Knowledge base | Letter avatar          |
-| Category    | UI override | `homegantry.category`    | `homepage.group`       | Knowledge base | `Other`                |
-| Description | UI override | `homegantry.description` | `homepage.description` | Knowledge base | _(empty)_              |
-| URL         | UI override | `homegantry.url`         | `homepage.href`        | Traefik        | `HOMEGANTRY_HOST:port` |
+| Field       | 1           | 2                        | 3                      | 4              | 5                                     |
+| ----------- | ----------- | ------------------------ | ---------------------- | -------------- | ------------------------------------- |
+| Name        | UI override | `homegantry.name`        | `homepage.name`        | Knowledge base | Container name                        |
+| Icon        | UI override | `homegantry.icon`        | `homepage.icon`        | Knowledge base | Letter avatar                         |
+| Category    | UI override | `homegantry.category`    | `homepage.group`       | Knowledge base | `Other`                               |
+| Description | UI override | `homegantry.description` | `homepage.description` | Knowledge base | _(empty)_                             |
+| URL         | UI override | `homegantry.url`         | `homepage.href`        | Traefik        | `HOMEGANTRY_HOST:port`, else `#` link |
 
-A `homegantry.name` or `homepage.name` label means you named the service yourself: the knowledge base is then skipped
-for that container. A knowledge-base entry is looked up by compose service name, then container name, then image.
-Services without a container are looked up by Traefik router name, then service name.
+- **A name label means you named the service yourself.** With `homegantry.name` or `homepage.name`, the knowledge base
+  is skipped for that container: its icon, category and description come only from labels and overrides, and an
+  infrastructure entry is not hidden.
+- **`homegantry.name` also ignores the `homepage.*` labels** for name, icon, category and description (`homepage.href`
+  still counts for the URL). Without `homegantry.name`, each `homegantry.*` label beats its `homepage.*` counterpart.
+- **A description label needs a companion.** `homegantry.description` only counts when the container also has
+  `homegantry.name`, `homegantry.icon` or `homegantry.category`; `homepage.description` only counts with
+  `homepage.name`, `homepage.icon` or `homepage.group`. A description label on its own is ignored.
+- **`homepage.*` labels need `HOMEGANTRY_HOMEPAGE_COMPAT=true`** (the default).
+- **Traefik** means the Traefik API when it is configured, then the router rules in the container's labels. Without
+  `HOMEGANTRY_HOST`, the port link uses `localhost`.
+
+A knowledge-base entry is looked up by compose service name, then container name, then image. Services without a
+container are looked up by Traefik router name, then service name.
 
 ## Coverage report
 

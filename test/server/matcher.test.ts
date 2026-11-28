@@ -247,6 +247,51 @@ describe('matchContainer: label precedence', () => {
     expect(svc.description).toBe('');
   });
 
+  it('homepage.description alone is ignored (documented precedence)', async () => {
+    const svc = await match({ labels: { 'homepage.description': 'only a description' } });
+    expect(svc.description).toBe('');
+  });
+
+  it('a description label alone does not replace the knowledge-base description', async () => {
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: { 'homegantry.description': 'mine', 'homepage.description': 'theirs' },
+    });
+    expect(svc.description).toBe('The free software media system');
+  });
+
+  it('homegantry.description counts together with another homegantry.* label', async () => {
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: { 'homegantry.icon': 'hg-icon', 'homegantry.description': 'mine' },
+    });
+    expect(svc).toMatchObject({ name: 'Jellyfin', icon: 'hg-icon', description: 'mine' });
+  });
+
+  it('homegantry.name ignores homepage.icon and homepage.description (documented precedence)', async () => {
+    const svc = await match({
+      image: 'jellyfin/jellyfin',
+      labels: {
+        'homegantry.name': 'Movies',
+        'homepage.icon': 'hp-icon',
+        'homepage.description': 'theirs',
+      },
+    });
+    expect(svc).toMatchObject({ name: 'Movies', icon: '', description: '' });
+  });
+
+  it('homegantry.name still uses homepage.href for the URL', async () => {
+    const svc = await match({
+      labels: { 'homegantry.name': 'Movies', 'homepage.href': 'https://hp.example.com' },
+    });
+    expect(svc.url).toBe('https://hp.example.com');
+  });
+
+  it('homepage.name skips the knowledge base', async () => {
+    const svc = await match({ image: 'jellyfin/jellyfin', labels: { 'homepage.name': 'HP' } });
+    expect(svc).toMatchObject({ name: 'HP', icon: '', category: 'Other', description: '' });
+  });
+
   it('ignores homepage.* labels when HOMEGANTRY_HOMEPAGE_COMPAT=false', async () => {
     const svc = await match(
       {

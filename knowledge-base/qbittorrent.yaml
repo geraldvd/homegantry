@@ -7,6 +7,9 @@ patterns:
   - linuxserver/qbittorrent
   - ghcr.io/linuxserver/qbittorrent
   - hotio/qbittorrent
+  - qbittorrentofficial/qbittorrent-nox
+  - ghcr.io/qbittorrent/docker-qbittorrent-nox
 aliases:
   - qbittorrent
   - qbt
+  - qbittorrent-nox

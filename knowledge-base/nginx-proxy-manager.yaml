@@ -6,6 +6,7 @@ defaultPort: 81
 patterns:
   - jc21/nginx-proxy-manager
   - ghcr.io/nginxproxymanager/nginx-proxy-manager
+  - jlesage/nginx-proxy-manager
 aliases:
   - nginx-proxy-manager
   - nginxproxymanager
